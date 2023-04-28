@@ -12,15 +12,18 @@ apt install git
 git clone https://github.com/DRM-Scripts/DRMUniversal
 
 --SETUP
-nano /etc/mysql/my.cnf
+nano /etc/mysql/my.cnf - Copy the below into the cnf file
 [mysqld]
 sql-mode="NO_ENGINE_SUBSTITUTION"
+
 service mysql restart
 cd DRMUniversal/
 cp -r cli /etc/php/7.4/
 nano /etc/php/7.4/apache2/php.ini - Enable Short Open Tags
-visudo
+
+visudo - Copy the below into visudo
 www-data ALL=(ALL) NOPASSWD: ALL
+
 service apache2 restart
 cd /home
 wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
