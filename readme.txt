@@ -1,3 +1,5 @@
+-- UBUNTU 18.04 ONLY --
+
 --REQUIREMENTS
 sudo apt -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php
