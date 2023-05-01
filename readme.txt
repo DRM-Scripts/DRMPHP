@@ -1,5 +1,9 @@
 -- UBUNTU 18.04 ONLY --
 
+###########################################################################################
+# THIS INSTALL IS BASED ON INSTALLING ON FILES IN PANEL FOLDER TO THE ROOT OF HTML FOLDER #
+###########################################################################################
+
 --REQUIREMENTS
 sudo apt -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php
@@ -31,6 +35,8 @@ cd /home
 wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
 tar -xf ffmpeg-release-amd64-static.tar.xz
 cp -r ffmpeg-6.0-amd64-static/* /usr/bin
+cd DRM*
+cp -r panel/. /var/www/html
 cd /var/www/html
 chmod +x mp4decrypt
 mkdir download
