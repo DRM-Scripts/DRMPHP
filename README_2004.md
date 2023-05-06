@@ -12,7 +12,7 @@
 11. cp -r cli /etc/php/7.4
 12. wget http://ftp.de.debian.org/debian/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1_amd64.deb
 13. dpkg -i libnghttp2-14_1.52.0-1_amd64.deb
-14. edit /etc/php/7.4/apache/php.ini using nano -> ctrl + w -> short_open_tag -> change short_open_tag = Off to be short_open_tag = On 
+14. edit /etc/php/7.4/apache2/php.ini using nano -> ctrl + w -> short_open_tag -> change short_open_tag = Off to be short_open_tag = On 
 15. visudo -> add www-data ALL=(ALL) NOPASSWD: ALL in the most bottom
 16. service apache2 restart
 17. cd /home
@@ -31,14 +31,15 @@
 30. chmod 777 html
 31. cd /home
 32. cd DRM*
-33. cp downloader.php /var/www/html
-34. cp panel/downloader.php /var/www/html
-35. cd /home/DRMUniversal
-36. chmod 777 ./db.sh
-37. sed -i -e 's/\r$//' db.sh
-38. ./db.sh - Fill in the MYSQL Database & User Details
-39. cd /var/www/html
-40. nano _db.php - Enter Your DB & User Details
-41. service apache2 restart
-42. browse to pub server ip
-43. login with admin/Admin@2022##
+33. mkdir -p /var/www/html/panel
+34. cp downloader.php /var/www/html
+35. cp panel/downloader.php /var/www/html/panel
+36. cd /home/DRMUniversal
+37. chmod 777 ./db.sh
+38. sed -i -e 's/\r$//' db.sh
+39. ./db.sh - Fill in the MYSQL Database & User Details
+40. cd /var/www/html
+41. nano _db.php - Enter Your DB & User Details
+42. service apache2 restart
+43. browse to pub server ip
+44. login with admin/Admin@2022##
