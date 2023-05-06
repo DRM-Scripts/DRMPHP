@@ -10,33 +10,35 @@
 9. git clone this repos at /home
 10. cd DRMUniversal
 11. cp -r cli /etc/php/7.4
-12. edit /etc/php/7.4/apache/php.ini using nano -> ctrl + w -> short_open_tag -> change short_open_tag = Off to be short_open_tag = On 
-13. visudo -> add www-data ALL=(ALL) NOPASSWD: ALL in the most bottom
-14. service apache2 restart
-15. cd /home
-16. wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-17. tar -xf ffmpeg-release-amd64-static.tar.xz
-18. cp -r ffmpeg-6.0-amd64-static/* /usr/bin
-19. cd DRM*
-20. cp -r panel/. /var/www/html
-21. cd /var/www/html
-22. chmod +x mp4decrypt
-23. mkdir download
-24. chmod 777 download
-25. cd ../
-26. mkdir backup
-27. chmod 777 backup
-28. chmod 777 html
-29. cd /home
-30. cd DRM*
-31. cp downloader.php /var/www/html
-32. cp panel/downloader.php /var/www/html
-33. cd /home/DRMUniversal
-34. chmod 777 ./db.sh
-35. sed -i -e 's/\r$//' db.sh
-36. ./db.sh - Fill in the MYSQL Database & User Details
-37. cd /var/www/html
-38. nano _db.php - Enter Your DB & User Details
-39. service apache2 restart
-40. browse to pub server ip
-41. login with admin/Admin@2022##
+12. wget http://ftp.de.debian.org/debian/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1_amd64.deb
+13. dpkg -i libnghttp2-14_1.52.0-1_amd64.deb
+14. edit /etc/php/7.4/apache/php.ini using nano -> ctrl + w -> short_open_tag -> change short_open_tag = Off to be short_open_tag = On 
+15. visudo -> add www-data ALL=(ALL) NOPASSWD: ALL in the most bottom
+16. service apache2 restart
+17. cd /home
+18. wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+19. tar -xf ffmpeg-release-amd64-static.tar.xz
+20. cp -r ffmpeg-6.0-amd64-static/* /usr/bin
+21. cd DRM*
+22. cp -r panel/. /var/www/html
+23. cd /var/www/html
+24. chmod +x mp4decrypt
+25. mkdir download
+26. chmod 777 download
+27. cd ../
+28. mkdir backup
+29. chmod 777 backup
+30. chmod 777 html
+31. cd /home
+32. cd DRM*
+33. cp downloader.php /var/www/html
+34. cp panel/downloader.php /var/www/html
+35. cd /home/DRMUniversal
+36. chmod 777 ./db.sh
+37. sed -i -e 's/\r$//' db.sh
+38. ./db.sh - Fill in the MYSQL Database & User Details
+39. cd /var/www/html
+40. nano _db.php - Enter Your DB & User Details
+41. service apache2 restart
+42. browse to pub server ip
+43. login with admin/Admin@2022##
