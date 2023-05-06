@@ -14,31 +14,29 @@
 13. visudo -> add www-data ALL=(ALL) NOPASSWD: ALL in the most bottom
 14. service apache2 restart
 15. cd /home
-wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-tar -xf ffmpeg-release-amd64-static.tar.xz
-cp -r ffmpeg-6.0-amd64-static/* /usr/bin
-cd DRM*
-cp -r panel/. /var/www/html
-cd /var/www/html
-chmod +x mp4decrypt
-mkdir download
-chmod 777 download
-cd ../
-mkdir backup
-chmod 777 backup
-chmod 777 html
-cd /home
-cd DRM*
-cp downloader.php /var/www/html
-cp panel/downloader.php /var/www/html
-cd /home/DRMUniversal
-chmod 777 ./db.sh
-sed -i -e 's/\r$//' db.sh
-./db.sh - Fill in the MYSQL Database & User Details
-cd /var/www/html
-nano _db.php - Enter Your DB & User Details
-service apache2 restart
-
---ACCESS
-browse to pub server ip
-login with admin/Admin@2022##
+16. wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+17. tar -xf ffmpeg-release-amd64-static.tar.xz
+18. cp -r ffmpeg-6.0-amd64-static/* /usr/bin
+19. cd DRM*
+20. cp -r panel/. /var/www/html
+21. cd /var/www/html
+22. chmod +x mp4decrypt
+23. mkdir download
+24. chmod 777 download
+25. cd ../
+26. mkdir backup
+27. chmod 777 backup
+28. chmod 777 html
+29. cd /home
+30. cd DRM*
+31. cp downloader.php /var/www/html
+32. cp panel/downloader.php /var/www/html
+33. cd /home/DRMUniversal
+34. chmod 777 ./db.sh
+35. sed -i -e 's/\r$//' db.sh
+36. ./db.sh - Fill in the MYSQL Database & User Details
+37. cd /var/www/html
+38. nano _db.php - Enter Your DB & User Details
+39. service apache2 restart
+40. browse to pub server ip
+41. login with admin/Admin@2022##
