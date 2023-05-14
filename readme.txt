@@ -14,48 +14,47 @@ sudo apt-get install -y php7.4 php7.4-cli php7.4-json php7.4-common php7.4-mysql
 
 --DOWNLOAD
 cd /home
-apt install git
-git clone https://github.com/DRM-Scripts/DRMUniversal
+sudo apt install git
+git clone https://github.com/DRM-Scripts/DRMPHP
 
 --SETUP
-nano /etc/mysql/my.cnf - Copy the below into the cnf file
+sudo nano /etc/mysql/my.cnf - Copy the below into the cnf file
 [mysqld]
 sql-mode="NO_ENGINE_SUBSTITUTION"
 
-service mysql restart
-cd DRMUniversal/
-cp -r cli /etc/php/7.4/
-nano /etc/php/7.4/apache2/php.ini - Enable Short Open Tags
+sudo service mysql restart
+cd DRMPHP/
+sudo cp -r cli /etc/php/7.4/
+sudo nano /etc/php/7.4/apache2/php.ini - Enable Short Open Tags
 
-visudo - Copy the below into visudo
+sudo visudo - Copy the below into visudo
 www-data ALL=(ALL) NOPASSWD: ALL
 
-service apache2 restart
+sudo service apache2 restart
 cd /home
-wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-tar -xf ffmpeg-release-amd64-static.tar.xz
-cp -r ffmpeg-6.0-amd64-static/* /usr/bin
+sudo wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+sudo tar -xf ffmpeg-release-amd64-static.tar.xz
+sudo cp -r ffmpeg-6.0-amd64-static/* /usr/bin
 cd DRM*
-cp -r panel/. /var/www/html
+sudo cp -r panel/. /var/www/html
 cd /var/www/html
-chmod +x mp4decrypt
-mkdir download
-chmod 777 download
+sudo chmod +x mp4decrypt
+sudo mkdir download
+sudo chmod 777 download
 cd ../
 mkdir backup
-chmod 777 backup
-chmod 777 html
+sudo chmod 777 backup
+sudo chmod 777 html
 cd /home
 cd DRM*
-cp downloader.php /var/www/html
-cp panel/downloader.php /var/www/html
-cd /home/DRMUniversal
-chmod 777 ./db.sh
-sed -i -e 's/\r$//' db.sh
-./db.sh - Fill in the MYSQL Database & User Details
+sudo cp panel/downloader.php /var/www/html
+sudo cd /home/DRMPHP
+sudo chmod 777 ./db.sh
+sudo sed -i -e 's/\r$//' db.sh
+sudo ./db.sh - Fill in the MYSQL Database & User Details
 cd /var/www/html
-nano _db.php - Enter Your DB & User Details
-service apache2 restart
+sudo nano _db.php - Enter Your DB & User Details
+sudo service apache2 restart
 
 --ACCESS
 browse to pub server ip
