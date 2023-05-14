@@ -9,10 +9,10 @@ if($Type=="api" || $Type=="hls"){
     if($Data[$i]["Status"]=="Downloading"){
       $ChName   = str_replace(" ", "_", $Data[$i]["ChannelName"]);
       if($Type=="api"){
-        $urlbase = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME']."/panel";      
+        $urlbase = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME']."";      
         $URL = $urlbase."/api.php?action=m3u8&id=".$ChName;
       }else{
-        $URL = $DownloadURL."/".$ChName."/hls/index.m3u8";
+        $URL = $DownloadURL."/".$ChName."/stream/index.m3u8";
       }
       $m3u8files.="#EXTINF:-1, ".$Data[$i]["ChannelName"].PHP_EOL.$URL.PHP_EOL;
     }
