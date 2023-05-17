@@ -52,6 +52,11 @@ sudo cd /home/DRMPHP
 sudo chmod 777 ./db.sh
 sudo sed -i -e 's/\r$//' db.sh
 sudo ./db.sh - Fill in the MYSQL Database & User Details
+mysql -u root -p
+USE DBNAME
+SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
+SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION';
+exit
 cd /var/www/html
 sudo nano _db.php - Enter Your DB & User Details
 sudo service apache2 restart
