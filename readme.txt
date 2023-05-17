@@ -48,7 +48,7 @@ sudo chmod 777 html
 cd /home
 cd DRM*
 sudo cp panel/downloader.php /var/www/html
-sudo cd /home/DRMPHP
+cd /home/DRMPHP
 sudo chmod 777 ./db.sh
 sudo sed -i -e 's/\r$//' db.sh
 sudo ./db.sh - Fill in the MYSQL Database & User Details
