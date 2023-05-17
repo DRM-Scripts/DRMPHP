@@ -27,8 +27,6 @@ if [ -f /root/.my.cnf ]; then
 	sudo mysql -e "GRANT ALL PRIVILEGES ON ${dbname}.* TO '${username}'@'localhost';"
 	sudo mysql -e "FLUSH PRIVILEGES;"
 	sudo mysql ${dbname} < db.sql
-    	sudo mysql SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
-    	sudo mysql SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION';
 	echo "You're good now :)"
 	exit
 	
@@ -61,8 +59,6 @@ else
 	sudo mysql -uroot -p${rootpasswd} -e "GRANT ALL PRIVILEGES ON ${dbname}.* TO '${username}'@'localhost';"
 	sudo mysql -uroot -p${rootpasswd} -e "FLUSH PRIVILEGES;"
 	sudo mysql -uroot -p${rootpasswd} ${dbname} < db.sql
-    	sudo mysql -uroot -p${rootpasswd} SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
-    	sudo mysql -uroot -p${rootpasswd} SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION';
 	echo "You're good now :)"
 	exit
 fi
