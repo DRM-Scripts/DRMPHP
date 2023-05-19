@@ -31,7 +31,7 @@ function GetConfig($Config, $ConfigName){
 }
 function GetChannel($ChID){
   global $db;
-  $sql="select ID, ChannelName, Manifest, KID, `Key`, PID, 
+  $sql="select ID, ChannelName, Manifest, PID, 
   SegmentJoiner, PlaylistLimit, URLListLimit, DownloadUseragent, AudioID, VideoID, Output, UDPIP
   from channels where ID=:ID";
   $st=$db->prepare($sql);
@@ -39,6 +39,11 @@ function GetChannel($ChID){
   $st->execute();
   $line= $st->fetch();
   $line["AudioIDs"] = explode(",", $line["AudioID"]);
+  $keySql = "select * from channel_keys where ChannelID=:ID";
+  $st=$db->prepare($keySql);
+  $st->bindParam(":ID", $ChID);
+  $st->execute();
+  $line["Keys"] = $st->fetchAll();
   if($line["ID"]!=""){  
     return $line;
   }else{
@@ -572,7 +577,7 @@ function in_Timeline($url, $arr){
   }
   return false;
 }
-function JoinSegment($ChID, $ChName, $Key, $aHeader, $aData, $vHeader, $vData, $DownloadIndex){
+function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, $DownloadIndex){
   global $WorkPath, $BinPath;
   global $FFMpegCMD;
   global $DeleteEncryptedAfterDecrypt;
@@ -602,13 +607,20 @@ function JoinSegment($ChID, $ChName, $Key, $aHeader, $aData, $vHeader, $vData, $
   $Merged_FileName   = $WorkPath."/".$ChName."/stream/$Index".$OutExt2;
 
   $map="";
+  /** let mp4decrypt bruteforce the key */
+  $keyString = "";
+  foreach($Keys as $key) {
+      $kid = $key["KID"];
+      $decKey = $key['Key'];
+      $keyString .= "--key $kid:$decKey ";
+  }
   for($k=0;$k<count($aData);$k++){
     $AudioEncFileName[] = $WorkPath."/".$ChName."/seg/".$Index."-".$k."-enc".$audio_ext;
     $AudioDecFileName[] = $WorkPath."/".$ChName."/seg/".$Index."-".$k."-dec".$audio_ext;
     $aSeg = null;
     $aSeg = $aHeader.$aData[$k];
     file_put_contents($AudioEncFileName[$k], $aSeg);
-    $dec=$Mp4Decrypt." --key $Key ".$AudioEncFileName[$k]." ".$AudioDecFileName[$k]." --show-progress ".$Redirect;
+    $dec=$Mp4Decrypt.$keyString.$AudioEncFileName[$k]." ".$AudioDecFileName[$k]." --show-progress ".$Redirect;
     exec($dec);
     $map.=" -map ".($k+1).":a ";
   }
@@ -618,8 +630,7 @@ function JoinSegment($ChID, $ChName, $Key, $aHeader, $aData, $vHeader, $vData, $
   $VideoDecFileName  = $WorkPath."/".$ChName."/seg/".$Index."-dec".$video_ext;
   $vSeg = $vHeader.$vData;
   file_put_contents($VideoEncFileName, $vSeg);
-  $dec=$Mp4Decrypt." --key $Key $VideoEncFileName $VideoDecFileName --show-progress ".$Redirect;
-  echo $dec;
+  $dec=$Mp4Decrypt.$keyString.$VideoEncFileName." ".$VideoDecFileName ." --show-progress ".$Redirect;
   exec($dec);
 
   $MyFFMpegCMD =str_replace("-i", "", $MyFFMpegCMD);
@@ -900,7 +911,8 @@ if($ChID){
 
   $Mpd_Url                    = $ChData["Manifest"];
 
-  $Key                        = $ChData["KID"].":".$ChData["Key"];
+  // $Key                        = $ChData["KID"].":".$ChData["Key"];
+  $Keys                       = $ChData["Keys"];
   $ChName                     = str_replace(" ", "_", $ChData["ChannelName"]);
 
   $Useragent                  = $ChData["DownloadUseragent"]?$ChData["DownloadUseragent"]:$Useragent; 
@@ -1184,7 +1196,7 @@ try {
         }
         
         DoLog("Finalizing segment");
-        JoinSegment($ChID, $ChName, $Key, $aHeader, $aData, $vHeader, $vData, $DownloadIndex);
+        JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, $DownloadIndex);
         $aData = "";
         $vData = "";        
         $SegmentCounter=0;
