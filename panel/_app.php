@@ -232,13 +232,30 @@ class App{
       $st->bindParam(":Output",             $Output);
       $st->execute();
 
-      $keySql = "update channel_keys set KID=:KID, `Key`=:Key where ChannelID=:ChannelID";
       for($i=0;$i<count($KID);$i++) {
-        $st=$this->DB->prepare($keySql);
+        $keyId = $KID[$i];
+        $contentKey = $Key[$i];
+        $checkKeyExistSql  = "SELECT count(*) as C FROM channel_keys WHERE ChannelID=:ChannelID AND KID=:KID";
+        $st = $this->DB->prepare($checkKeyExistSql);
         $st->bindParam(":ChannelID", $ID);
-        $st->bindParam(":KID", $KID[$i]);
-        $st->bindParam(":Key", $Key[$i]);
+        $st->bindParam(":KID", $keyId);
         $st->execute();
+        $count = $st->fetchColumn();
+        if($count == 0){
+          $insertKeySql = "INSERT INTO channel_keys (ChannelID, KID, `Key`) VALUES (:ChannelID, :KID, :Key)";
+          $st = $this->DB->prepare($insertKeySql);
+          $st->bindParam(":ChannelID", $ID);
+          $st->bindParam(":KID", $keyId);
+          $st->bindParam(":Key", $contentKey);
+          $st->execute();
+        }else{
+          $updateKeySql = "UPDATE channel_keys SET `Key`=:Key WHERE ChannelID=:ChannelID AND KID=:KID";
+          $st = $this->DB->prepare($updateKeySql);
+          $st->bindParam(":ChannelID", $ID);
+          $st->bindParam(":KID", $keyId);
+          $st->bindParam(":Key", $contentKey);
+          $st->execute();
+        }
       }
 
       if($ManifestField){
