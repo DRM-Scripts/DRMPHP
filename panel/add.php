@@ -105,18 +105,38 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">KID</label>
                         <div class="col-md-10">
-                          <input class="form-control" type="text" id="KID[]" name="KID[]" value="<?=$Data["KID"]?>">
+                          <input class="form-control" type="text" id="KID[]" name="KID[]" value="<?=$Data["Keys"][0]["KID"]?>">
                           <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="GetKID()">Get KID</a>
                         </div>
                       </div>
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Key</label>
                         <div class="col-md-10">
-                          <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?=$Data["Key"]?>">
+                          <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?=$Data["Keys"][0]["Key"]?>">
                           <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addKey()">Add Key</a>
                         </div>
                       </div>
                       <div id="keys">
+                        <?php
+                        if(count(["Keys"]) > 1) {
+                          for($i=1;$i<count($Data["Keys"]);$i++){
+                            ?>
+                            <div class="mb-3 row">
+                              <label class="col-md-2 col-form-label">KID</label>
+                              <div class="col-md-10">
+                                <input class="form-control" type="text" id="KID[]" name="KID[]" value="<?=$Data["Keys"][$i]["KID"]?>">
+                              </div>
+                            </div>
+                            <div class="mb-3 row">
+                              <label class="col-md-2 col-form-label">Key</label>
+                              <div class="col-md-10">
+                                <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?=$Data["Keys"][$i]["Key"]?>">
+                              </div>
+                            </div>
+                            <?php
+                          }
+                        }
+                        ?>
                       </div>
 
                       <h4 class="card-title mt-5">Downloading parameters</h4>

@@ -69,6 +69,12 @@ class App{
     $st->bindParam(":ChannelID", $ID);
     $st->execute();
     $Chan["VideoIDs"]=$st->fetchAll();
+
+    $keySql = "select * from channel_keys where ChannelID=:ChannelID";
+    $st=$this->DB->prepare($keySql);
+    $st->bindParam(":ChannelID", $ID);
+    $st->execute();
+    $Chan["Keys"]=$st->fetchAll();
     return $Chan;
   }
   function GetChannelByName($ChName){
