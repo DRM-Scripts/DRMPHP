@@ -196,6 +196,7 @@ class App{
       $ID=$this->DB->lastInsertId();
       $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
       for($i=0;$i<count($KID);$i++) {
+        if($KID[$i] == "" || $Key[$i] == "") continue;
         $st=$this->DB->prepare($keySql);
         $st->bindParam(":ChannelID", $ID);
         $st->bindParam(":KID", $KID[$i]);
@@ -241,6 +242,7 @@ class App{
       for($i=0;$i<count($KID);$i++) {
         $keyId = $KID[$i];
         $contentKey = $Key[$i];
+        if($keyId == "" || $contentKey == "") continue;
         $checkKeyExistSql  = "SELECT count(*) as C FROM channel_keys WHERE ChannelID=:ChannelID AND KID=:KID";
         $st = $this->DB->prepare($checkKeyExistSql);
         $st->bindParam(":ChannelID", $ID);
