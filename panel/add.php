@@ -169,11 +169,29 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Header (e.g : Authorization: Bearer xxxxx)</label>
                         <div class="col-md-10">
-                          <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="">
+                          <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?php 
+                            if(count($Data["customHeaders"]) > 0) {
+                              echo $Data["customHeaders"][0];
+                            }
+                          ?>">
                           <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addHeader()">Add Header</a>
                         </div>
                       </div>
                       <div id="headers">
+                        <?php
+                        if(count($Data["customHeaders"]) > 1) {
+                          for($i=1;$i<count($Data["customHeaders"]);$i++){
+                            ?>
+                            <div class="mb-3 row">
+                              <label class="col-md-2 col-form-label">Header</label>
+                              <div class="col-md-10">
+                                <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?=$Data["customHeaders"][$i]?>">
+                              </div>
+                            </div>
+                            <?php
+                          }
+                        }
+                        ?>
                       </div>
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Allowed IP</label>
