@@ -113,8 +113,8 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <label class="col-md-2 col-form-label">Key</label>
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?=$Data["Key"]?>">
+                          <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addKey()">Add Key</a>
                         </div>
-                        <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addKey()">Add Key</a>
                       </div>
                       <div id="keys">
                       </div>
@@ -342,10 +342,12 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
           $('#KID').val(data);
         })
       }
+
       function addKey() {
         $target = $('#keys');
-        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="<?=$Data["KID"]?>"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="Key"></div></div>');
+        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="" placeholder="KID"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="Key"></div></div>');
       }
+
     </script>
   </body>
 </html>
