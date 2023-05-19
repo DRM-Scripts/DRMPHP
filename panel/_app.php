@@ -719,10 +719,24 @@ class App{
     return $All;
   }
   function GetKID($URL){
-    $data=file_get_contents($URL);
-    $pos = strpos($data, "default_KID");
-    $kid=substr($data, $pos+13, 36);
-    return str_replace("-", "", $kid);
+  $data = file_get_contents($URL);
+  $posDefault = strpos($data, "default_KID");
+  $posMarlin = strpos($data, "marlin:kid");
+
+  if ($posDefault !== false) {
+    $kid = substr($data, $posDefault + 13, 36);
+    $kid = str_replace("-", "", $kid);
+  } elseif ($posMarlin !== false) {
+    $kidStart = $posMarlin + 10;
+    $kidEnd = strpos($data, "</mas:MarlinContentId>", $kidStart);
+    $kid = substr($data, $kidStart, $kidEnd - $kidStart);
+    $kid = str_replace("urn:marlin:kid:", "", $kid);
+    $kid = ltrim($kid, ":");
+  } else {
+    return null; // Return null if neither "default_KID" nor "marlin:kid" is found
   }
+
+  return $kid;
+}
 }
 ?>
