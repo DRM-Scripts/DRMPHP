@@ -851,7 +851,7 @@ function DownloadList($List, $UseProxy=0, $Proxy=[]){
   if($UseProxy){
     $cmd='aria2c --continue=true -t 10 --check-certificate=false --http-proxy="http://'.$Proxy["User"].':'.$Proxy["Pass"].'@'.$Proxy["URL"].':'.$Proxy["Port"].'" -i list.txt  --dir='.$Folder.' -j'.$j;
   }else{
-    $cmd='aria2c --continue=true -t 10 --check-certificate=false                                                                                                  -i list.txt  --dir='.$Folder.' -j'.$j;
+    $cmd='aria2c --continue=true -t 10 --check-certificate=false -i list.txt  --dir='.$Folder.' -j'.$j;
   }
   echo $cmd;
   exec($cmd);

@@ -443,6 +443,16 @@ class App{
     $st=$this->DB->prepare($sql);
     $st->bindParam(":ID", $ChanID);
     $st->execute();
+
+    $sql="delete from channel_keys where ChannelID=:ID";
+    $st=$this->DB->prepare($sql);
+    $st->bindParam(":ID", $ChanID);
+    $st->execute();
+
+    $sql="delete from channel_headers where ChannelID=:ID";
+    $st=$this->DB->prepare($sql);
+    $st->bindParam(":ID", $ChanID);
+    $st->execute();
   }
   function All($Action){
     $Chan=$this->GetAllChannels();

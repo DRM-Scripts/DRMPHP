@@ -170,7 +170,10 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <label class="col-md-2 col-form-label">Header (e.g : Authorization: Bearer xxxxx)</label>
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="">
+                          <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addHeader()">Add Header</a>
                         </div>
+                      </div>
+                      <div id="headers">
                       </div>
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Allowed IP</label>
@@ -377,6 +380,16 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
         }
         $target = $('#keys');
         $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="" placeholder="KID"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="Key"></div></div>');
+      }
+
+      function addHeader() {
+        var childCount = $('#headers').children().length;
+        if (childCount >= 6) {
+          alert('Maximum headers reached');
+          return;
+        }
+        $target = $('#headers');
+        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">Header</label><div class="col-md-10"><input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="" placeholder="Header"></div></div>');
       }
 
     </script>
