@@ -114,7 +114,7 @@ CREATE TABLE `config` (
 
 INSERT INTO `config` (`ID`, `ConfigName`, `ConfigDesc`, `ConfigValue`) VALUES
 (1, 'DownloadPath', '', '/var/www/html/download'),
-(2, 'BinPath', '', '/var/www/html/'),
+(2, 'BinPath', '', '/var/www/html/panel/'),
 (3, 'SegmentJoiner', '', '8'),
 (4, 'DeleteEncryptedAfterDecrypt', '', '1'),
 (5, 'DeleteDecryptedAfterMerge', '', '1'),
@@ -128,7 +128,7 @@ INSERT INTO `config` (`ID`, `ConfigName`, `ConfigDesc`, `ConfigValue`) VALUES
 (13, 'ProxyPass', 'Proxy Password', ''),
 (14, 'DownloadUseragent', 'Download Useragent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0'),
 (15, 'AutoRestart', 'Auto restart channels', '1'),
-(16, 'DownloaderPath', 'Downloader Path', '/var/www/html/'),
+(16, 'DownloaderPath', 'Downloader Path', '/var/www/html/panel/'),
 (17, 'BackupPath', '/var/www/backup', '/var/www/backup'),
 (18, 'MaxLogSize', '', '1048576');
 
