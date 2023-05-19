@@ -86,7 +86,7 @@ INSERT INTO `channels` (`ID`, `CatID`, `ChannelName`, `Manifest`, `VariantID`, `
 --
 
 CREATE TABLE `channel_keys` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ID` int(11) NOT NULL,
   `ChannelID` int(11) NOT NULL,
   `KID` varchar(32) NOT NULL,
   `Key` varchar(32) NOT NULL
@@ -241,6 +241,7 @@ ALTER TABLE `cats`
 ALTER TABLE `channels`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `CatID` (`CatID`);
+
 
 ALTER TABLE `channel_keys`
   ADD PRIMARY KEY (`ID`),
