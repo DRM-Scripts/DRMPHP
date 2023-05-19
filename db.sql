@@ -242,6 +242,10 @@ ALTER TABLE `channels`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `CatID` (`CatID`);
 
+ALTER TABLE `channel_keys`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `ChannelId` (`ChannelId`);
+
 --
 -- Indexes for table `config`
 --
