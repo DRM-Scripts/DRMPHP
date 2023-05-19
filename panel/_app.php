@@ -146,6 +146,7 @@ class App{
     $CatId = intval($Data["CatID"]);
     $KID            = $Data["KID"];
     $Key            = $Data["Key"];
+    $CustomHeaders = $Data["customHeaders"];
     $AllowedIP      = explode("\r\n", $Data["AllowedIP"]);
     $AllowedIPJson  = json_encode($AllowedIP);
     $AutoRestart    = intval($Data["AutoRestart"]);
@@ -198,6 +199,16 @@ class App{
       for($i=0;$i<count($KID);$i++) {
         if($KID[$i] == "" || $Key[$i] == "") continue;
         $st=$this->DB->prepare($keySql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->bindParam(":KID", $KID[$i]);
+        $st->bindParam(":Key", $Key[$i]);
+        $st->execute();
+      }
+
+      $headerSql = "insert into channel_headers (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
+      for($i=0;$i<count($KID);$i++) {
+        if($KID[$i] == "" || $Key[$i] == "") continue;
+        $st=$this->DB->prepare($headerSql);
         $st->bindParam(":ChannelID", $ID);
         $st->bindParam(":KID", $KID[$i]);
         $st->bindParam(":Key", $Key[$i]);
