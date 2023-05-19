@@ -841,7 +841,7 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
 
     if (count($customHeaders) > 0) {
         foreach ($customHeaders as $customHeader) {
-            $head[] = $customHeader;
+            $head[] = $customHeader["Value"];
         }
     }
 
@@ -913,7 +913,8 @@ function DownloadList($List, $UseProxy = 0, $Proxy = [], $userAgent = "", $custo
     file_put_contents("list.txt", $str);
     $customHeaderText = "";
     foreach ($customHeaders as $header) {
-        $customHeaderText .= "--header=\"$header\" ";
+        $value = $header["Value"];
+        $customHeaderText .= "--header=\"$value\" ";
     }
     $userAgentText = "";
     if ($userAgent != "") {
