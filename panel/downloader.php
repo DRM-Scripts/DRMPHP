@@ -47,6 +47,13 @@ function GetChannel($ChID)
     $st->bindParam(":ID", $ChID);
     $st->execute();
     $line["Keys"] = $st->fetchAll();
+
+    $headersSql = "select * from channel_headers where ChannelID=:ID";
+    $st = $db->prepare($keySql);
+    $st->bindParam(":ID", $ChID);
+    $st->execute();
+    $line["CustomHeaders"] = $st->fetchAll();
+
     if ($line["ID"] != "") {
         return $line;
     } else {
@@ -909,13 +916,13 @@ function DownloadList($List, $UseProxy = 0, $Proxy = [], $userAgent = "", $custo
         $customHeaderText .= "--header=\"$header\" ";
     }
     $userAgentText = "";
-    if($userAgent != ""){
+    if ($userAgent != "") {
         $userAgentText = "--user-agent=\"$userAgent\" ";
     }
     if ($UseProxy) {
-        $cmd = 'aria2c --continue=true -t 10 --check-certificate=false '.$customHeaderText.' '.$userAgentText.'--http-proxy="http://' . $Proxy["User"] . ':' . $Proxy["Pass"] . '@' . $Proxy["URL"] . ':' . $Proxy["Port"] . '" -i list.txt  --dir=' . $Folder . ' -j' . $j;
+        $cmd = 'aria2c --continue=true -t 10 --check-certificate=false ' . $customHeaderText . ' ' . $userAgentText . '--http-proxy="http://' . $Proxy["User"] . ':' . $Proxy["Pass"] . '@' . $Proxy["URL"] . ':' . $Proxy["Port"] . '" -i list.txt  --dir=' . $Folder . ' -j' . $j;
     } else {
-        $cmd = 'aria2c --continue=true -t 10 --check-certificate=false '.$customHeaderText.' '.$userAgentText.'-i list.txt  --dir=' . $Folder . ' -j' . $j;
+        $cmd = 'aria2c --continue=true -t 10 --check-certificate=false ' . $customHeaderText . ' ' . $userAgentText . '-i list.txt  --dir=' . $Folder . ' -j' . $j;
     }
     echo $cmd;
     exec($cmd);
@@ -977,6 +984,7 @@ if ($ChID) {
 
     // $Key                        = $ChData["KID"].":".$ChData["Key"];
     $Keys = $ChData["Keys"];
+    $CustomHeaders = $ChData["CustomHeaders"];
     $ChName = str_replace(" ", "_", $ChData["ChannelName"]);
 
     $Useragent = $ChData["DownloadUseragent"] ? $ChData["DownloadUseragent"] : $Useragent;
@@ -1228,11 +1236,11 @@ try {
 
                 if ($aHeader == "") {
                     DoLog("Downloading audio header: " . $aHeaderUrl);
-                    $aHeader = Download($aHeaderUrl, $UseProxy, $Proxy, $Useragent);
+                    $aHeader = Download($aHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                 }
                 if ($vHeader == "") {
                     DoLog("Downloading video header: " . $vHeaderUrl);
-                    $vHeader = Download($vHeaderUrl, $UseProxy, $Proxy, $Useragent);
+                    $vHeader = Download($vHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                 }
 
                 DoLog("Determining timeline strat/end");
@@ -1276,10 +1284,10 @@ try {
                     for ($i = 0; $i < count($DTimeline); $i++) {
                         for ($k = 0; $k < count($DTimeline[$i]["a"]); $k++) {
                             DoLog("   Downloading audio segment: " . $DTimeline[$i]["a"][$k]);
-                            $aData[$k] .= Download($DTimeline[$i]["a"][$k], $UseProxy, $Proxy, $Useragent);
+                            $aData[$k] .= Download($DTimeline[$i]["a"][$k], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                         }
                         DoLog("   Downloading video segment: " . $DTimeline[$i]["v"]);
-                        $vData .= Download($DTimeline[$i]["v"], $UseProxy, $Proxy, $Useragent);
+                        $vData .= Download($DTimeline[$i]["v"], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                         $SegmentCounter++;
                         DoLog("   Segments: $SegmentCounter / $SegmentJoiner done");
                         $SegCounter++;
