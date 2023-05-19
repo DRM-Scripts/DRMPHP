@@ -171,7 +171,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?php 
                             if(count($Data["CustomHeaders"]) > 0) {
-                              echo $Data["CustomHeaders"][0];
+                              echo $Data["CustomHeaders"][0]["Value"];
                             }
                           ?>">
                           <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addHeader()">Add Header</a>
@@ -185,7 +185,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                             <div class="mb-3 row">
                               <label class="col-md-2 col-form-label">Header</label>
                               <div class="col-md-10">
-                                <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?=$Data["CustomHeaders"][$i]?>">
+                                <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?php 
+                                echo $Data["CustomHeaders"][$i]["Value"]
+                                ?>">
                               </div>
                             </div>
                             <?php
