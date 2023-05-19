@@ -205,15 +205,15 @@ class App{
         $st->execute();
       }
 
-      $headerSql = "insert into channel_headers (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
-      for($i=0;$i<count($KID);$i++) {
-        if($KID[$i] == "" || $Key[$i] == "") continue;
+      $headerSql = "insert into channel_headers (ChannelID, `Value`) values (:ChannelID, :Value)";
+      for($i=0;$i<count($CustomHeaders);$i++) {
+        if($CustomHeaders[$i] == "") continue;
         $st=$this->DB->prepare($headerSql);
         $st->bindParam(":ChannelID", $ID);
-        $st->bindParam(":KID", $KID[$i]);
-        $st->bindParam(":Key", $Key[$i]);
+        $st->bindParam(":Value", $CustomHeaders[$i]);
         $st->execute();
       }
+
       $this->Parse($ID);
     }else{
       $Old = $this->GetChannel($ID);
@@ -273,6 +273,37 @@ class App{
           $st->bindParam(":ChannelID", $ID);
           $st->bindParam(":KID", $keyId);
           $st->bindParam(":Key", $contentKey);
+          $st->execute();
+        }
+      }
+
+      for($i=0;$i<count($CustomHeaders);$i++) {
+        $Value = $CustomHeaders[$i];
+        if($Value == "") continue;
+        $checkHeaderExistSql  = "SELECT count(*) as C FROM channel_headers WHERE ChannelID=:ChannelID AND `Value` = :Value";
+        $st = $this->DB->prepare($checkHeaderExistSql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->bindParam(":Value", $Value);
+        $st->execute();
+        $count = $st->fetchColumn();
+        if($count == 0){
+          $insertHeaderSql = "INSERT INTO channel_headers (ChannelID, `Value`) VALUES (:ChannelID, :Value)";
+          $st = $this->DB->prepare($insertHeaderSql);
+          $st->bindParam(":ChannelID", $ID);
+          $st->bindParam(":Value", $Value);
+          $st->execute();
+        }else{
+          $ExistingHeaderIDSql = "SELECT ID FROM channel_headers WHERE ChannelID=:ChannelID AND `Value` = :Value";
+          $st = $this->DB->prepare($ExistingHeaderIDSql);
+          $st->bindParam(":ChannelID", $ID);
+          $st->bindParam(":Value", $Value);
+          $st->execute();
+          $EntryID = $st->fetchColumn();
+          $updateHeaderSql = "UPDATE channel_headers SET `Value`=:Value WHERE ChannelID=:ChannelID AND ID=:EntryID";
+          $st = $this->DB->prepare($updateKeySql);
+          $st->bindParam(":ChannelID", $ID);
+          $st->bindParam(":Value", $Value);
+          $st->bindParam(":EntryID", $EntryID);
           $st->execute();
         }
       }
