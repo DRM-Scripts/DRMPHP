@@ -7,7 +7,6 @@ class App{
     include "_db.php";
     try {
       $db = new PDO('mysql:host='.$DBHost.';dbname='.$DBName.';charset=utf8', $DBUser, $DBPass);
-      //$db = new PDO("sqlite:db/dash.db");
       $this->DB = $db;
     } catch (PDOException $e) {
       print "Error!: " . $e->getMessage() . "<br/>";
@@ -138,6 +137,7 @@ class App{
     $ID             = intval($Data["ID"]);
     $ChannelName    = $Data["ChannelName"];
     $Manifest       = $Data["Manifest"];
+    $CatId = intval($Data["CatID"]);
     $KID            = $Data["KID"];
     $Key            = $Data["Key"];
     $AllowedIP      = explode("\r\n", $Data["AllowedIP"]);
@@ -166,15 +166,14 @@ class App{
 
     if($ID == 0 ){
       $sql="insert into channels (
-      `ChannelName`, `Manifest`, `KID`, `Key`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`
+      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`
       ) values (
-      :ChannelName, :Manifest, :KID, :Key, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output
+      :ChannelName, :Manifest, :CatId, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output
       )";
       $st=$this->DB->prepare($sql);
       $st->bindParam(":ChannelName",        $ChannelName);
       $st->bindParam(":Manifest",           $Manifest);
-      $st->bindParam(":KID",                $KID);
-      $st->bindParam(":Key",                $Key);
+      $st->bindParam(":CatId",                $CatId);
       $st->bindParam(":SegmentJoiner",      $SegmentJoiner);
       $st->bindParam(":PlaylistLimit",      $PlaylistLimit);
       $st->bindParam(":URLListLimit",       $URLListLimit);
@@ -185,6 +184,13 @@ class App{
       $st->bindParam(":Output",             $Output);
       $st->execute();
       $ID=$this->DB->lastInsertId();
+      $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
+
+      $st=$this->DB->prepare($keySql);
+      $st->bindParam(":ChannelID", $ID);
+      $st->bindParam(":KID", $KID);
+      $st->bindParam(":Key", $Key);
+      $st->execute();
       $this->Parse($ID);
     }else{
       $Old = $this->GetChannel($ID);
@@ -196,8 +202,6 @@ class App{
       $sql="update channels set 
       `ChannelName`     =:ChannelName
       $ManifestField
-      , `KID`           =:KID
-      , `Key`           =:Key 
       , `SegmentJoiner` =:SegmentJoiner
       , `PlaylistLimit` =:PlaylistLimit
       , `URLListLimit`  =:URLListLimit
@@ -213,8 +217,6 @@ class App{
         $st->bindParam(":Manifest",       $Manifest);
       }
       $st->bindParam(":ChannelName",        $ChannelName);
-      $st->bindParam(":KID",                $KID);
-      $st->bindParam(":Key",                $Key);
       $st->bindParam(":SegmentJoiner",      $SegmentJoiner);
       $st->bindParam(":PlaylistLimit",      $PlaylistLimit);
       $st->bindParam(":URLListLimit",       $URLListLimit);
@@ -223,6 +225,13 @@ class App{
       $st->bindParam(":VideoID",            $VideoID);
       $st->bindParam(":AllowedIP",          $AllowedIPJson);
       $st->bindParam(":Output",             $Output);
+      $st->execute();
+
+      $keySql = "update channel_keys set KID=:KID, `Key`=:Key where ChannelID=:ChannelID";
+      $st=$this->DB->prepare($keySql);
+      $st->bindParam(":ChannelID", $ID);
+      $st->bindParam(":KID", $KID);
+      $st->bindParam(":Key", $Key);
       $st->execute();
 
       if($ManifestField){

@@ -43,8 +43,6 @@ CREATE TABLE `channels` (
   `CatID` int(11) NOT NULL DEFAULT '1',
   `ChannelName` varchar(64) NOT NULL,
   `Manifest` varchar(1024) NOT NULL,
-  `KID` varchar(32) NOT NULL,
-  `Key` varchar(32) NOT NULL,
   `VariantID` int(11) DEFAULT NULL,
   `DownloadPath` varchar(128) DEFAULT NULL,
   `StartTime` datetime DEFAULT NULL,
@@ -74,12 +72,30 @@ CREATE TABLE `channels` (
 -- Dumping data for table `channels`
 --
 
-INSERT INTO `channels` (`ID`, `CatID`, `ChannelName`, `Manifest`, `KID`, `Key`, `VariantID`, `DownloadPath`, `StartTime`, `EndTime`, `Status`, `PID`, `FPID`, `info`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `UseProxy`, `ProxyURL`, `ProxyPort`, `ProxyUser`, `ProxyPass`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `AutoRestart`, `Output`, `UDPIP`) VALUES
-(1, 1, 'bein prem1', 'https://live-d-main-beinmena.beincdn.com/ch10/b96db17d-e0cd-4a40-8c9f-5911d83f6341/ea42ec8d-adfc-4ef4-8981-799f11d07cc8.ism/ZXhwPTE2NDk5MDA4Njh%2bYWNsPSUyZmNoMTAlMmZiOTZkYjE3ZC1lMGNkLTRhNDAtOGM5Zi01OTExZDgzZjYzNDElMmZlYTQyZWM4ZC1hZGZjLTRlZjQtODk4MS03OTlmMTFkMDdjYzguaXNtJTJmKn5kYXRhPWY0OTcxYmE1LWJiMDUtNDViMS1iNTVkLWM3ODRiNGM5MzE1NX5obWFjPWY2MDM4YmM0NDNmNGI0OWExMWViOGNiNTk4Y2VjOWVhZDQ4Njc2MGIwMGVmN2U3ODAwYzgzMDg1OGVjMjU3ZWY%3d/manifest(format=mpd-time-csf,filter=desktop-fullres,encryption=cenc)', '9C4DF6B783964B6995628CF95C2A6EB3', '61a4b148c4b0ee4ea27c50cbf8793a78', NULL, NULL, NULL, '2022-04-14 04:23:25', 'Stopped', 0, 0, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36', '5_A_primary_12037987828332995369', '1_V_video_17090713503055598136', '[\"\"]', 1, 'hls', ''),
-(2, 1, 'jawwy', 'https://akm.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd', 'E74C7D697BD26595B196C6B96E2D4F5B', 'e288110233737502e8af9184098ab50b', NULL, NULL, NULL, '2022-04-14 04:23:25', 'Stopped', 0, 0, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, '', 'audio_96052_ara=96000', 'video=3000000', '[\"*\"]', 1, 'hls', ''),
-(3, 1, 'FOX REW', 'https://akm.cdn.intigral-ott.net/FXR/FXR.isml/manifest.mpd', '556AF5561CBE3405FC3C241FD23B36C2', '18e9a528c7a22b940122afc832c333bf', NULL, NULL, NULL, '2022-04-14 04:23:25', 'Stopped', 0, 0, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, '', 'audio_96051_eng=96000', 'video=3000000', '[\"*\"]', 1, 'hls', '');
+INSERT INTO `channels` (`ID`, `CatID`, `ChannelName`, `Manifest`, `VariantID`, `DownloadPath`, `StartTime`, `EndTime`, `Status`, `PID`, `FPID`, `info`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `UseProxy`, `ProxyURL`, `ProxyPort`, `ProxyUser`, `ProxyPass`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `AutoRestart`, `Output`, `UDPIP`) VALUES
+(1, 1, 'bein prem1', 'https://live-d-main-beinmena.beincdn.com/ch10/b96db17d-e0cd-4a40-8c9f-5911d83f6341/ea42ec8d-adfc-4ef4-8981-799f11d07cc8.ism/ZXhwPTE2NDk5MDA4Njh%2bYWNsPSUyZmNoMTAlMmZiOTZkYjE3ZC1lMGNkLTRhNDAtOGM5Zi01OTExZDgzZjYzNDElMmZlYTQyZWM4ZC1hZGZjLTRlZjQtODk4MS03OTlmMTFkMDdjYzguaXNtJTJmKn5kYXRhPWY0OTcxYmE1LWJiMDUtNDViMS1iNTVkLWM3ODRiNGM5MzE1NX5obWFjPWY2MDM4YmM0NDNmNGI0OWExMWViOGNiNTk4Y2VjOWVhZDQ4Njc2MGIwMGVmN2U3ODAwYzgzMDg1OGVjMjU3ZWY%3d/manifest(format=mpd-time-csf,filter=desktop-fullres,encryption=cenc)', NULL, NULL, NULL, '2022-04-14 04:23:25', 'Stopped', 0, 0, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36', '5_A_primary_12037987828332995369', '1_V_video_17090713503055598136', '[\"\"]', 1, 'hls', ''),
+(2, 1, 'jawwy', 'https://akm.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd', NULL, NULL, NULL, '2022-04-14 04:23:25', 'Stopped', 0, 0, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, '', 'audio_96052_ara=96000', 'video=3000000', '[\"*\"]', 1, 'hls', ''),
+(3, 1, 'FOX REW', 'https://akm.cdn.intigral-ott.net/FXR/FXR.isml/manifest.mpd', NULL, NULL, NULL, '2022-04-14 04:23:25', 'Stopped', 0, 0, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, '', 'audio_96051_eng=96000', 'video=3000000', '[\"*\"]', 1, 'hls', '');
 
 -- --------------------------------------------------------
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `channel_keys`
+--
+
+CREATE TABLE `channel_keys` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ChannelID` int(11) NOT NULL,
+  `KID` varchar(32) NOT NULL,
+  `Key` varchar(32) NOT NULL,
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+INSERT INTO `channel_keys` (`ID`, `ChannelID`, `KID`, `Key`) VALUES
+(1, 1, '9C4DF6B783964B6995628CF95C2A6EB3', '61a4b148c4b0ee4ea27c50cbf8793a78'),
+(2, 2, 'E74C7D697BD26595B196C6B96E2D4F5B', 'e288110233737502e8af9184098ab50b'),
+(3, 3, '556AF5561CBE3405FC3C241FD23B36C2', '18e9a528c7a22b940122afc832c333bf');
 
 --
 -- Table structure for table `config`
@@ -98,21 +114,21 @@ CREATE TABLE `config` (
 
 INSERT INTO `config` (`ID`, `ConfigName`, `ConfigDesc`, `ConfigValue`) VALUES
 (1, 'DownloadPath', '', '/var/www/html/download'),
-(2, 'BinPath', '', '/var/www/html/panel'),
+(2, 'BinPath', '', '/var/www/html/'),
 (3, 'SegmentJoiner', '', '8'),
 (4, 'DeleteEncryptedAfterDecrypt', '', '1'),
 (5, 'DeleteDecryptedAfterMerge', '', '1'),
 (6, 'PlaylistLimit', '', '8'),
 (7, 'URLListLimit', '', '4'),
 (8, 'FFMpegCMD', '', '-hide_banner -i [VIDEO] -i [AUDIO] -vcodec copy -scodec copy -acodec copy [OUTPUT]'),
-(9, 'M3UDownloadURL', '', 'http://41.231.37.83/download'),
+(9, 'M3UDownloadURL', '', 'http://127.0.0.1/download'),
 (10, 'ProxyURL', 'Proxy URL', ''),
 (11, 'ProxyPort', 'Proxy Port', ''),
 (12, 'ProxyUser', 'Proxy Username', ''),
 (13, 'ProxyPass', 'Proxy Password', ''),
 (14, 'DownloadUseragent', 'Download Useragent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0'),
 (15, 'AutoRestart', 'Auto restart channels', '1'),
-(16, 'DownloaderPath', 'Downloader Path', '/var/www/html/panel'),
+(16, 'DownloaderPath', 'Downloader Path', '/var/www/html/'),
 (17, 'BackupPath', '/var/www/backup', '/var/www/backup'),
 (18, 'MaxLogSize', '', '1048576');
 
@@ -149,7 +165,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`ID`, `UserID`, `Password`, `Role`, `LastAccess`) VALUES
-(1, 'admin', 'Admin@2022##', 'Admin', '2022-04-14 03:44:24');
+(1, 'admin', 'Admin@2023##', 'Admin', '2022-04-14 03:44:24');
 
 -- --------------------------------------------------------
 
