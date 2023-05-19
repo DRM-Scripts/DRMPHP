@@ -89,7 +89,7 @@ CREATE TABLE `channel_keys` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `ChannelID` int(11) NOT NULL,
   `KID` varchar(32) NOT NULL,
-  `Key` varchar(32) NOT NULL,
+  `Key` varchar(32) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 INSERT INTO `channel_keys` (`ID`, `ChannelID`, `KID`, `Key`) VALUES
