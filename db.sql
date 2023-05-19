@@ -86,16 +86,32 @@ INSERT INTO `channels` (`ID`, `CatID`, `ChannelName`, `Manifest`, `VariantID`, `
 --
 
 CREATE TABLE `channel_keys` (
-  `ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `ChannelID` int(11) NOT NULL,
   `KID` varchar(32) NOT NULL,
-  `Key` varchar(32) NOT NULL
+  `Key` varchar(32) NOT NULL,
+  PRIMARY KEY (ID)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 INSERT INTO `channel_keys` (`ID`, `ChannelID`, `KID`, `Key`) VALUES
 (1, 1, '9C4DF6B783964B6995628CF95C2A6EB3', '61a4b148c4b0ee4ea27c50cbf8793a78'),
 (2, 2, 'E74C7D697BD26595B196C6B96E2D4F5B', 'e288110233737502e8af9184098ab50b'),
 (3, 3, '556AF5561CBE3405FC3C241FD23B36C2', '18e9a528c7a22b940122afc832c333bf');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `channel_keys`
+--
+
+CREATE TABLE `channel_headers` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ChannelID` int(11) NOT NULL,
+  `Key` varchar(255) NOT NULL,
+  `Value` varchar(255) NOT NULL,
+  PRIMARY KEY (ID)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
 
 --
 -- Table structure for table `config`
@@ -244,7 +260,10 @@ ALTER TABLE `channels`
 
 
 ALTER TABLE `channel_keys`
-  ADD PRIMARY KEY (`ID`),
+  ADD KEY `ChannelId` (`ChannelId`);
+
+
+ALTER TABLE `channel_headers`
   ADD KEY `ChannelId` (`ChannelId`);
 
 --
