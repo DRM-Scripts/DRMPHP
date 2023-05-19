@@ -147,6 +147,12 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         </div>
                       </div>
                       <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Header (e.g : Authorization: Bearer xxxxx)</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="">
+                        </div>
+                      </div>
+                      <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Allowed IP</label>
                         <div class="col-md-10">
                           <textarea class="form-control" id="AllowedIP" name="AllowedIP"><?=$Data["AllowedIP"]?></textarea>

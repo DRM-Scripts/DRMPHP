@@ -160,6 +160,10 @@ class App{
     $PlaylistLimit  = intval($Data["PlaylistLimit"]);
     $URLListLimit   = intval($Data["URLListLimit"]);
 
+    if (count($KID) != count($Key)) {
+      return "KID and Key count not match";
+    }
+
     //if($SegmentJoiner < 3) $this->GetConfig("SegmentJoiner");
     //if($PlaylistLimit < 3) $this->GetConfig("PlaylistLimit");
     //if($URLListLimit < 1) $this->GetConfig("URLListLimit");
@@ -185,12 +189,13 @@ class App{
       $st->execute();
       $ID=$this->DB->lastInsertId();
       $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
-
-      $st=$this->DB->prepare($keySql);
-      $st->bindParam(":ChannelID", $ID);
-      $st->bindParam(":KID", $KID);
-      $st->bindParam(":Key", $Key);
-      $st->execute();
+      for($i=0;$i<count($KID);$i++) {
+        $st=$this->DB->prepare($keySql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->bindParam(":KID", $KID[$i]);
+        $st->bindParam(":Key", $Key[$i]);
+        $st->execute();
+      }
       $this->Parse($ID);
     }else{
       $Old = $this->GetChannel($ID);
@@ -228,11 +233,13 @@ class App{
       $st->execute();
 
       $keySql = "update channel_keys set KID=:KID, `Key`=:Key where ChannelID=:ChannelID";
-      $st=$this->DB->prepare($keySql);
-      $st->bindParam(":ChannelID", $ID);
-      $st->bindParam(":KID", $KID);
-      $st->bindParam(":Key", $Key);
-      $st->execute();
+      for($i=0;$i<count($KID);$i++) {
+        $st=$this->DB->prepare($keySql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->bindParam(":KID", $KID[$i]);
+        $st->bindParam(":Key", $Key[$i]);
+        $st->execute();
+      }
 
       if($ManifestField){
         $Data["ChanID"]=$ID;
