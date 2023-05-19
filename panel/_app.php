@@ -75,6 +75,14 @@ class App{
     $st->bindParam(":ChannelID", $ID);
     $st->execute();
     $Chan["Keys"]=$st->fetchAll();
+
+    $headerSql = "select * from channel_headers where ChannelID=:ChannelID";
+    $st=$this->DB->prepare($headerSql);
+    $st->bindParam(":ChannelID", $ID);
+    $st->execute();
+    $Chan["CustomHeaders"]=$st->fetchAll();
+
+
     return $Chan;
   }
   function GetChannelByName($ChName){
