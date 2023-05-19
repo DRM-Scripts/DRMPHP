@@ -118,7 +118,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                       </div>
                       <div id="keys">
                         <?php
-                        if(count(["Keys"]) > 1) {
+                        if(count($Data["Keys"]) > 1) {
                           for($i=1;$i<count($Data["Keys"]);$i++){
                             ?>
                             <div class="mb-3 row">
