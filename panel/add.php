@@ -345,7 +345,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
 
       function addKey() {
         var childCount = $('#keys').children().length;
-        if (childCount >= 3) {
+        if (childCount >= 4) {
           alert('Maximum 4 keys allowed');
           return;
         }
