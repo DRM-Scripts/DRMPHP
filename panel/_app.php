@@ -172,8 +172,8 @@ class App
         $AudioIDs = implode(",", $Data["AudioIDs"]);
         $Output = "hls";
 
-        $UseProxy = 0;
-        $ProxyURL = "";
+        $UseProxy = intval($Data["useProxy"]);
+        $ProxyURL = $Data["proxyUrl"];
         $ProxyPort = "0";
         $ProxyUser = "";
         $ProxyPass = "";

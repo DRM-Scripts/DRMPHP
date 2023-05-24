@@ -141,7 +141,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
 
                       <h4 class="card-title mt-5">Downloading parameters</h4>
                       
-                      <div class="mb-3 row">
+                      <!-- <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Joiner</label>
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="SegmentJoiner" name="SegmentJoiner" onchange="CalcTime()" onkeyup="CalcTime()" value="<?=$Data["SegmentJoiner"]?>">
@@ -158,7 +158,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="URLListLimit" name="URLListLimit" value="<?=$Data["URLListLimit"]?>">
                         </div>
-                      </div>
+                      </div> -->
                      
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Useragent</label>
@@ -289,6 +289,46 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                             }
                             ?>
                           </select>
+                        </div>
+                      </div>
+                      <br/>
+                      <h4 class="card-title mt-5">Proxy Settings</h4>
+                      <br>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Use Proxy</label>
+                        <div class="col-md-10">
+                          <Select id="AutoRestart" name="AutoRestart">
+                            <?php if($Data["AutoRestart"]==1)$Selected="selected";else $Selected="";?>
+                            <option <?=$Selected?> value="1">Yes</option>
+                            <?php if($Data["AutoRestart"]==0)$Selected="selected";else $Selected="";?>
+                            <option <?=$Selected?> value="0">No</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy Host</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyUrl" name="proxyUrl" value="<?=$Data["ProxyURL"]?>">
+                        </div>
+                      </div>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy Port</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyPort" name="proxyPort" value="<?=$Data["ProxyPort"]?>">
+                        </div>
+                      </div>
+
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy User</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyUser" name="proxyUser" value="<?=$Data["ProxyUser"]?>">
+                        </div>
+                      </div>
+
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy Password</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyPassword" name="proxyPassword" value="<?=$Data["ProxyPass"]?>">
                         </div>
                       </div>
                     </div>
