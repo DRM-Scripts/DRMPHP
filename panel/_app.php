@@ -1,236 +1,253 @@
 <?php
-class App{
-  var $DB;
-  var $Config;
+class App
+{
+    public $DB;
+    public $Config;
 
-  function __construct(){
-    include "_db.php";
-    try {
-      $db = new PDO('mysql:host='.$DBHost.';dbname='.$DBName.';charset=utf8', $DBUser, $DBPass);
-      $this->DB = $db;
-    } catch (PDOException $e) {
-      print "Error!: " . $e->getMessage() . "<br/>";
-      die();
+    public function __construct()
+    {
+        include "_db.php";
+        try {
+            $db = new PDO('mysql:host=' . $DBHost . ';dbname=' . $DBName . ';charset=utf8', $DBUser, $DBPass);
+            $this->DB = $db;
+        } catch (PDOException $e) {
+            print "Error!: " . $e->getMessage() . "<br/>";
+            die();
+        }
+        $this->ReadConfig();
     }
-    $this->ReadConfig();
-  }
-  function ReadConfig(){
-    $sql="select * from config order by ID";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    $this->Config = $st->fetchAll();
-  }
-  function GetConfig($ConfigName){
-    for($i=0;$i<count($this->Config);$i++){
-      if($this->Config[$i]["ConfigName"] == $ConfigName){
-        return $this->Config[$i]["ConfigValue"];
-      }
+    public function ReadConfig()
+    {
+        $sql = "select * from config order by ID";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        $this->Config = $st->fetchAll();
     }
-  }
-  function LoggedIn(){
-    if(intval($_SESSION["User"]["ID"]) > 0 ){
-      return true;
-    }else{
-      return false;
+    public function GetConfig($ConfigName)
+    {
+        for ($i = 0; $i < count($this->Config); $i++) {
+            if ($this->Config[$i]["ConfigName"] == $ConfigName) {
+                return $this->Config[$i]["ConfigValue"];
+            }
+        }
     }
-  }
-  function Login($UserID, $Password){
-    $sql="select * from users where UserID=:UserID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":UserID", $UserID);
-    $st->execute();
-    $line=$st->fetch();
-    if($line["Password"]==$Password){
-      $sql="update users set LastAccess='".date("Y-m-d H:i:s")."' where UserID='$UserID'";
-      $this->DB->exec($sql);
-      return $line;
-    }else{
-      return false;
-    }    
-  }
-  function GetChannel($ID){
-    $sql="select * from channels where ID=:ID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ID);
-    $st->execute();
-    $Chan=$st->fetch();
-    $Chan["AllowedIPJson"] = $Chan["AllowedIP"];
-    $tmp=json_decode($Chan["AllowedIP"], true);
-    $Chan["AllowedIP"] = implode("\r\n", $tmp);
+    public function LoggedIn()
+    {
+        if (intval($_SESSION["User"]["ID"]) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function Login($UserID, $Password)
+    {
+        $sql = "select * from users where UserID=:UserID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":UserID", $UserID);
+        $st->execute();
+        $line = $st->fetch();
+        if ($line["Password"] == $Password) {
+            $sql = "update users set LastAccess='" . date("Y-m-d H:i:s") . "' where UserID='$UserID'";
+            $this->DB->exec($sql);
+            return $line;
+        } else {
+            return false;
+        }
+    }
+    public function GetChannel($ID)
+    {
+        $sql = "select * from channels where ID=:ID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ID", $ID);
+        $st->execute();
+        $Chan = $st->fetch();
+        $Chan["AllowedIPJson"] = $Chan["AllowedIP"];
+        $tmp = json_decode($Chan["AllowedIP"], true);
+        $Chan["AllowedIP"] = implode("\r\n", $tmp);
 
-    $sql="select distinct AudioID from variant where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ID);
-    $st->execute();
-    $Chan["AudioIDs"]=$st->fetchAll();
+        $sql = "select distinct AudioID from variant where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["AudioIDs"] = $st->fetchAll();
 
-    $sql="select distinct VideoID from variant where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ID);
-    $st->execute();
-    $Chan["VideoIDs"]=$st->fetchAll();
+        $sql = "select distinct VideoID from variant where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["VideoIDs"] = $st->fetchAll();
 
-    $keySql = "select * from channel_keys where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($keySql);
-    $st->bindParam(":ChannelID", $ID);
-    $st->execute();
-    $Chan["Keys"]=$st->fetchAll();
+        $keySql = "select * from channel_keys where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($keySql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["Keys"] = $st->fetchAll();
 
-    $headerSql = "select * from channel_headers where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($headerSql);
-    $st->bindParam(":ChannelID", $ID);
-    $st->execute();
-    $Chan["CustomHeaders"]=$st->fetchAll();
+        $headerSql = "select * from channel_headers where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($headerSql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["CustomHeaders"] = $st->fetchAll();
 
+        return $Chan;
+    }
+    public function GetChannelByName($ChName)
+    {
+        $sql = "select * from channels where REPLACE(ChannelName, ' ', '_') = '$ChName'";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ID", $ID);
+        $st->execute();
+        $Chan = $st->fetch();
+        $Chan["AllowedIPJson"] = $Chan["AllowedIP"];
+        $tmp = json_decode($Chan["AllowedIP"], true);
+        $Chan["AllowedIP"] = implode("\r\n", $tmp);
 
-    return $Chan;
-  }
-  function GetChannelByName($ChName){
-    $sql="select * from channels where REPLACE(ChannelName, ' ', '_') = '$ChName'";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ID);
-    $st->execute();
-    $Chan=$st->fetch();
-    $Chan["AllowedIPJson"] = $Chan["AllowedIP"];
-    $tmp=json_decode($Chan["AllowedIP"], true);
-    $Chan["AllowedIP"] = implode("\r\n", $tmp);
+        $sql = "select distinct AudioID from variant where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["AudioIDs"] = $st->fetchAll();
 
-    $sql="select distinct AudioID from variant where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ID);
-    $st->execute();
-    $Chan["AudioIDs"]=$st->fetchAll();
-
-    $sql="select distinct VideoID from variant where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ID);
-    $st->execute();
-    $Chan["VideoIDs"]=$st->fetchAll();
-    return $Chan;
-  }
-  function GetVariants($ChannelID){
-    $sql="select * from variant where ChannelID=:ChannelID order by AudioID, VideoID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ChannelID);
-    $st->execute();
-    $Variants=$st->fetchAll();
-    return $Variants;
-  }
-  function GetAudioIDs($ChannelID){
-    $sql="select distinct  AudioID, Language from variant where ChannelID=:ChannelID 
+        $sql = "select distinct VideoID from variant where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["VideoIDs"] = $st->fetchAll();
+        return $Chan;
+    }
+    public function GetVariants($ChannelID)
+    {
+        $sql = "select * from variant where ChannelID=:ChannelID order by AudioID, VideoID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ChannelID);
+        $st->execute();
+        $Variants = $st->fetchAll();
+        return $Variants;
+    }
+    public function GetAudioIDs($ChannelID)
+    {
+        $sql = "select distinct  AudioID, Language from variant where ChannelID=:ChannelID
     group by  AudioID, Language";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ChannelID);
-    $st->execute();
-    $Variants=$st->fetchAll();
-    return $Variants;
-  }
-
-  function GetAllChannels($Search=null){
-    if($Search["search"]){
-      if($Search["SearchChanName"]){
-        $Cond1=" and ChannelName like '%".$Search["SearchChanName"]."%'";
-      }
-      if($Search["SearchCatName"]){
-        $Cond2=" and CatName like '%".$Search["SearchCatName"]."%'";
-      }
-      if($Search["SearchMPDUrl"]){
-        $Cond3=" and Manifest like '%".$Search["SearchMPDUrl"]."%'";
-      }
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ChannelID);
+        $st->execute();
+        $Variants = $st->fetchAll();
+        return $Variants;
     }
-    $sql="select channels.*, TIMEDIFF(now(), channels.StartTime) as Uptime, cats.CatName
-    from channels 
+
+    public function GetAllChannels($Search = null)
+    {
+        if ($Search["search"]) {
+            if ($Search["SearchChanName"]) {
+                $Cond1 = " and ChannelName like '%" . $Search["SearchChanName"] . "%'";
+            }
+            if ($Search["SearchCatName"]) {
+                $Cond2 = " and CatName like '%" . $Search["SearchCatName"] . "%'";
+            }
+            if ($Search["SearchMPDUrl"]) {
+                $Cond3 = " and Manifest like '%" . $Search["SearchMPDUrl"] . "%'";
+            }
+        }
+        $sql = "select channels.*, TIMEDIFF(now(), channels.StartTime) as Uptime, cats.CatName
+    from channels
     inner join cats on channels.CatID = cats.CatID
     where 1=1 $Cond1 $Cond2 $Cond3
     order by ID";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    return $st->fetchAll();
-  }
-  function SaveChannel($Data){
-    $ID             = intval($Data["ID"]);
-    $ChannelName    = $Data["ChannelName"];
-    $Manifest       = $Data["Manifest"];
-    $CatId = intval($Data["CatID"]);
-    $KID            = $Data["KID"];
-    $Key            = $Data["Key"];
-    $CustomHeaders = $Data["customHeaders"];
-    $AllowedIP      = explode("\r\n", $Data["AllowedIP"]);
-    $AllowedIPJson  = json_encode($AllowedIP);
-    $AutoRestart    = intval($Data["AutoRestart"]);
-    $AudioIDs       = implode(",", $Data["AudioIDs"]);
-    $Output         = "hls";
-    
-    $UseProxy       = 0;
-    $ProxyURL       = "";
-    $ProxyPort      = "0";
-    $ProxyUser      = "";
-    $ProxyPass      = "";
-
-    $DownloadUseragent = $Data["DownloadUseragent"];
-    //$AudioID        = $Data["AudioID"];
-    $VideoID        = $Data["VideoID"];
-
-    $SegmentJoiner  = intval($Data["SegmentJoiner"]);
-    $PlaylistLimit  = intval($Data["PlaylistLimit"]);
-    $URLListLimit   = intval($Data["URLListLimit"]);
-
-    if (count($KID) != count($Key)) {
-      return "KID and Key count not match";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        return $st->fetchAll();
     }
+    public function SaveChannel($Data)
+    {
+        $ID = intval($Data["ID"]);
+        $ChannelName = $Data["ChannelName"];
+        $Manifest = $Data["Manifest"];
+        $CatId = intval($Data["CatID"]);
+        $KID = $Data["KID"];
+        $Key = $Data["Key"];
+        $CustomHeaders = $Data["customHeaders"];
+        $AllowedIP = explode("\r\n", $Data["AllowedIP"]);
+        $AllowedIPJson = json_encode($AllowedIP);
+        $AutoRestart = intval($Data["AutoRestart"]);
+        $AudioIDs = implode(",", $Data["AudioIDs"]);
+        $Output = "hls";
 
-    //if($SegmentJoiner < 3) $this->GetConfig("SegmentJoiner");
-    //if($PlaylistLimit < 3) $this->GetConfig("PlaylistLimit");
-    //if($URLListLimit < 1) $this->GetConfig("URLListLimit");
+        $UseProxy = 0;
+        $ProxyURL = "";
+        $ProxyPort = "0";
+        $ProxyUser = "";
+        $ProxyPass = "";
 
-    if($ID == 0 ){
-      $sql="insert into channels (
+        $DownloadUseragent = $Data["DownloadUseragent"];
+        //$AudioID        = $Data["AudioID"];
+        $VideoID = $Data["VideoID"];
+
+        $SegmentJoiner = intval($Data["SegmentJoiner"]);
+        $PlaylistLimit = intval($Data["PlaylistLimit"]);
+        $URLListLimit = intval($Data["URLListLimit"]);
+
+        if (count($KID) != count($Key)) {
+            return "KID and Key count not match";
+        }
+
+        //if($SegmentJoiner < 3) $this->GetConfig("SegmentJoiner");
+        //if($PlaylistLimit < 3) $this->GetConfig("PlaylistLimit");
+        //if($URLListLimit < 1) $this->GetConfig("URLListLimit");
+
+        if ($ID == 0) {
+            $sql = "insert into channels (
       `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`
       ) values (
       :ChannelName, :Manifest, :CatId, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output
       )";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":ChannelName",        $ChannelName);
-      $st->bindParam(":Manifest",           $Manifest);
-      $st->bindParam(":CatId",                $CatId);
-      $st->bindParam(":SegmentJoiner",      $SegmentJoiner);
-      $st->bindParam(":PlaylistLimit",      $PlaylistLimit);
-      $st->bindParam(":URLListLimit",       $URLListLimit);
-      $st->bindParam(":DownloadUseragent",  $DownloadUseragent);
-      $st->bindParam(":AudioID",            $AudioIDs);
-      $st->bindParam(":VideoID",            $VideoID);
-      $st->bindParam(":AllowedIP",          $AllowedIPJson);
-      $st->bindParam(":Output",             $Output);
-      $st->execute();
-      $ID=$this->DB->lastInsertId();
-      $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
-      for($i=0;$i<count($KID);$i++) {
-        if($KID[$i] == "" || $Key[$i] == "") continue;
-        $st=$this->DB->prepare($keySql);
-        $st->bindParam(":ChannelID", $ID);
-        $st->bindParam(":KID", $KID[$i]);
-        $st->bindParam(":Key", $Key[$i]);
-        $st->execute();
-      }
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":ChannelName", $ChannelName);
+            $st->bindParam(":Manifest", $Manifest);
+            $st->bindParam(":CatId", $CatId);
+            $st->bindParam(":SegmentJoiner", $SegmentJoiner);
+            $st->bindParam(":PlaylistLimit", $PlaylistLimit);
+            $st->bindParam(":URLListLimit", $URLListLimit);
+            $st->bindParam(":DownloadUseragent", $DownloadUseragent);
+            $st->bindParam(":AudioID", $AudioIDs);
+            $st->bindParam(":VideoID", $VideoID);
+            $st->bindParam(":AllowedIP", $AllowedIPJson);
+            $st->bindParam(":Output", $Output);
+            $st->execute();
+            $ID = $this->DB->lastInsertId();
+            $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
+            for ($i = 0; $i < count($KID); $i++) {
+                if ($KID[$i] == "" || $Key[$i] == "") {
+                    continue;
+                }
 
-      $headerSql = "insert into channel_headers (ChannelID, `Value`) values (:ChannelID, :Value)";
-      for($i=0;$i<count($CustomHeaders);$i++) {
-        if($CustomHeaders[$i] == "") continue;
-        $st=$this->DB->prepare($headerSql);
-        $st->bindParam(":ChannelID", $ID);
-        $st->bindParam(":Value", $CustomHeaders[$i]);
-        $st->execute();
-      }
+                $st = $this->DB->prepare($keySql);
+                $st->bindParam(":ChannelID", $ID);
+                $st->bindParam(":KID", $KID[$i]);
+                $st->bindParam(":Key", $Key[$i]);
+                $st->execute();
+            }
 
-      $this->Parse($ID);
-    }else{
-      $Old = $this->GetChannel($ID);
-      $ManifestField="";
-      if($Old["Manifest"]!=$Manifest){
-        $ManifestField=", `Manifest`      =:Manifest";
-      }
+            $headerSql = "insert into channel_headers (ChannelID, `Value`) values (:ChannelID, :Value)";
+            for ($i = 0; $i < count($CustomHeaders); $i++) {
+                if ($CustomHeaders[$i] == "") {
+                    continue;
+                }
 
-      $sql="update channels set 
+                $st = $this->DB->prepare($headerSql);
+                $st->bindParam(":ChannelID", $ID);
+                $st->bindParam(":Value", $CustomHeaders[$i]);
+                $st->execute();
+            }
+
+            $this->Parse($ID);
+        } else {
+            $Old = $this->GetChannel($ID);
+            $ManifestField = "";
+            if ($Old["Manifest"] != $Manifest) {
+                $ManifestField = ", `Manifest`      =:Manifest";
+            }
+
+            $sql = "update channels set
       `ChannelName`     =:ChannelName
       $ManifestField
       , `SegmentJoiner` =:SegmentJoiner
@@ -242,602 +259,639 @@ class App{
       , `AllowedIP`=:AllowedIP
       , `Output`=:Output
       where ID=:ID";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":ID",             $ID);
-      if($ManifestField){
-        $st->bindParam(":Manifest",       $Manifest);
-      }
-      $st->bindParam(":ChannelName",        $ChannelName);
-      $st->bindParam(":SegmentJoiner",      $SegmentJoiner);
-      $st->bindParam(":PlaylistLimit",      $PlaylistLimit);
-      $st->bindParam(":URLListLimit",       $URLListLimit);
-      $st->bindParam(":DownloadUseragent",  $DownloadUseragent);
-      $st->bindParam(":AudioID",            $AudioIDs);
-      $st->bindParam(":VideoID",            $VideoID);
-      $st->bindParam(":AllowedIP",          $AllowedIPJson);
-      $st->bindParam(":Output",             $Output);
-      $st->execute();
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":ID", $ID);
+            if ($ManifestField) {
+                $st->bindParam(":Manifest", $Manifest);
+            }
+            $st->bindParam(":ChannelName", $ChannelName);
+            $st->bindParam(":SegmentJoiner", $SegmentJoiner);
+            $st->bindParam(":PlaylistLimit", $PlaylistLimit);
+            $st->bindParam(":URLListLimit", $URLListLimit);
+            $st->bindParam(":DownloadUseragent", $DownloadUseragent);
+            $st->bindParam(":AudioID", $AudioIDs);
+            $st->bindParam(":VideoID", $VideoID);
+            $st->bindParam(":AllowedIP", $AllowedIPJson);
+            $st->bindParam(":Output", $Output);
+            $st->execute();
 
-      for($i=0;$i<count($KID);$i++) {
-        $keyId = $KID[$i];
-        $contentKey = $Key[$i];
-        if($keyId == "" || $contentKey == "") continue;
-        $checkKeyExistSql  = "SELECT count(*) as C FROM channel_keys WHERE ChannelID=:ChannelID AND KID=:KID";
-        $st = $this->DB->prepare($checkKeyExistSql);
-        $st->bindParam(":ChannelID", $ID);
-        $st->bindParam(":KID", $keyId);
-        $st->execute();
-        $count = $st->fetchColumn();
-        if($count == 0){
-          $insertKeySql = "INSERT INTO channel_keys (ChannelID, KID, `Key`) VALUES (:ChannelID, :KID, :Key)";
-          $st = $this->DB->prepare($insertKeySql);
-          $st->bindParam(":ChannelID", $ID);
-          $st->bindParam(":KID", $keyId);
-          $st->bindParam(":Key", $contentKey);
-          $st->execute();
-        }else{
-          $updateKeySql = "UPDATE channel_keys SET `Key`=:Key WHERE ChannelID=:ChannelID AND KID=:KID";
-          $st = $this->DB->prepare($updateKeySql);
-          $st->bindParam(":ChannelID", $ID);
-          $st->bindParam(":KID", $keyId);
-          $st->bindParam(":Key", $contentKey);
-          $st->execute();
+            $removeExistingKeysSql = "DELETE FROM channel_keys WHERE ChannelID=:ChannelID";
+            $st = $this->DB->prepare($removeExistingKeysSql);
+            $st->bindParam(":ChannelID", $ID);
+            $st->execute();
+
+            for ($i = 0; $i < count($KID); $i++) {
+                $keyId = $KID[$i];
+                $contentKey = $Key[$i];
+                if ($keyId == "" || $contentKey == "") {
+                    continue;
+                }
+
+                $insertKeySql = "INSERT INTO channel_keys (ChannelID, KID, `Key`) VALUES (:ChannelID, :KID, :Key)";
+                $st = $this->DB->prepare($insertKeySql);
+                $st->bindParam(":ChannelID", $ID);
+                $st->bindParam(":KID", $keyId);
+                $st->bindParam(":Key", $contentKey);
+                $st->execute();
+            }
+
+
+            $removeExistingHeadersSql = "DELETE FROM channel_headers WHERE ChannelID=:ChannelID";
+            $st = $this->DB->prepare($removeExistingHeadersSql);
+            $st->bindParam(":ChannelID", $ID);
+            $st->execute();
+
+            for ($i = 0; $i < count($CustomHeaders); $i++) {
+                $Value = $CustomHeaders[$i];
+                if ($Value == "") {
+                    continue;
+                }
+                $insertHeaderSql = "INSERT INTO channel_headers (ChannelID, `Value`) VALUES (:ChannelID, :Value)";
+                $st = $this->DB->prepare($insertHeaderSql);
+                $st->bindParam(":ChannelID", $ID);
+                $st->bindParam(":Value", $Value);
+                $st->execute();
+            }
+
+            if ($ManifestField) {
+                $Data["ChanID"] = $ID;
+                $this->StopDownload($Data);
+                $this->Parse($ID);
+            }
         }
-      }
-
-      for($i=0;$i<count($CustomHeaders);$i++) {
-        $Value = $CustomHeaders[$i];
-        if($Value == "") continue;
-        $checkHeaderExistSql  = "SELECT count(*) as C FROM channel_headers WHERE ChannelID=:ChannelID AND `Value` = :Value";
-        $st = $this->DB->prepare($checkHeaderExistSql);
-        $st->bindParam(":ChannelID", $ID);
-        $st->bindParam(":Value", $Value);
-        $st->execute();
-        $count = $st->fetchColumn();
-        if($count == 0){
-          $insertHeaderSql = "INSERT INTO channel_headers (ChannelID, `Value`) VALUES (:ChannelID, :Value)";
-          $st = $this->DB->prepare($insertHeaderSql);
-          $st->bindParam(":ChannelID", $ID);
-          $st->bindParam(":Value", $Value);
-          $st->execute();
-        }else{
-          $ExistingHeaderIDSql = "SELECT ID FROM channel_headers WHERE ChannelID=:ChannelID AND `Value` = :Value";
-          $st = $this->DB->prepare($ExistingHeaderIDSql);
-          $st->bindParam(":ChannelID", $ID);
-          $st->bindParam(":Value", $Value);
-          $st->execute();
-          $EntryID = $st->fetchColumn();
-          $updateHeaderSql = "UPDATE channel_headers SET `Value`=:Value WHERE ChannelID=:ChannelID AND ID=:EntryID";
-          $st = $this->DB->prepare($updateKeySql);
-          $st->bindParam(":ChannelID", $ID);
-          $st->bindParam(":Value", $Value);
-          $st->bindParam(":EntryID", $EntryID);
-          $st->execute();
+        return $ID;
+    }
+    public function Parse($ID)
+    {
+        $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+        exec($cmd, $Res);
+        for ($i = 0; $i < count($Res); $i++) {
+            $Res[$i] = explode("|", $Res[$i]);
+            $Variants[$i]["Language"] = $Res[$i][0];
+            $Variants[$i]["Bandwidth"] = "0";
+            $Variants[$i]["AudioID"] = $Res[$i][1];
+            $Variants[$i]["AudioBandwidth"] = $Res[$i][2];
+            $Variants[$i]["AudioCodecs"] = $Res[$i][3];
+            $Variants[$i]["VideoID"] = $Res[$i][4];
+            $Variants[$i]["VideoBandwidth"] = $Res[$i][5];
+            $Variants[$i]["VideoCodecs"] = $Res[$i][6];
+            $Variants[$i]["Width"] = $Res[$i][7];
+            $Variants[$i]["Height"] = $Res[$i][8];
+            $Variants[$i]["Framerate"] = $Res[$i][9];
         }
-      }
-
-      if($ManifestField){
-        $Data["ChanID"]=$ID;
-        $this->StopDownload($Data);
-        $this->Parse($ID);
-      }
+        $Data["ChanID"] = $ID;
+        $Data["Variants"] = $Variants;
+        $this->UpdateChanVariants($Data);
     }
-    return $ID;
-  }
-  function Parse($ID){
-    $cmd="php downloader.php --mode=infoshort --chid=$ID";
-    exec($cmd, $Res);
-    for($i=0;$i<count($Res);$i++){
-      $Res[$i]=explode("|", $Res[$i]);
-      $Variants[$i]["Language"]       = $Res[$i][0];
-      $Variants[$i]["Bandwidth"]      = "0";
-      $Variants[$i]["AudioID"]        = $Res[$i][1];
-      $Variants[$i]["AudioBandwidth"] = $Res[$i][2];
-      $Variants[$i]["AudioCodecs"]    = $Res[$i][3];
-      $Variants[$i]["VideoID"]        = $Res[$i][4];  
-      $Variants[$i]["VideoBandwidth"] = $Res[$i][5];
-      $Variants[$i]["VideoCodecs"]    = $Res[$i][6];
-      $Variants[$i]["Width"]          = $Res[$i][7];
-      $Variants[$i]["Height"]         = $Res[$i][8];
-      $Variants[$i]["Framerate"]      = $Res[$i][9];
-    }
-    $Data["ChanID"]=$ID;
-    $Data["Variants"]=$Variants;
-    $this->UpdateChanVariants($Data);
-  }
-  function UpdateChanVariants($Data){
-    $ChanID=$Data["ChanID"];
-    $Variants = $Data["Variants"];
+    public function UpdateChanVariants($Data)
+    {
+        $ChanID = $Data["ChanID"];
+        $Variants = $Data["Variants"];
 
-    $Chan=$this->GetChannel($ChanID);
-    $OldAudioID = $Chan["AudioID"];
-    $OldVideoID = $Chan["VideoID"];
+        $Chan = $this->GetChannel($ChanID);
+        $OldAudioID = $Chan["AudioID"];
+        $OldVideoID = $Chan["VideoID"];
 
-
-    $sql="delete from variant where ChannelID=:ChannelID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ChannelID", $ChanID);
-    $st->execute();
-    for($i=0;$i<count($Variants);$i++){
-      $Variant=$Variants[$i];
-      $sql="insert into variant(
+        $sql = "delete from variant where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ChannelID", $ChanID);
+        $st->execute();
+        for ($i = 0; $i < count($Variants); $i++) {
+            $Variant = $Variants[$i];
+            $sql = "insert into variant(
       ChannelID, Language, Bandwidth, AudioID, AudioBandwidth, AudioCodecs, VideoID, VideoBandwidth, VideoCodecs, Width, Height, Framerate
       ) values (
       :ChannelID, :Language, :Bandwidth, :AudioID, :AudioBandwidth, :AudioCodecs, :VideoID, :VideoBandwidth, :VideoCodecs, :Width, :Height, :Framerate
       )";
 
-      $Language       = $Variant["Language"];
-      $Bandwidth      = $Variant["Bandwidth"];
-      $AudioID        = $Variant["AudioID"];
-      $AudioBandwidth = $Variant["AudioBandwidth"];
-      $AudioCodecs    = $Variant["AudioCodecs"];
-      $VideoID        = $Variant["VideoID"];
-      $VideoBandwidth = $Variant["VideoBandwidth"];
-      $VideoCodecs    = $Variant["VideoCodecs"];
-      $Width          = $Variant["Width"];
-      $Height         = $Variant["Height"];
-      $Framerate      = $Variant["Framerate"];
+            $Language = $Variant["Language"];
+            $Bandwidth = $Variant["Bandwidth"];
+            $AudioID = $Variant["AudioID"];
+            $AudioBandwidth = $Variant["AudioBandwidth"];
+            $AudioCodecs = $Variant["AudioCodecs"];
+            $VideoID = $Variant["VideoID"];
+            $VideoBandwidth = $Variant["VideoBandwidth"];
+            $VideoCodecs = $Variant["VideoCodecs"];
+            $Width = $Variant["Width"];
+            $Height = $Variant["Height"];
+            $Framerate = $Variant["Framerate"];
 
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":ChannelID",      $ChanID);
-      $st->bindParam(":Language",       $Language);
-      $st->bindParam(":Bandwidth",      $Bandwidth);
-      $st->bindParam(":AudioID",        $AudioID);
-      $st->bindParam(":AudioBandwidth", $AudioBandwidth);
-      $st->bindParam(":AudioCodecs",    $AudioCodecs);
-      $st->bindParam(":VideoID",        $VideoID);
-      $st->bindParam(":VideoBandwidth", $VideoBandwidth);
-      $st->bindParam(":VideoCodecs",    $VideoCodecs);
-      $st->bindParam(":Width",          $Width);
-      $st->bindParam(":Height",         $Height);
-      $st->bindParam(":Framerate",      $Framerate);
-      $st->execute();
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":ChannelID", $ChanID);
+            $st->bindParam(":Language", $Language);
+            $st->bindParam(":Bandwidth", $Bandwidth);
+            $st->bindParam(":AudioID", $AudioID);
+            $st->bindParam(":AudioBandwidth", $AudioBandwidth);
+            $st->bindParam(":AudioCodecs", $AudioCodecs);
+            $st->bindParam(":VideoID", $VideoID);
+            $st->bindParam(":VideoBandwidth", $VideoBandwidth);
+            $st->bindParam(":VideoCodecs", $VideoCodecs);
+            $st->bindParam(":Width", $Width);
+            $st->bindParam(":Height", $Height);
+            $st->bindParam(":Framerate", $Framerate);
+            $st->execute();
+        }
+
+        if ($OldAudioID && $OldVideoID) {
+            $sql = "select ID from variant where ChannelID=:ChannelID and AudioID=:AudioID and VideoID=:VideoID";
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":ChannelID", $ChanID);
+            $st->bindParam(":AudioID", $OldAudioID);
+            $st->bindParam(":VideoID", $OldVideoID);
+            $st->execute();
+            $line = $st->fetch();
+            if (intval($line["ID"]) == 0) {
+                $sql = "update channels set AudioID='', VideoID='' where ID=:ID";
+                $st->bindParam(":ID", $ChanID);
+                $st->execute();
+            }
+        }
     }
+    public function SaveVariant($Data)
+    {
+        $ID = $Data["ChanID"];
+        $Variant = $Data["Variant"];
+        $tmp = explode("|", $Variant);
+        $AudioID = $tmp[0];
+        $VideoID = $tmp[1];
+        $sql = "update channels set AudioID=:AudioID, VideoID=:VideoID where ID=:ID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":AudioID", $AudioID);
+        $st->bindParam(":VideoID", $VideoID);
+        $st->bindParam(":ID", $ID);
+        $st->execute();
+    }
+    public function StartDownload($Data)
+    {
+        $ChanID = $Data["ChanID"];
+        $DownloaderPath = $this->GetConfig("DownloaderPath");
+        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
+        $this->execInBackground($cmd);
+        sleep(1);
+    }
+    public function execInBackground($cmd)
+    {
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            popen("start /B " . $cmd, "r");
+        } else {
+            exec($cmd . " > /dev/null &");
+        }
+    }
+    public function StopDownload($Data)
+    {
+        $ChanID = $Data["ChanID"];
+        $tmp = $this->GetChannel($ChanID);
+        $ChName = $tmp["ChannelName"];
+        $PID = $tmp["PID"];
+        $FPID = $tmp["FPID"];
 
-    if($OldAudioID && $OldVideoID){
-      $sql="select ID from variant where ChannelID=:ChannelID and AudioID=:AudioID and VideoID=:VideoID";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":ChannelID", $ChanID);
-      $st->bindParam(":AudioID", $OldAudioID);
-      $st->bindParam(":VideoID", $OldVideoID);
-      $st->execute();
-      $line=$st->fetch();
-      if(intval($line["ID"])==0){
-        $sql="update channels set AudioID='', VideoID='' where ID=:ID";
+        if ($PID) {
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                exec("taskkill /PID $PID /F");
+            } else {
+                exec("sudo kill -9 $PID");
+            }
+        }
+        if ($FPID) {
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                exec("taskkill /PID $FPID /F");
+            } else {
+                exec("sudo kill -9 $FPID");
+            }
+        }
+
+        $sql = "update channels set Status=:Status, PID=0, FPID=0, info='', StartTime=null, EndTime='" . date("Y-m-d H:i:s") . "', info='' where ID=:ID";
+        $Status = "Stopped";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ID", $ChanID);
+        $st->bindParam(":Status", $Status);
+        $st->execute();
+        $WorkPath = $this->GetConfig("DownloadPath");
+        $ChName = str_replace(" ", "_", $ChName);
+        array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/seg/*")));
+        array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/stream/*")));
+        array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/ts/*")));
+        array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/log/*")));
+        array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/hls/*")));
+        array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/*")));
+    }
+    public function SaveSettings($Data)
+    {
+        foreach ($Data as $Key => $Value) {
+            $Value = addslashes($Value);
+            $sql = "update config set ConfigValue='$Value' where ConfigName='$Key'";
+            $this->DB->exec($sql);
+        }
+        $this->ReadConfig();
+    }
+    public function DeleteChannel($ID)
+    {
+        $ChanID = $ID;
+        $this->StopDownload(array("ChanID" => $ChanID));
+        $sql = "delete from channels where ID=:ID";
+        $st = $this->DB->prepare($sql);
         $st->bindParam(":ID", $ChanID);
         $st->execute();
-      }
+
+        $sql = "delete from variant where ChannelID=:ID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ID", $ChanID);
+        $st->execute();
+
+        $sql = "delete from channel_keys where ChannelID=:ID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ID", $ChanID);
+        $st->execute();
+
+        $sql = "delete from channel_headers where ChannelID=:ID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":ID", $ChanID);
+        $st->execute();
     }
-  }
-  function SaveVariant($Data){
-    $ID=$Data["ChanID"];
-    $Variant=$Data["Variant"];
-    $tmp = explode("|", $Variant);
-    $AudioID = $tmp[0];
-    $VideoID = $tmp[1];
-    $sql="update channels set AudioID=:AudioID, VideoID=:VideoID where ID=:ID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":AudioID", $AudioID);
-    $st->bindParam(":VideoID", $VideoID);
-    $st->bindParam(":ID", $ID);
-    $st->execute();
-  }
-  function StartDownload($Data){
-    $ChanID   = $Data["ChanID"];
-    $DownloaderPath=$this->GetConfig("DownloaderPath");
-    $cmd      = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
-    $this->execInBackground($cmd);
-    sleep(1);
-  }
-  function execInBackground($cmd){
-    if (substr(php_uname(), 0, 7) == "Windows"){ 
-      popen("start /B ". $cmd, "r");  
-    }else{ 
-      exec($cmd . " > /dev/null &");   
-    }
-  } 
-  function StopDownload($Data){
-    $ChanID=$Data["ChanID"];
-    $tmp=$this->GetChannel($ChanID);
-    $ChName = $tmp["ChannelName"];
-    $PID=$tmp["PID"];
-    $FPID=$tmp["FPID"];
+    public function All($Action)
+    {
+        $Chan = $this->GetAllChannels();
 
-    if($PID){
-      if (substr(php_uname(), 0, 7) == "Windows"){ 
-        exec("taskkill /PID $PID /F");
-      }else{ 
-        exec("sudo kill -9 $PID");   
-      }
-    }
-    if($FPID){
-      if (substr(php_uname(), 0, 7) == "Windows"){ 
-        exec("taskkill /PID $FPID /F");
-      }else{ 
-        exec("sudo kill -9 $FPID");   
-      }
-    }
-
-    $sql="update channels set Status=:Status, PID=0, FPID=0, info='', StartTime=null, EndTime='".date("Y-m-d H:i:s")."', info='' where ID=:ID";
-    $Status="Stopped";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ChanID);
-    $st->bindParam(":Status", $Status);
-    $st->execute();
-    $WorkPath = $this->GetConfig("DownloadPath");
-    $ChName = str_replace(" ", "_", $ChName);
-    array_map('unlink', array_filter((array) glob($WorkPath."/".$ChName."/seg/*")));
-    array_map('unlink', array_filter((array) glob($WorkPath."/".$ChName."/stream/*")));
-    array_map('unlink', array_filter((array) glob($WorkPath."/".$ChName."/ts/*")));
-    array_map('unlink', array_filter((array) glob($WorkPath."/".$ChName."/log/*")));
-    array_map('unlink', array_filter((array) glob($WorkPath."/".$ChName."/hls/*")));
-    array_map('unlink', array_filter((array) glob($WorkPath."/".$ChName."/*")));    
-  }
-  function SaveSettings($Data){
-    foreach($Data as $Key => $Value){
-      $Value=addslashes($Value);
-      $sql="update config set ConfigValue='$Value' where ConfigName='$Key'";
-      $this->DB->exec($sql);
-    }
-    $this->ReadConfig();
-  }
-  function DeleteChannel($ID){
-    $ChanID = $ID;
-    $this->StopDownload(array("ChanID"=>$ChanID));
-    $sql="delete from channels where ID=:ID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ChanID);
-    $st->execute();
-
-    $sql="delete from variant where ChannelID=:ID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ChanID);
-    $st->execute();
-
-    $sql="delete from channel_keys where ChannelID=:ID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ChanID);
-    $st->execute();
-
-    $sql="delete from channel_headers where ChannelID=:ID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":ID", $ChanID);
-    $st->execute();
-  }
-  function All($Action){
-    $Chan=$this->GetAllChannels();
-
-    for($i=0;$i<count($Chan);$i++){
-      $Data["ChanID"]=$Chan[$i]["ID"];
-      if($Action=="Start"){
-        if($Chan[$i]["Status"]=="Stopped"){
-          $this->StartDownload($Data);
+        for ($i = 0; $i < count($Chan); $i++) {
+            $Data["ChanID"] = $Chan[$i]["ID"];
+            if ($Action == "Start") {
+                if ($Chan[$i]["Status"] == "Stopped") {
+                    $this->StartDownload($Data);
+                }
+            }
+            if ($Action == "Stop") {
+                $this->StopDownload($Data);
+            }
         }
-      }
-      if($Action=="Stop"){
-        $this->StopDownload($Data);
-      }
     }
-  }
-  function TestMPD($Data){
-    $Url = $Data["MPD"];
-    $UseProxy = $Data["UseProxy"];
-    $Useragent = $Data["Useragent"];
-    if($Useragent=="")$Useragent = $this->GetConfig("DownloadUseragent");
-    if($UseProxy){
-      $ProxyURL = $Data["ProxyURL"];
-      if($ProxyURL){
-        $ProxyPort = $Data["ProxyPort"];
-        $ProxyUser = $Data["ProxyUser"];
-        $ProxyPass = $Data["ProxyPass"];
-      }else{
-        $ProxyURL   = $this->GetConfig("ProxyURL");
-        $ProxyPort  = $this->GetConfig("ProxyPort");
-        $ProxyUser  = $this->GetConfig("ProxyUser");
-        $ProxyPass  = $this->GetConfig("ProxyPass");
-      }
-      $cmd='php downloader.php --mode=testonly --mpdurl="'.$Url.'" --proxyurl="'.$ProxyURL.'" --proxyport="'.$ProxyPort.'" --proxyuser="'.$ProxyUser.'" --proxypass="'.$ProxyPass.'" --useragent="'.$Useragent.'"';
-    }else{
-      $cmd='php downloader.php --mode=testonly --mpdurl="'.$Url.'"';
-    }
-    exec($cmd, $Res);
-    $data["str"]=implode("\r\n", $Res);
+    public function TestMPD($Data)
+    {
+        $Url = $Data["MPD"];
+        $UseProxy = $Data["UseProxy"];
+        $Useragent = $Data["Useragent"];
+        if ($Useragent == "") {
+            $Useragent = $this->GetConfig("DownloadUseragent");
+        }
 
-    $Res=null;
-    $cmd='php downloader.php --mode=infojson --mpdurl="'.$Url.'"';
-    exec($cmd, $Res);
-    $x=json_decode($Res[0], true);
-    $data["a"]=$x["a"];
-    $data["v"]=$x["v"];
-    return json_encode($data);
-  }
-  function GetLog($ID, $Lines){
-    $data=$this->GetChannel($ID);
-    $ChName = str_replace(" ", "_", $data["ChannelName"]);
-    $WorkPath=$this->GetConfig("DownloadPath");
-    $LogFile=$WorkPath."/".$ChName."/log/ffmpeg.log";
-    $Log[0]=$this->tail($LogFile, $Lines);
+        if ($UseProxy) {
+            $ProxyURL = $Data["ProxyURL"];
+            if ($ProxyURL) {
+                $ProxyPort = $Data["ProxyPort"];
+                $ProxyUser = $Data["ProxyUser"];
+                $ProxyPass = $Data["ProxyPass"];
+            } else {
+                $ProxyURL = $this->GetConfig("ProxyURL");
+                $ProxyPort = $this->GetConfig("ProxyPort");
+                $ProxyUser = $this->GetConfig("ProxyUser");
+                $ProxyPass = $this->GetConfig("ProxyPass");
+            }
+            $cmd = 'php downloader.php --mode=testonly --mpdurl="' . $Url . '" --proxyurl="' . $ProxyURL . '" --proxyport="' . $ProxyPort . '" --proxyuser="' . $ProxyUser . '" --proxypass="' . $ProxyPass . '" --useragent="' . $Useragent . '"';
+        } else {
+            $cmd = 'php downloader.php --mode=testonly --mpdurl="' . $Url . '"';
+        }
+        exec($cmd, $Res);
+        $data["str"] = implode("\r\n", $Res);
 
-    $LogFile=$WorkPath."/".$ChName."/log/php.log";
-    $Log[1]=$this->tail($LogFile, $Lines);
-    return $Log;
-  }
-  function tail($filepath, $lines = 1, $adaptive = true) {
-    $f = @fopen($filepath, "rb");
-    if ($f === false) return false;
-    if (!$adaptive) $buffer = 4096;
-    else $buffer = ($lines < 2 ? 64 : ($lines < 10 ? 512 : 4096));
-    fseek($f, -1, SEEK_END);
-    if (fread($f, 1) != "\n") $lines -= 1;
-    $output = '';
-    $chunk = '';
-    while (ftell($f) > 0 && $lines >= 0) {
-      $seek = min(ftell($f), $buffer);
-      fseek($f, -$seek, SEEK_CUR);
-      $output = ($chunk = fread($f, $seek)) . $output;
-      fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);
-      $lines -= substr_count($chunk, "\n");
+        $Res = null;
+        $cmd = 'php downloader.php --mode=infojson --mpdurl="' . $Url . '"';
+        exec($cmd, $Res);
+        $x = json_decode($Res[0], true);
+        $data["a"] = $x["a"];
+        $data["v"] = $x["v"];
+        return json_encode($data);
     }
-    while ($lines++ < 0) {
-      $output = substr($output, strpos($output, "\n") + 1);
-    }
-    fclose($f);
-    return trim($output);
-  }
-  function GetChanStat(){
-    $sql="select ID, TIMEDIFF(now(), channels.StartTime) as Uptime, info, status, PID, FPID from channels";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    $data=$st->fetchAll();
-    for($i=0;$i<count($data);$i++){
-      if(file_exists("/proc/".$data[$i]["PID"]))$PIDExist=1;else $PIDExist=0;
-      if(file_exists("/proc/".$data[$i]["FPID"]))$FPIDExist=1;else $FPIDExist=0;
-      $x["id"] = $data[$i]["ID"];
-      $x["status"]=$data[$i]["status"];
-      $Info=json_decode($data[$i]["info"], true);
-      $x["uptime"] = $data[$i]["Uptime"];
-      $x["pid"]=$data[$i]["PID"];
-      $x["fpid"]=$data[$i]["FPID"];
-      $x["pidexist"]=$PIDExist;
-      $x["fpidexist"]=$FPIDExist;
-      $x["framerate"]=str_replace("/1", "", $Info["framerate"]);
-      if($x["status"]=="Downloading"){
-        $x["bitrate"] = round($Info["bitrate"]/1000,1)."kb";
-        $x["codecs"]=$Info["vcodec"]."/".$Info["acodec"];
-        $x["res"]=$Info["width"]."x".$Info["height"];
-      }else{
-        $x["bitrate"] = "";
-        $x["codecs"]="";
-        $x["res"]="";
-      }
-      $Stat[]=$x;
-    }
-    return json_encode($Stat);
-  }
-  function AllowedIP($ChID, $IP){
-    $data=$this->GetChannel($ChID);
-    $AllowedIPs=json_decode($data["AllowedIPJson"],true);
-    for($i=0;$i<count($AllowedIPs);$i++){
-      if(strtolower($AllowedIPs[$i]) == "any" || $AllowedIPs[$i]=="*" || $AllowedIPs[$i]==$IP){
-        return true;
-      }
-    }
-    return false;
-  }
-  function BackupDatabase(){
-    try{
-      include "_db.php";
-      $FolderName=$this->GetConfig("BackupPath");
-      $cmd="sudo mkdir $FolderName";
-      exec($cmd);
-      $cmd="sudo chown -R www-data:www-data $FolderName";
-      exec($cmd);
-      $cmd="sudo chmod -R 777 $FolderName";
-      exec($cmd);
+    public function GetLog($ID, $Lines)
+    {
+        $data = $this->GetChannel($ID);
+        $ChName = str_replace(" ", "_", $data["ChannelName"]);
+        $WorkPath = $this->GetConfig("DownloadPath");
+        $LogFile = $WorkPath . "/" . $ChName . "/log/ffmpeg.log";
+        $Log[0] = $this->tail($LogFile, $Lines);
 
-      $FileName=$DBName."_".date("Y-m-d_H:i:s", time()).".sql";
-      $cmd="mysqldump --add-drop-table -u $DBUser -p'$DBPass' $DBName > $FolderName/".$FileName;
-      exec($cmd);
-      $SQL=file_get_contents($FolderName."/".$FileName);
-      $Ret[0]=$FolderName;
-      $Ret[1]=$FileName;
-    }catch(Exception $e){
-      $Ret[0]="Error";
-      $Ret[1]=$e->message;
+        $LogFile = $WorkPath . "/" . $ChName . "/log/php.log";
+        $Log[1] = $this->tail($LogFile, $Lines);
+        return $Log;
     }
-    return $Ret;
-  }
-  function RestoreDatabase($Files){
+    public function tail($filepath, $lines = 1, $adaptive = true)
+    {
+        $f = @fopen($filepath, "rb");
+        if ($f === false) {
+            return false;
+        }
 
-  }
-  function GetBackups(){
-    $Folder=$this->GetConfig("BackupPath");
-    $Files= glob($Folder."/*.sql");
-    for($i=0;$i<count($Files);$i++){
-      $Files[$i]=str_replace($Folder."/","", $Files[$i]);
+        if (!$adaptive) {
+            $buffer = 4096;
+        } else {
+            $buffer = ($lines < 2 ? 64 : ($lines < 10 ? 512 : 4096));
+        }
+
+        fseek($f, -1, SEEK_END);
+        if (fread($f, 1) != "\n") {
+            $lines -= 1;
+        }
+
+        $output = '';
+        $chunk = '';
+        while (ftell($f) > 0 && $lines >= 0) {
+            $seek = min(ftell($f), $buffer);
+            fseek($f, -$seek, SEEK_CUR);
+            $output = ($chunk = fread($f, $seek)) . $output;
+            fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);
+            $lines -= substr_count($chunk, "\n");
+        }
+        while ($lines++ < 0) {
+            $output = substr($output, strpos($output, "\n") + 1);
+        }
+        fclose($f);
+        return trim($output);
     }
-    return $Files;
-  }
-  function DeleteBackup($File){
-    $Folder = $this->GetConfig("BackupPath");
-    unlink($Folder."/".$File);
-  }
-  function DownloadBackup($File){
-    file_put_contents("getbkup.txt", 1);
-  }
-  function RestoreBackup($File){
-    try{
-      include "_db.php";
-      $Folder=$this->GetConfig("BackupPath");
-      $cmd="mysql -u $DBUser -p$DBPass $DBName < ".$Folder."/".$File;
-      exec($cmd, $res);
-    }catch(Exception $e){
-      $Ret[0]="Error";
-      $Ret[1]=$e->message;
+    public function GetChanStat()
+    {
+        $sql = "select ID, TIMEDIFF(now(), channels.StartTime) as Uptime, info, status, PID, FPID from channels";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        $data = $st->fetchAll();
+        for ($i = 0; $i < count($data); $i++) {
+            if (file_exists("/proc/" . $data[$i]["PID"])) {
+                $PIDExist = 1;
+            } else {
+                $PIDExist = 0;
+            }
+
+            if (file_exists("/proc/" . $data[$i]["FPID"])) {
+                $FPIDExist = 1;
+            } else {
+                $FPIDExist = 0;
+            }
+
+            $x["id"] = $data[$i]["ID"];
+            $x["status"] = $data[$i]["status"];
+            $Info = json_decode($data[$i]["info"], true);
+            $x["uptime"] = $data[$i]["Uptime"];
+            $x["pid"] = $data[$i]["PID"];
+            $x["fpid"] = $data[$i]["FPID"];
+            $x["pidexist"] = $PIDExist;
+            $x["fpidexist"] = $FPIDExist;
+            $x["framerate"] = str_replace("/1", "", $Info["framerate"]);
+            if ($x["status"] == "Downloading") {
+                $x["bitrate"] = round($Info["bitrate"] / 1000, 1) . "kb";
+                $x["codecs"] = $Info["vcodec"] . "/" . $Info["acodec"];
+                $x["res"] = $Info["width"] . "x" . $Info["height"];
+            } else {
+                $x["bitrate"] = "";
+                $x["codecs"] = "";
+                $x["res"] = "";
+            }
+            $Stat[] = $x;
+        }
+        return json_encode($Stat);
     }
-  }
+    public function AllowedIP($ChID, $IP)
+    {
+        $data = $this->GetChannel($ChID);
+        $AllowedIPs = json_decode($data["AllowedIPJson"], true);
+        for ($i = 0; $i < count($AllowedIPs); $i++) {
+            if (strtolower($AllowedIPs[$i]) == "any" || $AllowedIPs[$i] == "*" || $AllowedIPs[$i] == $IP) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function BackupDatabase()
+    {
+        try {
+            include "_db.php";
+            $FolderName = $this->GetConfig("BackupPath");
+            $cmd = "sudo mkdir $FolderName";
+            exec($cmd);
+            $cmd = "sudo chown -R www-data:www-data $FolderName";
+            exec($cmd);
+            $cmd = "sudo chmod -R 777 $FolderName";
+            exec($cmd);
 
+            $FileName = $DBName . "_" . date("Y-m-d_H:i:s", time()) . ".sql";
+            $cmd = "mysqldump --add-drop-table -u $DBUser -p'$DBPass' $DBName > $FolderName/" . $FileName;
+            exec($cmd);
+            $SQL = file_get_contents($FolderName . "/" . $FileName);
+            $Ret[0] = $FolderName;
+            $Ret[1] = $FileName;
+        } catch (Exception $e) {
+            $Ret[0] = "Error";
+            $Ret[1] = $e->message;
+        }
+        return $Ret;
+    }
+    public function RestoreDatabase($Files)
+    {
 
+    }
+    public function GetBackups()
+    {
+        $Folder = $this->GetConfig("BackupPath");
+        $Files = glob($Folder . "/*.sql");
+        for ($i = 0; $i < count($Files); $i++) {
+            $Files[$i] = str_replace($Folder . "/", "", $Files[$i]);
+        }
+        return $Files;
+    }
+    public function DeleteBackup($File)
+    {
+        $Folder = $this->GetConfig("BackupPath");
+        unlink($Folder . "/" . $File);
+    }
+    public function DownloadBackup($File)
+    {
+        file_put_contents("getbkup.txt", 1);
+    }
+    public function RestoreBackup($File)
+    {
+        try {
+            include "_db.php";
+            $Folder = $this->GetConfig("BackupPath");
+            $cmd = "mysql -u $DBUser -p$DBPass $DBName < " . $Folder . "/" . $File;
+            exec($cmd, $res);
+        } catch (Exception $e) {
+            $Ret[0] = "Error";
+            $Ret[1] = $e->message;
+        }
+    }
 
-
-  function GetAllCats(){
-    $sql="select cats.CatID, cats.CatName, count(channels.ID) as ChannelsCount
+    public function GetAllCats()
+    {
+        $sql = "select cats.CatID, cats.CatName, count(channels.ID) as ChannelsCount
     From cats left outer join channels on cats.CatID = channels.CatID
     group by cats.CatID, cats.CatName
     order by CatID";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    return $st->fetchAll();
-  }
-  function GetCat($ID){
-    $sql="select * From cats where CatID=:CatID";
-    $st=$this->DB->prepare($sql);
-    $st->bindParam(":CatID", $ID);
-    $st->execute();
-    return $st->fetch();
-  }
-  function SaveCat($Data){
-    $ID=  intval($Data["ID"]);
-    $CatName=  $Data["CatName"];
-    if($ID > 0 ){
-      $sql="update cats set CatName=:CatName where CatID=:CatID";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":CatID", $ID);
-      $st->bindParam(":CatName", $CatName);
-      $st->execute();
-    }else{
-      $sql="Insert into cats (CatName) values (:CatName)";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":CatName", $CatName);
-      $st->execute();
-      $ID = $this->DB->lastInsertId();
-    }
-    return $ID;
-  }
-  function DeleteCat($ID){
-    if($ID <> 1){
-      $sql="delete from cats where CatID=:CatID";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":CatID", $ID);
-      $st->execute();
-      
-      $sql="update channels set CatID = 1 Where CatID =:CatID";
-      $st=$this->DB->prepare($sql);
-      $st->bindParam(":CatID", $ID);
-      $st->execute();
-
-      $Cats=$this->GetAllCats();
-      if(!$Data){
-        $sql="insert into cats (CatID, CatName) values (1, 'Uncategorized')";
-        $st=$this->DB->prepare($sql);
+        $st = $this->DB->prepare($sql);
         $st->execute();
-      }
+        return $st->fetchAll();
     }
-  }
-  function GetStat(){
-    $sql="select Status, ChannelName, ifnull(TIME_TO_SEC(TIMEDIFF(now(), channels.StartTime)), 0)/60  as Uptime from channels";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    $data=$st->fetchAll();
-    $Res["Total"] = count($data);
-    $Res["Online"] =0;
-    $Res["Offline"] =0;
-
-    for($i=0;$i<count($data);$i++){
-      $Res["Names"].='"'.$data[$i]["ChannelName"].'",';
-      $Res["Uptime"].='"'.$data[$i]["Uptime"].'",';
-      if($data[$i]["Status"] == "Downloading"){
-        $Res["Online"]++;
-      }else{
-        $Res["Offline"]++;
-      }
+    public function GetCat($ID)
+    {
+        $sql = "select * From cats where CatID=:CatID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":CatID", $ID);
+        $st->execute();
+        return $st->fetch();
     }
-    if($Res["Names"])$Res["Names"]=rtrim($Res["Names"],",");
-    if($Res["Uptime"])$Res["Uptime"]=rtrim($Res["Uptime"],",");
-
-    return $Res;
-  }
-  function time_elapsed_string($datetime, $full = false) {
-    $now = new DateTime;
-    $ago = new DateTime($datetime);
-    $diff = $now->diff($ago);
-
-    $diff->w = floor($diff->d / 7);
-    $diff->d -= $diff->w * 7;
-
-    $string = array(
-      'y' => 'year',
-      'm' => 'month',
-      'w' => 'week',
-      'd' => 'day',
-      'h' => 'hour',
-      'i' => 'minute',
-      's' => 'second',
-    );
-    foreach ($string as $k => &$v) {
-      if ($diff->$k) {
-        $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
-      } else {
-        unset($string[$k]);
-      }
+    public function SaveCat($Data)
+    {
+        $ID = intval($Data["ID"]);
+        $CatName = $Data["CatName"];
+        if ($ID > 0) {
+            $sql = "update cats set CatName=:CatName where CatID=:CatID";
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":CatID", $ID);
+            $st->bindParam(":CatName", $CatName);
+            $st->execute();
+        } else {
+            $sql = "Insert into cats (CatName) values (:CatName)";
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":CatName", $CatName);
+            $st->execute();
+            $ID = $this->DB->lastInsertId();
+        }
+        return $ID;
     }
+    public function DeleteCat($ID)
+    {
+        if ($ID != 1) {
+            $sql = "delete from cats where CatID=:CatID";
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":CatID", $ID);
+            $st->execute();
 
-    if (!$full) $string = array_slice($string, 0, 1);
-    return $string ? implode(', ', $string) . ' ago' : 'just now';
-  }
-  function GetNotification($Status=""){
-    if($Status=="")$Cond="";
-    else{$Cond=" and Status='$Status'";}
-    $sql="select * from notification where 1=1 $Cond";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    $data= $st->fetchAll();
-    for($i=0;$i<count($data);$i++){
-      $data[$i]["ago"]=$this->time_elapsed_string($data[$i]["Sent"]);
-    }
-    return $data;
-  }
-  function SetNotiSeen($ID){
-    $sql="update notification set Status='Seen' where ID=$ID";
-    $this->DB->exec($sql);
-  }
-  function GetFreeUDPIPs($ChID){
-    for($j=0;$j<5;$j++){
-      for($i=1;$i<256;$i++){
-        $All[]="239.200.$j.$i";
-      }
-    }
-    $sql="select distinct UDPIP as IP from channels where ID <> $ChID";
-    $st=$this->DB->prepare($sql);
-    $st->execute();
-    $Used=$st->fetchAll();
-    for($i=0;$i<count($Used);$i++){
-      if(in_array($Used[$i]["IP"], $All)){
-        $index = array_search($Used[$i]["IP"], $All);
-        unset($All[$index]);
-      }
-    }
-    return $All;
-  }
-  function GetKID($URL){
-  $data = file_get_contents($URL);
-  $posDefault = strpos($data, "default_KID");
-  $posMarlin = strpos($data, "marlin:kid");
+            $sql = "update channels set CatID = 1 Where CatID =:CatID";
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":CatID", $ID);
+            $st->execute();
 
-  if ($posDefault !== false) {
-    $kid = substr($data, $posDefault + 13, 36);
-    $kid = str_replace("-", "", $kid);
-  } elseif ($posMarlin !== false) {
-    $kidStart = $posMarlin + 10;
-    $kidEnd = strpos($data, "</mas:MarlinContentId>", $kidStart);
-    $kid = substr($data, $kidStart, $kidEnd - $kidStart);
-    $kid = str_replace("urn:marlin:kid:", "", $kid);
-    $kid = ltrim($kid, ":");
-  } else {
-    return null; // Return null if neither "default_KID" nor "marlin:kid" is found
-  }
+            $Cats = $this->GetAllCats();
+            if (!$Data) {
+                $sql = "insert into cats (CatID, CatName) values (1, 'Uncategorized')";
+                $st = $this->DB->prepare($sql);
+                $st->execute();
+            }
+        }
+    }
+    public function GetStat()
+    {
+        $sql = "select Status, ChannelName, ifnull(TIME_TO_SEC(TIMEDIFF(now(), channels.StartTime)), 0)/60  as Uptime from channels";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        $data = $st->fetchAll();
+        $Res["Total"] = count($data);
+        $Res["Online"] = 0;
+        $Res["Offline"] = 0;
 
-  return $kid;
+        for ($i = 0; $i < count($data); $i++) {
+            $Res["Names"] .= '"' . $data[$i]["ChannelName"] . '",';
+            $Res["Uptime"] .= '"' . $data[$i]["Uptime"] . '",';
+            if ($data[$i]["Status"] == "Downloading") {
+                $Res["Online"]++;
+            } else {
+                $Res["Offline"]++;
+            }
+        }
+        if ($Res["Names"]) {
+            $Res["Names"] = rtrim($Res["Names"], ",");
+        }
+
+        if ($Res["Uptime"]) {
+            $Res["Uptime"] = rtrim($Res["Uptime"], ",");
+        }
+
+        return $Res;
+    }
+    public function time_elapsed_string($datetime, $full = false)
+    {
+        $now = new DateTime;
+        $ago = new DateTime($datetime);
+        $diff = $now->diff($ago);
+
+        $diff->w = floor($diff->d / 7);
+        $diff->d -= $diff->w * 7;
+
+        $string = array(
+            'y' => 'year',
+            'm' => 'month',
+            'w' => 'week',
+            'd' => 'day',
+            'h' => 'hour',
+            'i' => 'minute',
+            's' => 'second',
+        );
+        foreach ($string as $k => &$v) {
+            if ($diff->$k) {
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            } else {
+                unset($string[$k]);
+            }
+        }
+
+        if (!$full) {
+            $string = array_slice($string, 0, 1);
+        }
+
+        return $string ? implode(', ', $string) . ' ago' : 'just now';
+    }
+    public function GetNotification($Status = "")
+    {
+        if ($Status == "") {
+            $Cond = "";
+        } else { $Cond = " and Status='$Status'";}
+        $sql = "select * from notification where 1=1 $Cond";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        $data = $st->fetchAll();
+        for ($i = 0; $i < count($data); $i++) {
+            $data[$i]["ago"] = $this->time_elapsed_string($data[$i]["Sent"]);
+        }
+        return $data;
+    }
+    public function SetNotiSeen($ID)
+    {
+        $sql = "update notification set Status='Seen' where ID=$ID";
+        $this->DB->exec($sql);
+    }
+    public function GetFreeUDPIPs($ChID)
+    {
+        for ($j = 0; $j < 5; $j++) {
+            for ($i = 1; $i < 256; $i++) {
+                $All[] = "239.200.$j.$i";
+            }
+        }
+        $sql = "select distinct UDPIP as IP from channels where ID <> $ChID";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        $Used = $st->fetchAll();
+        for ($i = 0; $i < count($Used); $i++) {
+            if (in_array($Used[$i]["IP"], $All)) {
+                $index = array_search($Used[$i]["IP"], $All);
+                unset($All[$index]);
+            }
+        }
+        return $All;
+    }
+    public function GetKID($URL)
+    {
+        $data = file_get_contents($URL);
+        $posDefault = strpos($data, "default_KID");
+        $posMarlin = strpos($data, "marlin:kid");
+
+        if ($posDefault !== false) {
+            $kid = substr($data, $posDefault + 13, 36);
+            $kid = str_replace("-", "", $kid);
+        } elseif ($posMarlin !== false) {
+            $kidStart = $posMarlin + 10;
+            $kidEnd = strpos($data, "</mas:MarlinContentId>", $kidStart);
+            $kid = substr($data, $kidStart, $kidEnd - $kidStart);
+            $kid = str_replace("urn:marlin:kid:", "", $kid);
+            $kid = ltrim($kid, ":");
+        } else {
+            return null; // Return null if neither "default_KID" nor "marlin:kid" is found
+        }
+
+        return $kid;
+    }
 }
-}
-?>
