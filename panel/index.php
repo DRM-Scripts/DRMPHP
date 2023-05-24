@@ -50,7 +50,7 @@ if(!$App->LoggedIn())header('location: login.php');
                     <div class="col-lg-3">
                       <div class="mb-3">
                         <label class="form-label">MPD Url</label>
-                        <input type="text" class="form-control" id="SearchMPDUrl" name="SearchMPDUrl" placeholder="Enter manifist url" value="<?=$_POST["SearchMPDUrl"]?>">
+                        <input type="text" class="form-control" id="SearchMPDUrl" name="SearchMPDUrl" placeholder="Enter manifest url" value="<?=$_POST["SearchMPDUrl"]?>">
                       </div>
                     </div>
                     <div class="col-lg-3">
