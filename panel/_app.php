@@ -262,7 +262,12 @@ class App
       , `AudioID`=:AudioID
       , `VideoID`=:VideoID
       , `AllowedIP`=:AllowedIP
-      , `Output`=:Output
+      , `Output`=:Output,
+      , `UseProxy`=:UseProxy,
+      , `ProxyURL`=:ProxyURL,
+      , `ProxyPort`=:ProxyPort,
+      , `ProxyUser`=:ProxyUser,
+      , `ProxyPass`=:ProxyPass
       where ID=:ID";
             $st = $this->DB->prepare($sql);
             $st->bindParam(":ID", $ID);
@@ -278,6 +283,11 @@ class App
             $st->bindParam(":VideoID", $VideoID);
             $st->bindParam(":AllowedIP", $AllowedIPJson);
             $st->bindParam(":Output", $Output);
+            $st->bindParam(":UseProxy", $UseProxy);
+            $st->bindParam(":ProxyURL", $ProxyURL);
+            $st->bindParam(":ProxyPort", $ProxyPort);
+            $st->bindParam(":ProxyUser", $ProxyUser);
+            $st->bindParam(":ProxyPass", $ProxyPass);
             $st->execute();
 
             $removeExistingKeysSql = "DELETE FROM channel_keys WHERE ChannelID=:ChannelID";
