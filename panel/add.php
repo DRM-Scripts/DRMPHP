@@ -439,7 +439,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
           return;
         }
         $target = $('#keys');
-        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="" placeholder="KID"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="Key"></div></div>');
+        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="" placeholder="KID"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="KEY"></div></div>');
       }
 
       function addHeader() {
