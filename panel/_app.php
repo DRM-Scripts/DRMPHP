@@ -174,9 +174,9 @@ class App
 
         $UseProxy = intval($Data["useProxy"]);
         $ProxyURL = $Data["proxyUrl"];
-        $ProxyPort = "0";
-        $ProxyUser = "";
-        $ProxyPass = "";
+        $ProxyPort = $Data["proxyPort"];
+        $ProxyUser = $Data["proxyUser"];
+        $ProxyPass = $Data["proxyPassword"];
 
         $DownloadUseragent = $Data["DownloadUseragent"];
         //$AudioID        = $Data["AudioID"];

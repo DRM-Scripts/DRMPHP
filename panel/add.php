@@ -298,9 +298,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <label class="col-md-2 col-form-label">Use Proxy</label>
                         <div class="col-md-10">
                           <Select id="AutoRestart" name="AutoRestart">
-                            <?php if($Data["AutoRestart"]==1)$Selected="selected";else $Selected="";?>
+                            <?php if($Data["UseProxy"]==1)$Selected="selected";else $Selected="";?>
                             <option <?=$Selected?> value="1">Yes</option>
-                            <?php if($Data["AutoRestart"]==0)$Selected="selected";else $Selected="";?>
+                            <?php if($Data["UseProxy"]==0)$Selected="selected";else $Selected="";?>
                             <option <?=$Selected?> value="0">No</option>
                           </select>
                         </div>
