@@ -105,20 +105,43 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">KID</label>
                         <div class="col-md-10">
-                          <input class="form-control" type="text" id="KID" name="KID" value="<?=$Data["KID"]?>">
+                          <input class="form-control" type="text" id="KID[]" name="KID[]" value="<?=$Data["Keys"][0]["KID"]?>">
                           <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="GetKID()">Get KID</a>
                         </div>
                       </div>
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Key</label>
                         <div class="col-md-10">
-                          <input class="form-control" type="text" id="Key" name="Key" value="<?=$Data["Key"]?>">
+                          <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?=$Data["Keys"][0]["Key"]?>">
+                          <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addKey()">Add Key</a>
                         </div>
+                      </div>
+                      <div id="keys">
+                        <?php
+                        if(count($Data["Keys"]) > 1) {
+                          for($i=1;$i<count($Data["Keys"]);$i++){
+                            ?>
+                            <div class="mb-3 row">
+                              <label class="col-md-2 col-form-label">KID</label>
+                              <div class="col-md-10">
+                                <input class="form-control" type="text" id="KID[]" name="KID[]" value="<?=$Data["Keys"][$i]["KID"]?>">
+                              </div>
+                            </div>
+                            <div class="mb-3 row">
+                              <label class="col-md-2 col-form-label">Key</label>
+                              <div class="col-md-10">
+                                <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?=$Data["Keys"][$i]["Key"]?>">
+                              </div>
+                            </div>
+                            <?php
+                          }
+                        }
+                        ?>
                       </div>
 
                       <h4 class="card-title mt-5">Downloading parameters</h4>
-                      <!--
-                      <div class="mb-3 row">
+                      
+                      <!-- <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Joiner</label>
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="SegmentJoiner" name="SegmentJoiner" onchange="CalcTime()" onkeyup="CalcTime()" value="<?=$Data["SegmentJoiner"]?>">
@@ -135,13 +158,42 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="URLListLimit" name="URLListLimit" value="<?=$Data["URLListLimit"]?>">
                         </div>
-                      </div>
-                      -->
+                      </div> -->
+                     
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Useragent</label>
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="DownloadUseragent" name="DownloadUseragent" value="<?=$Data["DownloadUseragent"]?>">
                         </div>
+                      </div>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Header (e.g : Authorization: Bearer xxxxx)</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?php 
+                            if(count($Data["CustomHeaders"]) > 0) {
+                              echo $Data["CustomHeaders"][0]["Value"];
+                            }
+                          ?>">
+                          <a href="javascript: void(0)" class="btn btn-primary btn-sm" onclick="addHeader()">Add Header</a>
+                        </div>
+                      </div>
+                      <div id="headers">
+                        <?php
+                        if(count($Data["CustomHeaders"]) > 1) {
+                          for($i=1;$i<count($Data["CustomHeaders"]);$i++){
+                            ?>
+                            <div class="mb-3 row">
+                              <label class="col-md-2 col-form-label">Header</label>
+                              <div class="col-md-10">
+                                <input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="<?php 
+                                echo $Data["CustomHeaders"][$i]["Value"]
+                                ?>">
+                              </div>
+                            </div>
+                            <?php
+                          }
+                        }
+                        ?>
                       </div>
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Allowed IP</label>
@@ -237,6 +289,46 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                             }
                             ?>
                           </select>
+                        </div>
+                      </div>
+                      <br/>
+                      <h4 class="card-title mt-5">Proxy Settings</h4>
+                      <br>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Use Proxy</label>
+                        <div class="col-md-10">
+                          <Select id="AutoRestart" name="AutoRestart">
+                            <?php if($Data["UseProxy"]==1)$Selected="selected";else $Selected="";?>
+                            <option <?=$Selected?> value="1">Yes</option>
+                            <?php if($Data["UseProxy"]==0)$Selected="selected";else $Selected="";?>
+                            <option <?=$Selected?> value="0">No</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy Host</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyUrl" name="proxyUrl" value="<?=$Data["ProxyURL"]?>">
+                        </div>
+                      </div>
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy Port</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyPort" name="proxyPort" value="<?=$Data["ProxyPort"]?>">
+                        </div>
+                      </div>
+
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy User</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyUser" name="proxyUser" value="<?=$Data["ProxyUser"]?>">
+                        </div>
+                      </div>
+
+                      <div class="mb-3 row">
+                        <label class="col-md-2 col-form-label">Proxy Password</label>
+                        <div class="col-md-10">
+                          <input class="form-control" type="text" id="proxyPassword" name="proxyPassword" value="<?=$Data["ProxyPass"]?>">
                         </div>
                       </div>
                     </div>
@@ -339,6 +431,27 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
           $('#KID').val(data);
         })
       }
+
+      function addKey() {
+        var childCount = $('#keys').children().length;
+        if (childCount >= 6) {
+          alert('Maximum 4 keys allowed');
+          return;
+        }
+        $target = $('#keys');
+        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="" placeholder="KID"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="Key"></div></div>');
+      }
+
+      function addHeader() {
+        var childCount = $('#headers').children().length;
+        if (childCount >= 6) {
+          alert('Maximum headers reached');
+          return;
+        }
+        $target = $('#headers');
+        $target.append('<div class="mb-3 row"><label class="col-md-2 col-form-label">Header</label><div class="col-md-10"><input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="" placeholder="Header"></div></div>');
+      }
+
     </script>
   </body>
 </html>
