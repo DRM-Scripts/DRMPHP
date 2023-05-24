@@ -909,4 +909,11 @@ class App
 
         return $kid;
     }
+        function GetUsers(){
+        $sql = "SELECT * FROM users";
+        $st = $this->DB->prepare($sql);
+        $st->execute();
+        $users = $st->fetchAll(PDO::FETCH_ASSOC);
+        return $users;
+    }
 }
