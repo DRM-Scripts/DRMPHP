@@ -196,9 +196,9 @@ class App
 
         if ($ID == 0) {
             $sql = "insert into channels (
-      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`
+      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`, 'UseProxy', 'ProxyURL', 'ProxyPort', 'ProxyUser', 'ProxyPass'
       ) values (
-      :ChannelName, :Manifest, :CatId, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output
+      :ChannelName, :Manifest, :CatId, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output, :UseProxy, :ProxyURL, :ProxyPort, :ProxyUser, :ProxyPass
       )";
             $st = $this->DB->prepare($sql);
             $st->bindParam(":ChannelName", $ChannelName);
@@ -212,6 +212,11 @@ class App
             $st->bindParam(":VideoID", $VideoID);
             $st->bindParam(":AllowedIP", $AllowedIPJson);
             $st->bindParam(":Output", $Output);
+            $st->bindParam(":UseProxy", $UseProxy);
+            $st->bindParam(":ProxyURL", $ProxyURL);
+            $st->bindParam(":ProxyPort", $ProxyPort);
+            $st->bindParam(":ProxyUser", $ProxyUser);
+            $st->bindParam(":ProxyPass", $ProxyPass);
             $st->execute();
             $ID = $this->DB->lastInsertId();
             $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
