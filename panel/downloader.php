@@ -657,6 +657,7 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
         $decKey = $key['Key'];
         $keyString .= "--key $kid:$decKey ";
     }
+    echo $keyString;
     for ($k = 0; $k < count($aData); $k++) {
         $AudioEncFileName[] = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-" . $k . "-enc" . $audio_ext;
         $AudioDecFileName[] = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-" . $k . "-dec" . $audio_ext;
