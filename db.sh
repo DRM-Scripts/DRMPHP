@@ -6,7 +6,7 @@
 if [ -f /root/.my.cnf ]; then
 	echo "Please enter the NAME of the new MySQL database! (example: database1)"
 	read dbname
-	sudo sed -i "s/drm/$dbname/g" /var/www/html/panel/_db.php
+	sudo sed -i "s/drm/$dbname/g" /var/www/html/_db.php
 	echo "Please enter the MySQL database CHARACTER SET! (example: latin1, utf8, ...)"
 	echo "Enter utf8 if you don't know what you are doing"
 	read charset
@@ -18,11 +18,11 @@ if [ -f /root/.my.cnf ]; then
 	echo ""
 	echo "Please enter the NAME of the new MySQL database user! (example: user1)"
 	read username
-	sudo sed -i "s/admin/$username/g" /var/www/html/panel/_db.php
+	sudo sed -i "s/admin/$username/g" /var/www/html/_db.php
 	echo "Please enter the PASSWORD for the new MySQL database user!"
 	echo "Note: password will be hidden when typing"
 	read -s userpass
-	sudo sed -i "s/passwd/$userpass/g" /var/www/html/panel/_db.php
+	sudo sed -i "s/passwd/$userpass/g" /var/www/html/_db.php
 	echo "Creating new user..."
 	sudo mysql -e "CREATE USER ${username}@localhost IDENTIFIED BY '${userpass}';"
 	echo "User successfully created!"
@@ -52,7 +52,7 @@ else
 	read -s rootpasswd
 	echo "Please enter the NAME of the new MySQL database! (example: database1)"
 	read dbname
-	sudo sed -i "s/drm/$dbname/g" /var/www/html/panel/_db.php
+	sudo sed -i "s/drm/$dbname/g" /var/www/html/_db.php
 	echo "Please enter the MySQL database CHARACTER SET! (example: latin1, utf8, ...)"
 	echo "Enter utf8 if you don't know what you are doing"
 	read charset
@@ -64,11 +64,11 @@ else
 	echo ""
 	echo "Please enter the NAME of the new MySQL database user! (example: user1)"
 	read username
-	sudo sed -i "s/admin/$username/g" /var/www/html/panel/_db.php
+	sudo sed -i "s/admin/$username/g" /var/www/html/_db.php
 	echo "Please enter the PASSWORD for the new MySQL database user!"
 	echo "Note: password will be hidden when typing"
 	read -s userpass
-	sudo sed -i "s/passwd/$userpass/g" /var/www/html/panel/_db.php
+	sudo sed -i "s/passwd/$userpass/g" /var/www/html/_db.php
 	echo "Creating new user..."
 	sudo mysql -uroot -p${rootpasswd} -e "CREATE USER ${username}@localhost IDENTIFIED BY '${userpass}';"
 	echo "User successfully created!"
