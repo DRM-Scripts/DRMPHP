@@ -1,6 +1,6 @@
 #!/bin/bash
 # Bash script written by Saad Ismail - me@saadismail.net
-# edit to change _db.php - from https://github.com/andrewzhong1122/DRMPHP/blob/master/db.sh
+# edit to change _db.php 
 
 # If /root/.my.cnf exists then it won't ask for root password
 if [ -f /root/.my.cnf ]; then
