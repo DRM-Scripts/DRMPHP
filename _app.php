@@ -51,23 +51,47 @@ public function getCurrentUserId() {
 }
 
 
-  function Login($UserID, $Password) {
+function Login($UserID, $Password) {
   $sql = "SELECT * FROM users WHERE UserID = :UserID";
   $st = $this->DB->prepare($sql);
   $st->bindParam(":UserID", $UserID);
   $st->execute();
   $line = $st->fetch();
-  if ($line && $line["Password"] == $Password) {
-    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
-    $st = $this->DB->prepare($sql);
-    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
-    $st->bindParam(":UserID", $UserID);
-    $st->execute();
-    return $line;
-  } else {
-    return false;
+
+  if ($line) {
+    if (!password_needs_rehash($line["Password"], PASSWORD_DEFAULT)) {
+      // Password is already hashed, verify it
+      if (password_verify($Password, $line["Password"])) {
+        $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+        $st->bindParam(":UserID", $UserID);
+        $st->execute();
+        return $line;
+      }
+    } else {
+      // Password is not hashed, update it to a hashed version
+      $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+      $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
+      $st = $this->DB->prepare($sql);
+      $st->bindParam(":NewPassword", $hashedPassword);
+      $st->bindParam(":UserID", $UserID);
+      $st->execute();
+      
+      if (password_verify($Password, $hashedPassword)) {
+        $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+        $st->bindParam(":UserID", $UserID);
+        $st->execute();
+        return $line;
+      }
+    }
   }
+
+  return false;
 }
+
 
 function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
   // Check if the current password is correct
@@ -76,9 +100,10 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
   if ($loggedInUser) {
     try {
       // Update the password
+      $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
       $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :ID";
       $st = $this->DB->prepare($sql);
-      $st->bindParam(":NewPassword", $NewPassword);
+      $st->bindParam(":NewPassword", $hashedPassword);
       $st->bindParam(":ID", $UserID);
       $st->execute();
 
@@ -90,6 +115,7 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
     return false; // Current password is incorrect
   }
 }
+
 
 
   function GetChannel($ID){
