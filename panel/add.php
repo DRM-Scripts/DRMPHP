@@ -141,7 +141,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
 
                       <h4 class="card-title mt-5">Downloading parameters</h4>
                       
-                      <!-- <div class="mb-3 row">
+                      <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Joiner</label>
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="SegmentJoiner" name="SegmentJoiner" onchange="CalcTime()" onkeyup="CalcTime()" value="<?=$Data["SegmentJoiner"]?>">
@@ -158,7 +158,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <div class="col-md-10">
                           <input class="form-control" type="text" id="URLListLimit" name="URLListLimit" value="<?=$Data["URLListLimit"]?>">
                         </div>
-                      </div> -->
+                      </div>
                      
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Useragent</label>
