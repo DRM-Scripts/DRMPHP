@@ -1028,12 +1028,13 @@ class App
       if ($widevineIdPos !== false) {
           $kidPos = $widevineIdPos + strlen($widevineId) + 8;
           $kidSplitter = "1210";
-          $kidLength = 32 * 2;
+          $kidLength = 32;
           $psshSplit = substr($psshHex, $kidPos);
           $kidPotential = explode($kidSplitter, $psshSplit);
           if (count($kidPotential) > 1) {
               foreach($kidPotential as $kid) {
-                  if (strlen($kid) == $kidLength) {
+                  if (strlen($kid) >= $kidLength) {
+                      $kid = strtolower(substr($kid, 0, $kidLength));
                       if(!in_array($kid, $kidArray))
                       {
                         $kidArray[] = $kid;
@@ -1042,13 +1043,13 @@ class App
               }
           }
       }
-      return [];
+      return $kidArray;
     }
     public function GetPSSH($URL)
     {
         $data = $this->GetURL($URL);
         // Use regex to extract pssh value
-        $pattern = '/<(?:cenc:)?pssh>(.*?)<\/(?:cenc:)?pssh>/s';
+        $pattern = '/<(?:cenc:pssh|pssh)\s*[^>]*>(.*?)<\/(?:cenc:pssh|pssh)>/s';
         $validPssh = '';
         preg_match_all($pattern, $data, $matches);
         foreach ($matches[1] as $pssh) {
