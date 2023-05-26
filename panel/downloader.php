@@ -885,7 +885,9 @@ function DownloadRetry($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $custo
         if ($page) {
             return $page;
         }
+        sleep(0.5);
     }
+    return null;
 }
 function DoLog($Msg)
 {
