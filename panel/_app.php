@@ -137,7 +137,7 @@ class App
 
     public function GetAllChannels($Search = null)
     {
-        if ($Search["search"]) {
+        if ($Search != null && $Search["search"]) {
             if ($Search["SearchChanName"]) {
                 $Cond1 = " and ChannelName like '%" . $Search["SearchChanName"] . "%'";
             }
@@ -174,7 +174,7 @@ class App
 
         $UseProxy = intval($Data["useProxy"]);
         $ProxyURL = $Data["proxyUrl"];
-        $ProxyPort = $Data["proxyPort"];
+        $ProxyPort = intval($Data["proxyPort"]);
         $ProxyUser = $Data["proxyUser"];
         $ProxyPass = $Data["proxyPassword"];
 
