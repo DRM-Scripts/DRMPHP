@@ -428,7 +428,8 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
         var manifest=$('#Manifest').val();
         $.post("_func.php",{Func:"GetKID", URL:manifest})
         .done(function(data){
-          $('#KID\\[\\]').val(data);
+          let res=JSON.parse(data);
+          $('#KID\\[\\]').val(res);
         })
       }
 
