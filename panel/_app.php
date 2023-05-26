@@ -342,7 +342,25 @@ class App
     }
     public function Parse($ID)
     {
-        $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+        $Data = $this->GetChannel($ID);
+        $UseProxy = intval($Data["UseProxy"]) == 1;
+        if ($UseProxy) {
+          $ProxyURL = $Data["ProxyURL"];
+          if ($ProxyURL) {
+              $ProxyPort = $Data["ProxyPort"];
+              $ProxyUser = $Data["ProxyUser"];
+              $ProxyPass = $Data["ProxyPass"];
+          } else {
+              $ProxyURL = $this->GetConfig("ProxyURL");
+              $ProxyPort = $this->GetConfig("ProxyPort");
+              $ProxyUser = $this->GetConfig("ProxyUser");
+              $ProxyPass = $this->GetConfig("ProxyPass");
+          }
+        $cmd = "php downloader.php --mode=infoshort --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass";
+        } else {
+          $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+        }
+        
         exec($cmd, $Res);
         for ($i = 0; $i < count($Res); $i++) {
             $Res[$i] = explode("|", $Res[$i]);
@@ -444,7 +462,24 @@ class App
     {
         $ChanID = $Data["ChanID"];
         $DownloaderPath = $this->GetConfig("DownloaderPath");
-        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
+        $ChannData = $this->GetChannel($ID);
+        $UseProxy = intval($ChannData["UseProxy"]) == 1;
+        if ($UseProxy) {
+          $ProxyURL = $ChannData["ProxyURL"];
+          if ($ProxyURL) {
+              $ProxyPort = $ChannData["ProxyPort"];
+              $ProxyUser = $ChannData["ProxyUser"];
+              $ProxyPass = $ChannData["ProxyPass"];
+          } else {
+              $ProxyURL = $this->GetConfig("ProxyURL");
+              $ProxyPort = $this->GetConfig("ProxyPort");
+              $ProxyUser = $this->GetConfig("ProxyUser");
+              $ProxyPass = $this->GetConfig("ProxyPass");
+          }
+        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
+        } else {
+          $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ID --checkkey=1";
+        }
         $this->execInBackground($cmd);
         sleep(1);
     }
@@ -546,7 +581,7 @@ class App
     public function TestMPD($Data)
     {
         $Url = $Data["MPD"];
-        $UseProxy = $Data["UseProxy"];
+        $UseProxy = intval($Data["UseProxy"]) == 1;
         $Useragent = $Data["Useragent"];
         if ($Useragent == "") {
             $Useragent = $this->GetConfig("DownloadUseragent");

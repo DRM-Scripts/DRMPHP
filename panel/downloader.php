@@ -995,8 +995,8 @@ if ($ChID) {
     $PlaylistLimit = intval($ChData["PlaylistLimit"]) >= 3 ? $ChData["PlaylistLimit"] : $PlaylistLimit;
 
     if (!isset($Options["proxyurl"])) {
-        $UseProxy = $ChData["UseProxy"];
-        if ($ChData["UseProxy"]) {
+        $UseProxy = intval($ChData["UseProxy"]) == 1;
+        if ($UseProxy) {
             if ($ChData["ProxyURL"]) {
                 $Proxy["URL"] = $ChData["ProxyURL"];
                 $Proxy["Port"] = $ChData["ProxyPort"];
