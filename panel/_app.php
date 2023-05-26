@@ -41,19 +41,70 @@ class App
     }
     public function Login($UserID, $Password)
     {
-        $sql = "select * from users where UserID=:UserID";
+        $sql = "SELECT * FROM users WHERE UserID = :UserID";
         $st = $this->DB->prepare($sql);
         $st->bindParam(":UserID", $UserID);
         $st->execute();
         $line = $st->fetch();
-        if ($line["Password"] == $Password) {
-            $sql = "update users set LastAccess='" . date("Y-m-d H:i:s") . "' where UserID='$UserID'";
-            $this->DB->exec($sql);
-            return $line;
+
+        if ($line) {
+            if (!password_needs_rehash($line["Password"], PASSWORD_DEFAULT)) {
+                // Password is already hashed, verify it
+                if (password_verify($Password, $line["Password"])) {
+                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                    $st = $this->DB->prepare($sql);
+                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                    $st->bindParam(":UserID", $UserID);
+                    $st->execute();
+                    return $line;
+                }
+            } else {
+                // Password is not hashed, update it to a hashed version
+                $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $hashedPassword);
+                $st->bindParam(":UserID", $UserID);
+                $st->execute();
+
+                if (password_verify($Password, $hashedPassword)) {
+                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                    $st = $this->DB->prepare($sql);
+                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                    $st->bindParam(":UserID", $UserID);
+                    $st->execute();
+                    return $line;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function ChangePassword($UserID, $CurrentPassword, $NewPassword)
+    {
+        // Check if the current password is correct
+        $loggedInUser = $this->Login($UserID, $CurrentPassword);
+
+        if ($loggedInUser != null && isset($loggedInUser["ID"])) {
+            try {
+                // Update the password
+                $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :ID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $hashedPassword);
+                $st->bindParam(":ID", $UserID);
+                $st->execute();
+
+            } catch (PDOException $e) {
+                // Handle the database error
+                echo "Database Error: " . $e->getMessage();
+            }
         } else {
-            return false;
+            return false; // Current password is incorrect
         }
     }
+
     public function GetChannel($ID)
     {
         $sql = "select * from channels where ID=:ID";
@@ -137,7 +188,7 @@ class App
 
     public function GetAllChannels($Search = null)
     {
-        if ($Search["search"]) {
+        if ($Search != null && $Search["search"]) {
             if ($Search["SearchChanName"]) {
                 $Cond1 = " and ChannelName like '%" . $Search["SearchChanName"] . "%'";
             }
@@ -174,7 +225,7 @@ class App
 
         $UseProxy = intval($Data["useProxy"]);
         $ProxyURL = $Data["proxyUrl"];
-        $ProxyPort = $Data["proxyPort"];
+        $ProxyPort = intval($Data["proxyPort"]);
         $ProxyUser = $Data["proxyUser"];
         $ProxyPass = $Data["proxyPassword"];
 
@@ -196,7 +247,7 @@ class App
 
         if ($ID == 0) {
             $sql = "insert into channels (
-      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`, 'UseProxy', 'ProxyURL', 'ProxyPort', 'ProxyUser', 'ProxyPass'
+      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`, `UseProxy`, `ProxyURL`, `ProxyPort`, `ProxyUser`, `ProxyPass`
       ) values (
       :ChannelName, :Manifest, :CatId, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output, :UseProxy, :ProxyURL, :ProxyPort, :ProxyUser, :ProxyPass
       )";
@@ -219,6 +270,10 @@ class App
             $st->bindParam(":ProxyPass", $ProxyPass);
             $st->execute();
             $ID = $this->DB->lastInsertId();
+
+            if ($ID == 0) {
+                return "Error while inserting channel";
+            }
             $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
             for ($i = 0; $i < count($KID); $i++) {
                 if ($KID[$i] == "" || $Key[$i] == "") {
@@ -310,7 +365,6 @@ class App
                 $st->execute();
             }
 
-
             $removeExistingHeadersSql = "DELETE FROM channel_headers WHERE ChannelID=:ChannelID";
             $st = $this->DB->prepare($removeExistingHeadersSql);
             $st->bindParam(":ChannelID", $ID);
@@ -338,7 +392,25 @@ class App
     }
     public function Parse($ID)
     {
-        $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+        $Data = $this->GetChannel($ID);
+        $UseProxy = intval($Data["UseProxy"]) == 1;
+        if ($UseProxy) {
+            $ProxyURL = $Data["ProxyURL"];
+            if ($ProxyURL) {
+                $ProxyPort = $Data["ProxyPort"];
+                $ProxyUser = $Data["ProxyUser"];
+                $ProxyPass = $Data["ProxyPass"];
+            } else {
+                $ProxyURL = $this->GetConfig("ProxyURL");
+                $ProxyPort = $this->GetConfig("ProxyPort");
+                $ProxyUser = $this->GetConfig("ProxyUser");
+                $ProxyPass = $this->GetConfig("ProxyPass");
+            }
+            $cmd = "php downloader.php --mode=infoshort --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass";
+        } else {
+            $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+        }
+
         exec($cmd, $Res);
         for ($i = 0; $i < count($Res); $i++) {
             $Res[$i] = explode("|", $Res[$i]);
@@ -440,7 +512,24 @@ class App
     {
         $ChanID = $Data["ChanID"];
         $DownloaderPath = $this->GetConfig("DownloaderPath");
-        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
+        $ChannData = $this->GetChannel($ChanID);
+        $UseProxy = intval($ChannData["UseProxy"]) == 1;
+        if ($UseProxy) {
+            $ProxyURL = $ChannData["ProxyURL"];
+            if ($ProxyURL) {
+                $ProxyPort = $ChannData["ProxyPort"];
+                $ProxyUser = $ChannData["ProxyUser"];
+                $ProxyPass = $ChannData["ProxyPass"];
+            } else {
+                $ProxyURL = $this->GetConfig("ProxyURL");
+                $ProxyPort = $this->GetConfig("ProxyPort");
+                $ProxyUser = $this->GetConfig("ProxyUser");
+                $ProxyPass = $this->GetConfig("ProxyPass");
+            }
+            $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
+        } else {
+            $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
+        }
         $this->execInBackground($cmd);
         sleep(1);
     }
@@ -542,7 +631,7 @@ class App
     public function TestMPD($Data)
     {
         $Url = $Data["MPD"];
-        $UseProxy = $Data["UseProxy"];
+        $UseProxy = intval($Data["UseProxy"]) == 1;
         $Useragent = $Data["Useragent"];
         if ($Useragent == "") {
             $Useragent = $this->GetConfig("DownloadUseragent");
@@ -888,26 +977,123 @@ class App
         }
         return $All;
     }
+    private function GetURL($URL)
+    {
+        //chrome user agent
+        $userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36";
+        $headers = array(
+            'Connection: Keep-Alive',
+            'User-Agent: ' . $userAgent,
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // set header
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+    private function HexToBase64($String)
+    {
+        $data = hex2bin($String);
+        $base64 = base64_encode($data);
+        return $base64;
+    }
+    private function Base64ToHex($String)
+    {
+        $data = base64_decode($String);
+        $hex = bin2hex($data);
+        return $hex;
+    }
+    private function IsValidWidevinePSSH($PSSH)
+    {
+        $psshHex = $this->Base64ToHex($PSSH);
+        $psshHex = strtoupper($psshHex);
+        $widevineId = "EDEF8BA979D64ACEA3C827DCD51D21ED";
+        $widevineIdPos = strpos($psshHex, $widevineId);
+        if ($widevineIdPos !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private function ExtractKidFromPSSH($PSSH)
+    {
+      $psshHex = $this->Base64ToHex($PSSH);
+      $psshHex = strtoupper($psshHex);
+      $widevineId = "EDEF8BA979D64ACEA3C827DCD51D21ED";
+      $widevineIdPos = strpos($psshHex, $widevineId);
+      if ($widevineIdPos !== false) {
+          $kidPos = $widevineIdPos + strlen($widevineId) + 8;
+          $kidSplitter = "1210";
+          $kidLength = 32;
+          $psshSplit = substr($psshHex, $kidPos);
+          $kidPotential = explode($kidSplitter, $psshSplit);
+          if (count($kidPotential) > 1) {
+              foreach($kidPotential as $kid) {
+                  if (strlen($kid) >= $kidLength) {
+                      $kid = strtolower(substr($kid, 0, $kidLength));
+                      if(!in_array($kid, $kidArray))
+                      {
+                        $kidArray[] = $kid;
+                      }
+                  }
+              }
+          }
+      }
+      return $kidArray;
+    }
+    public function GetPSSH($URL)
+    {
+        $data = $this->GetURL($URL);
+        // Use regex to extract pssh value
+        $pattern = '/<(?:cenc:pssh|pssh)\s*[^>]*>(.*?)<\/(?:cenc:pssh|pssh)>/s';
+        $validPssh = '';
+        preg_match_all($pattern, $data, $matches);
+        foreach ($matches[1] as $pssh) {
+            if ($this->IsValidWidevinePSSH($pssh)) {
+                return $pssh;
+                break;
+            }
+        }
+        return null;
+    }
     public function GetKID($URL)
     {
         $data = file_get_contents($URL);
         $posDefault = strpos($data, "default_KID");
         $posMarlin = strpos($data, "marlin:kid");
-
-        if ($posDefault !== false) {
-            $kid = substr($data, $posDefault + 13, 36);
-            $kid = str_replace("-", "", $kid);
-        } elseif ($posMarlin !== false) {
-            $kidStart = $posMarlin + 10;
-            $kidEnd = strpos($data, "</mas:MarlinContentId>", $kidStart);
-            $kid = substr($data, $kidStart, $kidEnd - $kidStart);
-            $kid = str_replace("urn:marlin:kid:", "", $kid);
-            $kid = ltrim($kid, ":");
-        } else {
-            return null; // Return null if neither "default_KID" nor "marlin:kid" is found
+        $pssh = $this->GetPSSH($URL);
+        $kidArray = array();
+        if ($pssh !== null) {
+            $kidArray = $this->ExtractKidFromPSSH($pssh);
+        }
+        // pssh not include any kid
+        if (count($kidArray) == 0) {
+            if ($posDefault !== false) {
+                $kid = substr($data, $posDefault + 13, 36);
+                $kid = str_replace("-", "", $kid);
+                // check if kid is already in kid array
+                if (!in_array($kid, $kidArray)) {
+                    $kidArray[] = $kid;
+                }
+            } elseif ($posMarlin !== false) {
+                $kidStart = $posMarlin + 10;
+                $kidEnd = strpos($data, "</mas:MarlinContentId>", $kidStart);
+                $kid = substr($data, $kidStart, $kidEnd - $kidStart);
+                $kid = str_replace("urn:marlin:kid:", "", $kid);
+                $kid = ltrim($kid, ":");
+                if (!in_array($kid, $kidArray)) {
+                    $kidArray[] = $kid;
+                }
+            } else {
+                return null; // Return null if neither "default_KID" nor "marlin:kid" is found
+            }
         }
 
-        return $kid;
+        return $kidArray;
     }
         function GetUsers(){
         $sql = "SELECT * FROM users";

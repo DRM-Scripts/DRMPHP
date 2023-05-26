@@ -65,7 +65,7 @@
     }
     case "GetKID":{
       $kid=$App->GetKID($_POST["URL"]);
-      echo $kid;
+      echo json_encode($kid);
       break;
     }
     case "DeleteCat":{
