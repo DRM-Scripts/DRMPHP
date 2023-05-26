@@ -41,19 +41,70 @@ class App
     }
     public function Login($UserID, $Password)
     {
-        $sql = "select * from users where UserID=:UserID";
+        $sql = "SELECT * FROM users WHERE UserID = :UserID";
         $st = $this->DB->prepare($sql);
         $st->bindParam(":UserID", $UserID);
         $st->execute();
         $line = $st->fetch();
-        if ($line["Password"] == $Password) {
-            $sql = "update users set LastAccess='" . date("Y-m-d H:i:s") . "' where UserID='$UserID'";
-            $this->DB->exec($sql);
-            return $line;
+
+        if ($line) {
+            if (!password_needs_rehash($line["Password"], PASSWORD_DEFAULT)) {
+                // Password is already hashed, verify it
+                if (password_verify($Password, $line["Password"])) {
+                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                    $st = $this->DB->prepare($sql);
+                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                    $st->bindParam(":UserID", $UserID);
+                    $st->execute();
+                    return $line;
+                }
+            } else {
+                // Password is not hashed, update it to a hashed version
+                $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $hashedPassword);
+                $st->bindParam(":UserID", $UserID);
+                $st->execute();
+
+                if (password_verify($Password, $hashedPassword)) {
+                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                    $st = $this->DB->prepare($sql);
+                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                    $st->bindParam(":UserID", $UserID);
+                    $st->execute();
+                    return $line;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function ChangePassword($UserID, $CurrentPassword, $NewPassword)
+    {
+        // Check if the current password is correct
+        $loggedInUser = $this->Login($UserID, $CurrentPassword);
+
+        if ($loggedInUser) {
+            try {
+                // Update the password
+                $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :ID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $hashedPassword);
+                $st->bindParam(":ID", $UserID);
+                $st->execute();
+
+            } catch (PDOException $e) {
+                // Handle the database error
+                echo "Database Error: " . $e->getMessage();
+            }
         } else {
-            return false;
+            return false; // Current password is incorrect
         }
     }
+
     public function GetChannel($ID)
     {
         $sql = "select * from channels where ID=:ID";
@@ -220,7 +271,7 @@ class App
             $st->execute();
             $ID = $this->DB->lastInsertId();
 
-            if($ID == 0) {
+            if ($ID == 0) {
                 return "Error while inserting channel";
             }
             $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
@@ -314,7 +365,6 @@ class App
                 $st->execute();
             }
 
-
             $removeExistingHeadersSql = "DELETE FROM channel_headers WHERE ChannelID=:ChannelID";
             $st = $this->DB->prepare($removeExistingHeadersSql);
             $st->bindParam(":ChannelID", $ID);
@@ -345,22 +395,22 @@ class App
         $Data = $this->GetChannel($ID);
         $UseProxy = intval($Data["UseProxy"]) == 1;
         if ($UseProxy) {
-          $ProxyURL = $Data["ProxyURL"];
-          if ($ProxyURL) {
-              $ProxyPort = $Data["ProxyPort"];
-              $ProxyUser = $Data["ProxyUser"];
-              $ProxyPass = $Data["ProxyPass"];
-          } else {
-              $ProxyURL = $this->GetConfig("ProxyURL");
-              $ProxyPort = $this->GetConfig("ProxyPort");
-              $ProxyUser = $this->GetConfig("ProxyUser");
-              $ProxyPass = $this->GetConfig("ProxyPass");
-          }
-        $cmd = "php downloader.php --mode=infoshort --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass";
+            $ProxyURL = $Data["ProxyURL"];
+            if ($ProxyURL) {
+                $ProxyPort = $Data["ProxyPort"];
+                $ProxyUser = $Data["ProxyUser"];
+                $ProxyPass = $Data["ProxyPass"];
+            } else {
+                $ProxyURL = $this->GetConfig("ProxyURL");
+                $ProxyPort = $this->GetConfig("ProxyPort");
+                $ProxyUser = $this->GetConfig("ProxyUser");
+                $ProxyPass = $this->GetConfig("ProxyPass");
+            }
+            $cmd = "php downloader.php --mode=infoshort --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass";
         } else {
-          $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+            $cmd = "php downloader.php --mode=infoshort --chid=$ID";
         }
-        
+
         exec($cmd, $Res);
         for ($i = 0; $i < count($Res); $i++) {
             $Res[$i] = explode("|", $Res[$i]);
@@ -465,20 +515,20 @@ class App
         $ChannData = $this->GetChannel($ChanID);
         $UseProxy = intval($ChannData["UseProxy"]) == 1;
         if ($UseProxy) {
-          $ProxyURL = $ChannData["ProxyURL"];
-          if ($ProxyURL) {
-              $ProxyPort = $ChannData["ProxyPort"];
-              $ProxyUser = $ChannData["ProxyUser"];
-              $ProxyPass = $ChannData["ProxyPass"];
-          } else {
-              $ProxyURL = $this->GetConfig("ProxyURL");
-              $ProxyPort = $this->GetConfig("ProxyPort");
-              $ProxyUser = $this->GetConfig("ProxyUser");
-              $ProxyPass = $this->GetConfig("ProxyPass");
-          }
-        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
+            $ProxyURL = $ChannData["ProxyURL"];
+            if ($ProxyURL) {
+                $ProxyPort = $ChannData["ProxyPort"];
+                $ProxyUser = $ChannData["ProxyUser"];
+                $ProxyPass = $ChannData["ProxyPass"];
+            } else {
+                $ProxyURL = $this->GetConfig("ProxyURL");
+                $ProxyPort = $this->GetConfig("ProxyPort");
+                $ProxyUser = $this->GetConfig("ProxyUser");
+                $ProxyPass = $this->GetConfig("ProxyPass");
+            }
+            $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
         } else {
-          $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
+            $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
         }
         $this->execInBackground($cmd);
         sleep(1);
