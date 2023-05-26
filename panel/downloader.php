@@ -101,6 +101,9 @@ function InitiateFolders($ChName, $WorkPath)
     mkdir($WorkPath . "/" . $ChName . "/hls", 777, true);
     mkdir($WorkPath . "/" . $ChName . "/log", 777, true);
     mkdir($WorkPath . "/" . $ChName . "/aria", 777, true);
+    if (!file_exists($WorkPath . "/" . $ChName . "/cache")) {
+        mkdir($WorkPath . "/" . $ChName . "/cache", 777, true);
+    }
 
     array_map('unlink', array_filter((array) glob("tmp/*")));
     array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/seg/*")));
@@ -122,7 +125,6 @@ function LoadMPD($mpd_url, $UseProxy, $Proxy, $Useragent, $customHeaders = [])
 {
     $data = Download($mpd_url, $UseProxy, $Proxy, $Useragent, $customHeaders);
     if ($data) {
-        //$loaded = simplexml_load_file($mpd_url);
         $loaded = simplexml_load_string($data);
         if ($loaded) {
             $dom_sxe1 = dom_import_simplexml($loaded);
@@ -876,6 +878,15 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     DoLog("Got Result : $page");
     return $page;
 }
+function DownloadRetry($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHeaders = [], $maxRetries = 5)
+{
+    for ($i = 0; $i < $maxRetries; $i++) {
+        $page = Download($url, $UseProxy, $Proxy, $Useragent, $customHeaders);
+        if ($page) {
+            return $page;
+        }
+    }
+}
 function DoLog($Msg)
 {
     global $WorkPath, $ChName, $ScreenLog, $Config;
@@ -1213,7 +1224,7 @@ try {
                     $current_representation = 0;
                     $current_adaptation_set++;
                 }
-                
+
                 $aHeaderUrl = $a_url[0][0];
                 $vHeaderUrl = $v_url[0];
 
@@ -1242,16 +1253,33 @@ try {
                     }
                 }
 
+                $aHeaderFile = $WorkPath . "/" . $ChName . "/cache/ainit_" . md5($aHeaderUrl) . ".mp4";
+                $vHeaderFile = $WorkPath . "/" . $ChName . "/cache/vinit_" . md5($vHeaderUrl) . ".mp4";
+
                 if ($aHeader == "") {
-                    DoLog("Downloading audio header: " . $aHeaderUrl);
-                    $aHeader = Download($aHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                    if (!file_exists($aHeaderFile)) {
+                        DoLog("Downloading audio header: " . $aHeaderUrl);
+                        $aHeader = DownloadRetry($aHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                        if ($aHeader && !file_exists($aHeaderFile)) {
+                            file_put_contents($aHeaderFile, $aHeader);
+                        }
+                    } else {
+                        $aHeader = file_get_contents($aHeaderFile);
+                    }
                 }
                 if ($vHeader == "") {
-                    DoLog("Downloading video header: " . $vHeaderUrl);
-                    $vHeader = Download($vHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                    if (!file_exists($vHeaderFile)) {
+                        DoLog("Downloading video header: " . $vHeaderUrl);
+                        $vHeader = DownloadRetry($vHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                        if ($vHeader && !file_exists($vHeaderFile)) {
+                            file_put_contents($vHeaderFile, $vHeader);
+                        }
+                    } else {
+                        $vHeader = file_get_contents($vHeaderFile);
+                    }
                 }
 
-                DoLog("Determining timeline strat/end");
+                DoLog("Determining timeline start/end");
                 for ($i = $Start; $i < $End; $i++) {
                     if ($v_url[$i] != "") {
                         $TimelineItem["v"] = $v_url[$i];
@@ -1292,10 +1320,10 @@ try {
                     for ($i = 0; $i < count($DTimeline); $i++) {
                         for ($k = 0; $k < count($DTimeline[$i]["a"]); $k++) {
                             DoLog("   Downloading audio segment: " . $DTimeline[$i]["a"][$k]);
-                            $aData[$k] .= Download($DTimeline[$i]["a"][$k], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                            $aData[$k] .= DownloadRetry($DTimeline[$i]["a"][$k], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                         }
                         DoLog("   Downloading video segment: " . $DTimeline[$i]["v"]);
-                        $vData .= Download($DTimeline[$i]["v"], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                        $vData .= DownloadRetry($DTimeline[$i]["v"], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                         $SegmentCounter++;
                         DoLog("   Segments: $SegmentCounter / $SegmentJoiner done");
                         $SegCounter++;
