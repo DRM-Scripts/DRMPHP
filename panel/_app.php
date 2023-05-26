@@ -462,7 +462,7 @@ class App
     {
         $ChanID = $Data["ChanID"];
         $DownloaderPath = $this->GetConfig("DownloaderPath");
-        $ChannData = $this->GetChannel($ID);
+        $ChannData = $this->GetChannel($ChanID);
         $UseProxy = intval($ChannData["UseProxy"]) == 1;
         if ($UseProxy) {
           $ProxyURL = $ChannData["ProxyURL"];
