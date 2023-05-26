@@ -676,6 +676,7 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
     file_put_contents($VideoEncFileName, $vSeg);
     $dec = $Mp4Decrypt . $keyString . $VideoEncFileName . " " . $VideoDecFileName . " --show-progress " . $Redirect;
     exec($dec);
+    DoLog("Decrypting video : $videoEncFileName - $videoDecFileName - $vSeg");
 
     $MyFFMpegCMD = str_replace("-i", "", $MyFFMpegCMD);
     $MyFFMpegCMD = str_replace("[VIDEO]", " -i " . $VideoDecFileName, $MyFFMpegCMD);
@@ -1210,6 +1211,8 @@ try {
                     $current_representation = 0;
                     $current_adaptation_set++;
                 }
+
+                DoLog("Audio Url List : ". json_encode($a_url));
                 $aHeaderUrl = $a_url[0][0];
                 $vHeaderUrl = $v_url[0];
 
