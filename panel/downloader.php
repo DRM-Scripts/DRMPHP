@@ -839,18 +839,16 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     $ch = @curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
 
-    // $head[] = "Connection: keep-alive";
-    // $head[] = "Keep-Alive: 300";
-    // $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
-    // $head[] = "Accept-Language: en-us,en;q=0.5";
+    $head[] = "Connection: keep-alive";
+    $head[] = "Keep-Alive: 300";
+    $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    $head[] = "Accept-Language: en-us,en;q=0.5";
 
     if (count($customHeaders) > 0) {
         foreach ($customHeaders as $customHeader) {
             $head[] = $customHeader["Value"];
         }
     }
-
-    DoLog("Custom headers : " . json_encode($head) . PHP_EOL);
 
     if ($UseProxy) {
         $ProxyPassUser = $Proxy["User"] . ":" . $Proxy["Pass"];
@@ -875,7 +873,6 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $page = curl_exec($ch);
     curl_close($ch);
-    DoLog("Got Result : $page");
     return $page;
 }
 function DownloadRetry($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHeaders = [], $maxRetries = 5)
