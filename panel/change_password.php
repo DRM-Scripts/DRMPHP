@@ -8,7 +8,7 @@ if(!$App->LoggedIn())header('location: login.php');
   <style>
     /* Your custom styles here */
   </style>
-  <body data-sidebar="dark" onload="redirect()">
+  <body data-sidebar="dark">
     <div id="layout-wrapper">
       <?php include "_header.php"?>
       <?php include "_sidebar.php"?>
@@ -37,7 +37,7 @@ if(!$App->LoggedIn())header('location: login.php');
                   <div class="card-body">
                     <h4 class="card-title mb-4">Success</h4>
                     <p>Your password has been successfully changed.</p>
-                    <p>You will redirected to login page in 5 seconds ....</a></p>
+                    <p><a href="dashboard.php">Go back to the dashboard</a></p>
                   </div>
                 </div>
               </div>
@@ -58,14 +58,5 @@ if(!$App->LoggedIn())header('location: login.php');
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
     <script src="assets/js/app.js"></script>
-    <script type="text/javascript">
-        function redirect () {
-         var interval = setInterval(logout, 5000);
-        }
-        function logout() {
-         document.location.href = 'login.php';
-         clearInterval(interval);
-      }
-    </script>
   </body>
 </html>
