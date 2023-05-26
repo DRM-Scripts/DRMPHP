@@ -847,7 +847,7 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
         }
     }
 
-    DoLog("Downloading from: " . $url, "INFO Headers : " . json_encode($head) . " Proxy: " . json_encode($Proxy) . " Useragent: " . $Useragent, "INFO");
+    DoLog("Downloading from: " . $url . "INFO Headers : " . json_encode($head) . " Proxy: " . json_encode($Proxy) . " Useragent: " . $Useragent .  "INFO");
 
     if ($UseProxy) {
         $ProxyPassUser = $Proxy["User"] . ":" . $Proxy["Pass"];
