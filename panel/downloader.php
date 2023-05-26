@@ -848,6 +848,8 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
         }
     }
 
+    DoLog("Custom headers : " . json_encode($head) . PHP_EOL);
+
     if ($UseProxy) {
         $ProxyPassUser = $Proxy["User"] . ":" . $Proxy["Pass"];
         curl_setopt($ch, CURLOPT_PROXY, $Proxy["URL"]);
@@ -866,8 +868,8 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $page = curl_exec($ch);
     curl_close($ch);
@@ -1211,8 +1213,7 @@ try {
                     $current_representation = 0;
                     $current_adaptation_set++;
                 }
-
-                DoLog("Audio Url List : ". json_encode($a_url));
+                
                 $aHeaderUrl = $a_url[0][0];
                 $vHeaderUrl = $v_url[0];
 
