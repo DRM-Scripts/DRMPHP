@@ -219,6 +219,10 @@ class App
             $st->bindParam(":ProxyPass", $ProxyPass);
             $st->execute();
             $ID = $this->DB->lastInsertId();
+            
+            if($ID == 0) {
+                return "Error while inserting channel";
+            }
             $keySql = "insert into channel_keys (ChannelID, KID, `Key`) values (:ChannelID, :KID, :Key)";
             for ($i = 0; $i < count($KID); $i++) {
                 if ($KID[$i] == "" || $Key[$i] == "") {
