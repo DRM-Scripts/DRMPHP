@@ -317,11 +317,11 @@ class App
       , `AudioID`=:AudioID
       , `VideoID`=:VideoID
       , `AllowedIP`=:AllowedIP
-      , `Output`=:Output,
-      , `UseProxy`=:UseProxy,
-      , `ProxyURL`=:ProxyURL,
-      , `ProxyPort`=:ProxyPort,
-      , `ProxyUser`=:ProxyUser,
+      , `Output`=:Output
+      , `UseProxy`=:UseProxy
+      , `ProxyURL`=:ProxyURL
+      , `ProxyPort`=:ProxyPort
+      , `ProxyUser`=:ProxyUser
       , `ProxyPass`=:ProxyPass
       where ID=:ID";
             $st = $this->DB->prepare($sql);
