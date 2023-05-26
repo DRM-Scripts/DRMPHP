@@ -870,6 +870,7 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $page = curl_exec($ch);
     curl_close($ch);
+    DoLog("Got Result : $page");
     return $page;
 }
 function DoLog($Msg)
@@ -1016,7 +1017,7 @@ if ($ChID) {
     ini_set("error_log", $WorkPath . "/" . $ChName . "/log/php_error.log");
 }
 if (!$Mpd_Url) {
-    echo "must provid valid mpd url";
+    echo "must provide valid mpd url";
     die();
 }
 $DownloadIndex = 1;
@@ -1029,7 +1030,7 @@ try {
     $Xml_DOM = null;
     $StartTime = time();
 
-    $Xml_DOM = LoadMPD($Mpd_Url, $UseProxy, $Proxy, $Useragent);
+    $Xml_DOM = LoadMPD($Mpd_Url, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
     if (!$Xml_DOM) {
         echo "can not load mpd.";
         die();
