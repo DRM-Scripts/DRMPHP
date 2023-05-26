@@ -196,7 +196,7 @@ class App
 
         if ($ID == 0) {
             $sql = "insert into channels (
-      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`, 'UseProxy', 'ProxyURL', 'ProxyPort', 'ProxyUser', 'ProxyPass'
+      `ChannelName`, `Manifest`, `CatId`, `SegmentJoiner`, `PlaylistLimit`, `URLListLimit`, `DownloadUseragent`, `AudioID`, `VideoID`, `AllowedIP`, `Output`, `UseProxy`, `ProxyURL`, `ProxyPort`, `ProxyUser`, `ProxyPass`
       ) values (
       :ChannelName, :Manifest, :CatId, :SegmentJoiner, :PlaylistLimit, :URLListLimit, :DownloadUseragent, :AudioID, :VideoID, :AllowedIP, :Output, :UseProxy, :ProxyURL, :ProxyPort, :ProxyUser, :ProxyPass
       )";
@@ -219,7 +219,7 @@ class App
             $st->bindParam(":ProxyPass", $ProxyPass);
             $st->execute();
             $ID = $this->DB->lastInsertId();
-            
+
             if($ID == 0) {
                 return "Error while inserting channel";
             }
