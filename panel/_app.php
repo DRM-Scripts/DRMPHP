@@ -476,9 +476,9 @@ class App
               $ProxyUser = $this->GetConfig("ProxyUser");
               $ProxyPass = $this->GetConfig("ProxyPass");
           }
-        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
+        $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
         } else {
-          $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ID --checkkey=1";
+          $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
         }
         $this->execInBackground($cmd);
         sleep(1);
