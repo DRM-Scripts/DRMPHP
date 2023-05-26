@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($passwordChanged) {
             // Password change successful, redirect to a success page
-            header('location: passwordchanged.php');
+            header('location: password_changed.php');
             exit;
         } else {
             // Display an error message if password change fails
