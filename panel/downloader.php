@@ -49,7 +49,7 @@ function GetChannel($ChID)
     $st->execute();
     $line["Keys"] = $st->fetchAll();
 
-    $headersSql = "select * from channel_headers where ChannelID=:ID";
+    $headersSql = "select Value from channel_headers where ChannelID=:ID";
     $st = $db->prepare($keySql);
     $st->bindParam(":ID", $ChID);
     $st->execute();
@@ -991,6 +991,8 @@ if ($ChID) {
     $Keys = $ChData["Keys"];
     $CustomHeaders = $ChData["CustomHeaders"];
     $ChName = str_replace(" ", "_", $ChData["ChannelName"]);
+
+    DoLog("Got Custom Header " . json_encode($CustomHeaders) . "\r\n");
 
     $Useragent = $ChData["DownloadUseragent"] ? $ChData["DownloadUseragent"] : $Useragent;
     $SegmentJoiner = intval($ChData["SegmentJoiner"]) > 0 ? $ChData["SegmentJoiner"] : $SegmentJoiner;
