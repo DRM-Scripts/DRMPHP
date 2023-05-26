@@ -1,0 +1,3 @@
+26/05/23
+- Change Password: FIXED THANKS @obsecuremind
+- MultiKey Support: ADDED THANKS @ninjajiraiya
