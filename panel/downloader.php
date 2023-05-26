@@ -847,8 +847,6 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
         }
     }
 
-    DoLog("Downloading from: " . $url . "INFO Headers : " . json_encode($head) . " Proxy: " . json_encode($Proxy) . " Useragent: " . $Useragent . "INFO");
-
     if ($UseProxy) {
         $ProxyPassUser = $Proxy["User"] . ":" . $Proxy["Pass"];
         curl_setopt($ch, CURLOPT_PROXY, $Proxy["URL"]);
@@ -991,8 +989,6 @@ if ($ChID) {
     $Keys = $ChData["Keys"];
     $CustomHeaders = $ChData["CustomHeaders"];
     $ChName = str_replace(" ", "_", $ChData["ChannelName"]);
-
-    DoLog("Got Custom Header " . json_encode($CustomHeaders) . "\r\n");
 
     $Useragent = $ChData["DownloadUseragent"] ? $ChData["DownloadUseragent"] : $Useragent;
     $SegmentJoiner = intval($ChData["SegmentJoiner"]) > 0 ? $ChData["SegmentJoiner"] : $SegmentJoiner;
