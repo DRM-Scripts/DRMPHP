@@ -42,6 +42,7 @@ function GetChannel($ChID)
     $st->execute();
     $line = $st->fetch();
     $line["AudioIDs"] = explode(",", $line["AudioID"]);
+
     $keySql = "select * from channel_keys where ChannelID=:ID";
     $st = $db->prepare($keySql);
     $st->bindParam(":ID", $ChID);
@@ -845,6 +846,8 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
             $head[] = $customHeader["Value"];
         }
     }
+
+    DoLog("Downloading from: " . $url, "INFO Headers : " . json_encode($head) . " Proxy: " . json_encode($Proxy) . " Useragent: " . $Useragent, "INFO");
 
     if ($UseProxy) {
         $ProxyPassUser = $Proxy["User"] . ":" . $Proxy["Pass"];
