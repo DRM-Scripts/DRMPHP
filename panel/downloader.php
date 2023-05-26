@@ -660,7 +660,7 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
         $decKey = $key['Key'];
         $keyString .= "--key $kid:$decKey ";
     }
-    DoLog("Decrypting using key $keyString");
+    DoLog("Decrypting segment .... please wait .....");
     for ($k = 0; $k < count($aData); $k++) {
         $AudioEncFileName[] = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-" . $k . "-enc" . $audio_ext;
         $AudioDecFileName[] = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-" . $k . "-dec" . $audio_ext;
@@ -678,7 +678,6 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
     file_put_contents($VideoEncFileName, $vSeg);
     $dec = $Mp4Decrypt . $keyString . $VideoEncFileName . " " . $VideoDecFileName . " --show-progress " . $Redirect;
     exec($dec);
-    DoLog("Decrypting video : $videoEncFileName - $videoDecFileName - $vSeg");
 
     $MyFFMpegCMD = str_replace("-i", "", $MyFFMpegCMD);
     $MyFFMpegCMD = str_replace("[VIDEO]", " -i " . $VideoDecFileName, $MyFFMpegCMD);
