@@ -63,7 +63,7 @@ if(!$App->LoggedIn())header('location: login.php');
          var interval = setInterval(logout, 5000);
         }
         function logout() {
-         document.location.href = 'logout.php';
+         document.location.href = 'login.php';
          clearInterval(interval);
       }
     </script>
