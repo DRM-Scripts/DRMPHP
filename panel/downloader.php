@@ -837,10 +837,10 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     $ch = @curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
 
-    $head[] = "Connection: keep-alive";
-    $head[] = "Keep-Alive: 300";
-    $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
-    $head[] = "Accept-Language: en-us,en;q=0.5";
+    // $head[] = "Connection: keep-alive";
+    // $head[] = "Keep-Alive: 300";
+    // $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    // $head[] = "Accept-Language: en-us,en;q=0.5";
 
     if (count($customHeaders) > 0) {
         foreach ($customHeaders as $customHeader) {
