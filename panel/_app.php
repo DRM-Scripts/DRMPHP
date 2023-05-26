@@ -85,7 +85,7 @@ class App
     {
         // Check if the current password is correct
         $loggedInUser = $this->Login($UserID, $CurrentPassword);
-      
+
         if ($loggedInUser != null && isset($loggedInUser["ID"])) {
             try {
                 // Update the password
@@ -982,20 +982,28 @@ class App
         $data = file_get_contents($URL);
         $posDefault = strpos($data, "default_KID");
         $posMarlin = strpos($data, "marlin:kid");
+        $kidArray = array();
 
         if ($posDefault !== false) {
             $kid = substr($data, $posDefault + 13, 36);
             $kid = str_replace("-", "", $kid);
+            // check if kid is already in kid array
+            if (!in_array($kid, $kidArray)) {
+                $kidArray[] = $kid;
+            }
         } elseif ($posMarlin !== false) {
             $kidStart = $posMarlin + 10;
             $kidEnd = strpos($data, "</mas:MarlinContentId>", $kidStart);
             $kid = substr($data, $kidStart, $kidEnd - $kidStart);
             $kid = str_replace("urn:marlin:kid:", "", $kid);
             $kid = ltrim($kid, ":");
+            if (!in_array($kid, $kidArray)) {
+                $kidArray[] = $kid;
+            }
         } else {
             return null; // Return null if neither "default_KID" nor "marlin:kid" is found
         }
 
-        return $kid;
+        return $kidArray;
     }
 }
