@@ -25,7 +25,7 @@ if (isset($_SESSION['User']['UserID'])) {
 
     if ($passwordChanged) {
       // Password change successful, redirect to a success page
-      header('location: password_changed.php');
+      header('location: passwordchanged.php');
       exit;
     } else {
       // Display an error message if password change fails
