@@ -85,9 +85,8 @@ class App
     {
         // Check if the current password is correct
         $loggedInUser = $this->Login($UserID, $CurrentPassword);
-        echo $loggedInUser;
-
-        if ($loggedInUser) {
+      
+        if ($loggedInUser != null && isset($loggedInUser["ID"])) {
             try {
                 // Update the password
                 $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
