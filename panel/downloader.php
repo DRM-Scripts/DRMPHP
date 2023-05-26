@@ -50,7 +50,7 @@ function GetChannel($ChID)
     $line["Keys"] = $st->fetchAll();
 
     $headersSql = "select Value from channel_headers where ChannelID=:ID";
-    $st = $db->prepare($keySql);
+    $st = $db->prepare($headersSql);
     $st->bindParam(":ID", $ChID);
     $st->execute();
     $line["CustomHeaders"] = $st->fetchAll();
@@ -847,7 +847,7 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
         }
     }
 
-    DoLog("Downloading from: " . $url . "INFO Headers : " . json_encode($head) . " Proxy: " . json_encode($Proxy) . " Useragent: " . $Useragent .  "INFO");
+    DoLog("Downloading from: " . $url . "INFO Headers : " . json_encode($head) . " Proxy: " . json_encode($Proxy) . " Useragent: " . $Useragent . "INFO");
 
     if ($UseProxy) {
         $ProxyPassUser = $Proxy["User"] . ":" . $Proxy["Pass"];
