@@ -42,14 +42,15 @@ function GetChannel($ChID)
     $st->execute();
     $line = $st->fetch();
     $line["AudioIDs"] = explode(",", $line["AudioID"]);
+
     $keySql = "select * from channel_keys where ChannelID=:ID";
     $st = $db->prepare($keySql);
     $st->bindParam(":ID", $ChID);
     $st->execute();
     $line["Keys"] = $st->fetchAll();
 
-    $headersSql = "select * from channel_headers where ChannelID=:ID";
-    $st = $db->prepare($keySql);
+    $headersSql = "select Value from channel_headers where ChannelID=:ID";
+    $st = $db->prepare($headersSql);
     $st->bindParam(":ID", $ChID);
     $st->execute();
     $line["CustomHeaders"] = $st->fetchAll();
@@ -100,6 +101,9 @@ function InitiateFolders($ChName, $WorkPath)
     mkdir($WorkPath . "/" . $ChName . "/hls", 777, true);
     mkdir($WorkPath . "/" . $ChName . "/log", 777, true);
     mkdir($WorkPath . "/" . $ChName . "/aria", 777, true);
+    if (!file_exists($WorkPath . "/" . $ChName . "/cache")) {
+        mkdir($WorkPath . "/" . $ChName . "/cache", 777, true);
+    }
 
     array_map('unlink', array_filter((array) glob("tmp/*")));
     array_map('unlink', array_filter((array) glob($WorkPath . "/" . $ChName . "/seg/*")));
@@ -121,7 +125,6 @@ function LoadMPD($mpd_url, $UseProxy, $Proxy, $Useragent, $customHeaders = [])
 {
     $data = Download($mpd_url, $UseProxy, $Proxy, $Useragent, $customHeaders);
     if ($data) {
-        //$loaded = simplexml_load_file($mpd_url);
         $loaded = simplexml_load_string($data);
         if ($loaded) {
             $dom_sxe1 = dom_import_simplexml($loaded);
@@ -657,7 +660,7 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
         $decKey = $key['Key'];
         $keyString .= "--key $kid:$decKey ";
     }
-    DoLog("Decrypting using key $keyString");
+    DoLog("Decrypting segment .... please wait .....");
     for ($k = 0; $k < count($aData); $k++) {
         $AudioEncFileName[] = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-" . $k . "-enc" . $audio_ext;
         $AudioDecFileName[] = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-" . $k . "-dec" . $audio_ext;
@@ -686,7 +689,7 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
     $cmd = $FFMpegBin . " -copyts " . $MyFFMpegCMD . $Redirect;
 
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
-    $cmd = $FFMpegBin . " -hide_banner -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName ";
+    $cmd = $FFMpegBin . " -hide_banner -probesize 10M -analyzeduration 10M -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a aac -bsf:a aac_adtstoasc $Merged_FileName ";
     echo $cmd;
     $Res = null;
     exec($cmd, $Res);
@@ -864,12 +867,23 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $page = curl_exec($ch);
     curl_close($ch);
     return $page;
+}
+function DownloadRetry($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHeaders = [], $maxRetries = 5)
+{
+    for ($i = 0; $i < $maxRetries; $i++) {
+        $page = Download($url, $UseProxy, $Proxy, $Useragent, $customHeaders);
+        if ($page) {
+            return $page;
+        }
+        sleep(0.5);
+    }
+    return null;
 }
 function DoLog($Msg)
 {
@@ -1015,7 +1029,7 @@ if ($ChID) {
     ini_set("error_log", $WorkPath . "/" . $ChName . "/log/php_error.log");
 }
 if (!$Mpd_Url) {
-    echo "must provid valid mpd url";
+    echo "must provide valid mpd url";
     die();
 }
 $DownloadIndex = 1;
@@ -1028,7 +1042,7 @@ try {
     $Xml_DOM = null;
     $StartTime = time();
 
-    $Xml_DOM = LoadMPD($Mpd_Url, $UseProxy, $Proxy, $Useragent);
+    $Xml_DOM = LoadMPD($Mpd_Url, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
     if (!$Xml_DOM) {
         echo "can not load mpd.";
         die();
@@ -1208,6 +1222,7 @@ try {
                     $current_representation = 0;
                     $current_adaptation_set++;
                 }
+
                 $aHeaderUrl = $a_url[0][0];
                 $vHeaderUrl = $v_url[0];
 
@@ -1236,16 +1251,33 @@ try {
                     }
                 }
 
+                $aHeaderFile = $WorkPath . "/" . $ChName . "/cache/ainit_" . md5($aHeaderUrl) . ".mp4";
+                $vHeaderFile = $WorkPath . "/" . $ChName . "/cache/vinit_" . md5($vHeaderUrl) . ".mp4";
+
                 if ($aHeader == "") {
-                    DoLog("Downloading audio header: " . $aHeaderUrl);
-                    $aHeader = Download($aHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                    if (!file_exists($aHeaderFile)) {
+                        DoLog("Downloading audio header: " . $aHeaderUrl);
+                        $aHeader = DownloadRetry($aHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                        if ($aHeader && !file_exists($aHeaderFile)) {
+                            file_put_contents($aHeaderFile, $aHeader);
+                        }
+                    } else {
+                        $aHeader = file_get_contents($aHeaderFile);
+                    }
                 }
                 if ($vHeader == "") {
-                    DoLog("Downloading video header: " . $vHeaderUrl);
-                    $vHeader = Download($vHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                    if (!file_exists($vHeaderFile)) {
+                        DoLog("Downloading video header: " . $vHeaderUrl);
+                        $vHeader = DownloadRetry($vHeaderUrl, $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                        if ($vHeader && !file_exists($vHeaderFile)) {
+                            file_put_contents($vHeaderFile, $vHeader);
+                        }
+                    } else {
+                        $vHeader = file_get_contents($vHeaderFile);
+                    }
                 }
 
-                DoLog("Determining timeline strat/end");
+                DoLog("Determining timeline start/end");
                 for ($i = $Start; $i < $End; $i++) {
                     if ($v_url[$i] != "") {
                         $TimelineItem["v"] = $v_url[$i];
@@ -1286,10 +1318,10 @@ try {
                     for ($i = 0; $i < count($DTimeline); $i++) {
                         for ($k = 0; $k < count($DTimeline[$i]["a"]); $k++) {
                             DoLog("   Downloading audio segment: " . $DTimeline[$i]["a"][$k]);
-                            $aData[$k] .= Download($DTimeline[$i]["a"][$k], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                            $aData[$k] .= DownloadRetry($DTimeline[$i]["a"][$k], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                         }
                         DoLog("   Downloading video segment: " . $DTimeline[$i]["v"]);
-                        $vData .= Download($DTimeline[$i]["v"], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
+                        $vData .= DownloadRetry($DTimeline[$i]["v"], $UseProxy, $Proxy, $Useragent, $CustomHeaders);
                         $SegmentCounter++;
                         DoLog("   Segments: $SegmentCounter / $SegmentJoiner done");
                         $SegCounter++;
