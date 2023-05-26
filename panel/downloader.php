@@ -689,7 +689,7 @@ function JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, 
     $cmd = $FFMpegBin . " -copyts " . $MyFFMpegCMD . $Redirect;
 
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
-    $cmd = $FFMpegBin . " -hide_banner -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName ";
+    $cmd = $FFMpegBin . " -hide_banner -probesize 10M -analyzeduration 10M -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -bsf:a aac_adtstoasc $Merged_FileName ";
     echo $cmd;
     $Res = null;
     exec($cmd, $Res);
