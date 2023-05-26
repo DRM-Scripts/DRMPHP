@@ -241,9 +241,15 @@ class App
             return "KID and Key count not match";
         }
 
-        if($SegmentJoiner < 3) $this->GetConfig("SegmentJoiner");
-        if($PlaylistLimit < 3) $this->GetConfig("PlaylistLimit");
-        if($URLListLimit < 1) $this->GetConfig("URLListLimit");
+        if($SegmentJoiner < 3) {
+          $SegmentJoiner = $this->GetConfig("SegmentJoiner");
+        }
+        if($PlaylistLimit < 3) {
+          $PlaylistLimit = $this->GetConfig("PlaylistLimit");
+        }
+        if($URLListLimit < 1) {
+          $URLListLimit = $this->GetConfig("URLListLimit");
+        } 
 
         if ($ID == 0) {
             $sql = "insert into channels (
