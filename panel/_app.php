@@ -85,6 +85,7 @@ class App
     {
         // Check if the current password is correct
         $loggedInUser = $this->Login($UserID, $CurrentPassword);
+        echo $loggedInUser;
 
         if ($loggedInUser) {
             try {
