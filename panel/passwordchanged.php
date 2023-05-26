@@ -8,7 +8,7 @@ if(!$App->LoggedIn())header('location: login.php');
   <style>
     /* Your custom styles here */
   </style>
-  <body data-sidebar="dark">
+  <body data-sidebar="dark" onload="redirect()">
     <div id="layout-wrapper">
       <?php include "_header.php"?>
       <?php include "_sidebar.php"?>
