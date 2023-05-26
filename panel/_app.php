@@ -977,6 +977,40 @@ class App
         }
         return $All;
     }
+    private function GetURL($URL)
+    {
+        //chrome user agent 
+        $userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36";
+        $headers = array(
+            'Connection: Keep-Alive',
+            'User-Agent: ' . $userAgent,
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // set header
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+    private function HexToBase64($String) {
+        $data = hex2bin($String);
+        $base64 = base64_encode($data);
+        return $base64;
+    }
+    private function Base64ToHex($String) {
+        $data = base64_decode($String);
+        $hex = bin2hex($data);
+        return $hex;
+    }
+    public function GetPSSH($URL) {
+        $data = $this->GetURL($URL);
+        $pos = strpos($data, "pssh");
+        $pssh = substr($data, $pos + 6, 44);
+        return $pssh;
+    }
     public function GetKID($URL)
     {
         $data = file_get_contents($URL);
