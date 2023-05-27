@@ -476,6 +476,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
             })
             .done(function(data) {
                 let res = JSON.parse(data);
+                clearKey();
                 $('#KID\\[\\]').val(res[0]);
                 if (res.length > 1) {
                     for (i = 1; i < res.length; i++) {
@@ -484,6 +485,10 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                     }
                 }
             })
+    }
+
+    function clearKey() {
+        $('#keys').html('');
     }
 
     function addKey() {
