@@ -39,84 +39,87 @@ class App
             return false;
         }
     }
-	
-	public function getCurrentUserId() {
-    // Implement the logic to retrieve the current user's ID
-    // You can use your own logic or database queries to fetch the user ID
-    // Return the user ID
 
-    // Example implementation using session
-    if (isset($_SESSION['User']['ID'])) {
-        return $_SESSION['User']['ID'];
+    public function getCurrentUserId()
+    {
+        // Implement the logic to retrieve the current user's ID
+        // You can use your own logic or database queries to fetch the user ID
+        // Return the user ID
+
+        // Example implementation using session
+        if (isset($_SESSION['User']['ID'])) {
+            return $_SESSION['User']['ID'];
+        }
+
+        return null;
     }
 
-    return null;
-}
-
-function Login($UserID, $Password) {
-  $sql = "SELECT * FROM users WHERE UserID = :UserID";
-  $st = $this->DB->prepare($sql);
-  $st->bindParam(":UserID", $UserID);
-  $st->execute();
-  $line = $st->fetch();
-
-   if ($line) {
-    if (!password_needs_rehash($line["Password"], PASSWORD_DEFAULT)) {
-      // Password is already hashed, verify it
-      if (password_verify($Password, $line["Password"])) {
-        $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+    public function Login($UserID, $Password)
+    {
+        $sql = "SELECT * FROM users WHERE UserID = :UserID";
         $st = $this->DB->prepare($sql);
-        $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
         $st->bindParam(":UserID", $UserID);
         $st->execute();
-        return $line;
-      }
-    } else {
-      // Password is not hashed, update it to a hashed version
-      $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
-      $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
-      $st = $this->DB->prepare($sql);
-      $st->bindParam(":NewPassword", $hashedPassword);
-      $st->bindParam(":UserID", $UserID);
-      $st->execute();
+        $line = $st->fetch();
 
-      if (password_verify($Password, $hashedPassword)) {
-        $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
-        $st = $this->DB->prepare($sql);
-        $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
-        $st->bindParam(":UserID", $UserID);
-        $st->execute();
-        return $line;
-      }
+        if ($line) {
+            if (!password_needs_rehash($line["Password"], PASSWORD_DEFAULT)) {
+                // Password is already hashed, verify it
+                if (password_verify($Password, $line["Password"])) {
+                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                    $st = $this->DB->prepare($sql);
+                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                    $st->bindParam(":UserID", $UserID);
+                    $st->execute();
+                    return $line;
+                }
+            } else {
+                // Password is not hashed, update it to a hashed version
+                $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $hashedPassword);
+                $st->bindParam(":UserID", $UserID);
+                $st->execute();
+
+                if (password_verify($Password, $hashedPassword)) {
+                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                    $st = $this->DB->prepare($sql);
+                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                    $st->bindParam(":UserID", $UserID);
+                    $st->execute();
+                    return $line;
+                }
+            }
+        }
+
+        return false;
     }
-  }
 
-  return false;
-}
+    public function ChangePassword($UserID, $CurrentPassword, $NewPassword)
+    {
+        // Check if the current password is correct
+        $loggedInUser = $this->Login($UserID, $CurrentPassword);
 
+        if ($loggedInUser) {
+            try {
+                // Update the password
+                $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :ID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $hashedPassword);
+                $st->bindParam(":ID", $UserID);
+                $st->execute();
 
-function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
-  // Check if the current password is correct
-  $loggedInUser = $this->Login($UserID, $CurrentPassword);
-
-  if ($loggedInUser) {
-    try {
-      // Update the password
-      $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
-      $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :ID";
-      $st = $this->DB->prepare($sql);
-      $st->bindParam(":NewPassword", $hashedPassword);
-      $st->bindParam(":ID", $UserID);
-      $st->execute();
-
-    } catch (PDOException $e) {
-      // Handle the database error
-      echo "Database Error: " . $e->getMessage();
+            } catch (PDOException $e) {
+                // Handle the database error
+                echo "Database Error: " . $e->getMessage();
+            }
+        } else {
+            return false; // Current password is incorrect
+        }
     }
-  } else {
-    return false; // Current password is incorrect
-  }
-}
+    
     public function GetChannel($ID)
     {
         $sql = "select * from channels where ID=:ID";
@@ -253,15 +256,15 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
             return "KID and Key count not match";
         }
 
-        if($SegmentJoiner < 3) {
-          $SegmentJoiner = $this->GetConfig("SegmentJoiner");
+        if ($SegmentJoiner < 3) {
+            $SegmentJoiner = $this->GetConfig("SegmentJoiner");
         }
-        if($PlaylistLimit < 3) {
-          $PlaylistLimit = $this->GetConfig("PlaylistLimit");
+        if ($PlaylistLimit < 3) {
+            $PlaylistLimit = $this->GetConfig("PlaylistLimit");
         }
-        if($URLListLimit < 1) {
-          $URLListLimit = $this->GetConfig("URLListLimit");
-        } 
+        if ($URLListLimit < 1) {
+            $URLListLimit = $this->GetConfig("URLListLimit");
+        }
 
         if ($ID == 0) {
             $sql = "insert into channels (
@@ -1039,29 +1042,28 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
     }
     private function ExtractKidFromPSSH($PSSH)
     {
-      $psshHex = $this->Base64ToHex($PSSH);
-      $psshHex = strtoupper($psshHex);
-      $widevineId = "EDEF8BA979D64ACEA3C827DCD51D21ED";
-      $widevineIdPos = strpos($psshHex, $widevineId);
-      if ($widevineIdPos !== false) {
-          $kidPos = $widevineIdPos + strlen($widevineId) + 8;
-          $kidSplitter = "1210";
-          $kidLength = 32;
-          $psshSplit = substr($psshHex, $kidPos);
-          $kidPotential = explode($kidSplitter, $psshSplit);
-          if (count($kidPotential) > 1) {
-              foreach($kidPotential as $kid) {
-                  if (strlen($kid) >= $kidLength) {
-                      $kid = strtolower(substr($kid, 0, $kidLength));
-                      if(!in_array($kid, $kidArray))
-                      {
-                        $kidArray[] = $kid;
-                      }
-                  }
-              }
-          }
-      }
-      return $kidArray;
+        $psshHex = $this->Base64ToHex($PSSH);
+        $psshHex = strtoupper($psshHex);
+        $widevineId = "EDEF8BA979D64ACEA3C827DCD51D21ED";
+        $widevineIdPos = strpos($psshHex, $widevineId);
+        if ($widevineIdPos !== false) {
+            $kidPos = $widevineIdPos + strlen($widevineId) + 8;
+            $kidSplitter = "1210";
+            $kidLength = 32;
+            $psshSplit = substr($psshHex, $kidPos);
+            $kidPotential = explode($kidSplitter, $psshSplit);
+            if (count($kidPotential) > 1) {
+                foreach ($kidPotential as $kid) {
+                    if (strlen($kid) >= $kidLength) {
+                        $kid = strtolower(substr($kid, 0, $kidLength));
+                        if (!in_array($kid, $kidArray)) {
+                            $kidArray[] = $kid;
+                        }
+                    }
+                }
+            }
+        }
+        return $kidArray;
     }
     public function GetPSSH($URL)
     {
@@ -1113,7 +1115,8 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
 
         return $kidArray;
     }
-        function GetUsers(){
+    public function GetUsers()
+    {
         $sql = "SELECT * FROM users";
         $st = $this->DB->prepare($sql);
         $st->execute();
