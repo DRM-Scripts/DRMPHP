@@ -44,19 +44,25 @@ if(!$App->LoggedIn())header('location: login.php');
                     <div class="col-lg-3">
                       <div class="mb-3">
                         <label class="form-label">Channel Name</label>
-                        <input type="text" class="form-control" id="SearchChanName" name="SearchChanName" placeholder="Enter channel name" value="<?=$_POST["SearchChanName"]?>">
+                        <input type="text" class="form-control" id="SearchChanName" name="SearchChanName" placeholder="Enter channel name" value="<?php
+echo $_POST["SearchChanName"];
+?>">
                       </div>
                     </div>
                     <div class="col-lg-3">
                       <div class="mb-3">
                         <label class="form-label">MPD Url</label>
-                        <input type="text" class="form-control" id="SearchMPDUrl" name="SearchMPDUrl" placeholder="Enter manifest url" value="<?=$_POST["SearchMPDUrl"]?>">
+                        <input type="text" class="form-control" id="SearchMPDUrl" name="SearchMPDUrl" placeholder="Enter manifest url" value="<?php
+echo $_POST["SearchMPDUrl"];
+?>">
                       </div>
                     </div>
                     <div class="col-lg-3">
                       <div class="mb-3">
                         <label class="form-label">Category</label>
-                        <input type="text" class="form-control" id="SearchCatName" name="SearchCatName" placeholder="Enter category" value="<?=$_POST["SearchCatName"]?>">
+                        <input type="text" class="form-control" id="SearchCatName" name="SearchCatName" placeholder="Enter category" value="<?php
+echo $_POST["SearchCatName"];
+?>">
                       </div>
                     </div>
                     <div class="col-lg-3">
@@ -99,8 +105,12 @@ if(!$App->LoggedIn())header('location: login.php');
                               $info = json_decode($Chan["info"], true);
                           ?>
                               <tr>
-                                <td id="status_<?=$Chan["ID"]?>" style="text-align: center;">
-                                  <?=$Chan["ID"]?><br>
+                                <td id="status_<?php
+echo $Chan["ID"];
+?>" style="text-align: center;">
+                                  <?php
+echo $Chan["ID"];
+?><br>
                                   <?php if($Chan["Status"]=="Downloading" && (!file_exists("/proc/".$Chan["PID"]) ||!file_exists("/proc/".$Chan["FPID"]))){?>
                                     <span class="badge badge-pill badge-soft-danger">Error</span>
                                   <?php }else {?>
@@ -123,36 +133,70 @@ if(!$App->LoggedIn())header('location: login.php');
                                   <?php
                                   $Url="http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/".dirname($_SERVER['SCRIPT_NAME'])."/api.php?action=m3u8&id=".str_replace(" ", "_", $Chan["ChannelName"]);
                                   ?>
-                                  <a class="btn btn-sm btn-default" target="_blank" href='<?=$Url?>'><span class="bx bxs-playlist"></span></a>
-                                  <a href="add.php?id=<?=$Chan["ID"]?>" class="text-body fw-bold"><?=$Chan["ChannelName"]?></a> <small style="float:right"><span class="badge badge-soft-pink">Category</span> <?=$Chan["CatName"]?></small><br>
-                                  <small style="margin-left: 32px;"><span class="badge badge-soft-info">Audio</span> <?=$Chan["AudioID"]?> <span class="badge badge-soft-info">Video</span> <?=$Chan["VideoID"]?></small>
+                                  <a class="btn btn-sm btn-default" target="_blank" href='<?php
+echo $Url;
+?>'><span class="bx bxs-playlist"></span></a>
+                                  <a href="add.php?id=<?php
+echo $Chan["ID"]?>" class="text-body fw-bold"><?=$Chan["ChannelName"]?></a> <small style="float:right"><span class="badge badge-soft-pink">Category</span> <?=$Chan["CatName"];
+?></small><br>
+                                  <small style="margin-left: 32px;"><span class="badge badge-soft-info">Audio</span> <?php
+echo $Chan["AudioID"]?> <span class="badge badge-soft-info">Video</span> <?=$Chan["VideoID"];
+?></small>
                                 </td>
-                                <td><span id="uptime_<?=$Chan["ID"]?>"><?=$Chan["Uptime"]?></span></td>
-                                <td><span id="res_<?=$Chan["ID"]?>"><?=($info["width"]."x".$info["height"])?></span></td>
-                                <td><span id="bitrate_<?=$Chan["ID"]?>"><?=round($info["bitrate"]/1000, 1)."kb"?></span></td>
-                                <td><span id="fps_<?=$Chan["ID"]?>"><?=str_replace("/1", "", $info["framerate"])?></span></td>
-                                <td><span id="codecs_<?=$Chan["ID"]?>"><?=($info["vcodec"]."/".$info["acodec"])?></span></td>
-                                <td><span id="pid_<?=$Chan["ID"]?>"><?=$Chan["PID"]?></span></td>
-                                <td><span id="fpid_<?=$Chan["ID"]?>"><?=$Chan["FPID"]?></span></td>
+                                <td><span id="uptime_<?php
+echo $Chan["ID"]?>"><?=$Chan["Uptime"];
+?></span></td>
+                                <td><span id="res_<?php
+echo $Chan["ID"]?>"><?=($info["width"]."x".$info["height"]);
+?></span></td>
+                                <td><span id="bitrate_<?php
+echo $Chan["ID"]?>"><?=round($info["bitrate"]/1000, 1)."kb";
+?></span></td>
+                                <td><span id="fps_<?php
+echo $Chan["ID"]?>"><?=str_replace("/1", "", $info["framerate"]);
+?></span></td>
+                                <td><span id="codecs_<?php
+echo $Chan["ID"]?>"><?=($info["vcodec"]."/".$info["acodec"]);
+?></span></td>
+                                <td><span id="pid_<?php
+echo $Chan["ID"]?>"><?=$Chan["PID"];
+?></span></td>
+                                <td><span id="fpid_<?php
+echo $Chan["ID"]?>"><?=$Chan["FPID"];
+?></span></td>
                                 <td>
                                   <div class="btn-group btn-group-sm">
-                                    <a class="btn btn-outline-dark" title="hhh" href="add.php?id=<?=$Chan["ID"]?>"><i class="bx bxs-edit-alt"></i></a>
+                                    <a class="btn btn-outline-dark" title="hhh" href="add.php?id=<?php
+echo $Chan["ID"];
+?>"><i class="bx bxs-edit-alt"></i></a>
                                     <!--
-                                    <a class="btn btn-outline-info" href="javascript: void(0)" onclick="ShowConfig('<?=$Chan["ID"]?>')"><i class="bx bxs-cog"></i></a>
+                                    <a class="btn btn-outline-info" href="javascript: void(0)" onclick="ShowConfig('<?php
+echo $Chan["ID"];
+?>')"><i class="bx bxs-cog"></i></a>
                                     -->
                                     <?php if($Chan["Status"]=="Stopped"){ ?>
-                                      <a href="javascript: void(0)" class="btn btn-outline-success" onclick="Download('<?=$Chan["ID"]?>', '<?=$Chan["Manifest"]?>', '<?=$Chan["AudioID"]?>', '<?=$Chan["VideoID"]?>')"><i class="bx bxs-download"></i></a>
+                                      <a href="javascript: void(0)" class="btn btn-outline-success" onclick="Download('<?php
+echo $Chan["ID"]?>', '<?=$Chan["Manifest"]?>', '<?=$Chan["AudioID"]?>', '<?=$Chan["VideoID"];
+?>')"><i class="bx bxs-download"></i></a>
                                     <?php } else { ?>
-                                      <a class="btn btn-outline-warning" href="javascript: void(0)" onclick="StopDownload('<?=$Chan["ID"]?>')"><i class="bx bx-stop"></i></a>
+                                      <a class="btn btn-outline-warning" href="javascript: void(0)" onclick="StopDownload('<?php
+echo $Chan["ID"];
+?>')"><i class="bx bx-stop"></i></a>
                                     <?php }?>
                                   </div>
 
-                                  <a class="btn btn-light btn-sm" href="log.php?id=<?=$Chan["ID"]?>&l=20"><i class="bx bx-clipboard"></i></a>
-                                  <a class="btn btn-danger btn-sm" href="javascript: void(0)" onclick="DeleteChannel('<?=$Chan["ID"]?>')"><i class="bx bx-trash"></i></a>
+                                  <a class="btn btn-light btn-sm" href="log.php?id=<?php
+echo $Chan["ID"];
+?>&l=20"><i class="bx bx-clipboard"></i></a>
+                                  <a class="btn btn-danger btn-sm" href="javascript: void(0)" onclick="DeleteChannel('<?php
+echo $Chan["ID"];
+?>')"><i class="bx bx-trash"></i></a>
                                 </td>
                               </tr>
                               <tr>
-                                <td colspan="7" id="Config_<?=$Chan["ID"]?>" style="display:none;padding-left:100px"></td>
+                                <td colspan="7" id="Config_<?php
+echo $Chan["ID"];
+?>" style="display:none;padding-left:100px"></td>
                               </tr>
                             <?}
                           }else{

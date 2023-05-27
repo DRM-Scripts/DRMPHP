@@ -41,7 +41,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                                 <h4 class="mb-sm-0 font-size-18">
                                     <?php if($ChanID){ ?>
-                                    Edit channel: <span class="bg-light"><?=$Data["ChannelName"]?></span>
+                                    Edit channel: <span class="bg-light"><?php
+echo $Data["ChannelName"];
+?></span>
                                     <?php }else{?>
                                     Add New channel
                                     <?php }?>
@@ -81,7 +83,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <label class="col-md-2 col-form-label">Name</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="ChannelName"
-                                                    name="ChannelName" value="<?=$Data["ChannelName"]?>">
+                                                    name="ChannelName" value="<?php
+echo $Data["ChannelName"];
+?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -92,8 +96,12 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                           for($i=0;$i<count($Cats);$i++){
                             if($Cats[$i]["CatID"]==$Data["CatID"])$Selected="selected";else $Selected="";
                             ?>
-                                                    <option <?=$Selected?> value="<?=$Cats[$i]["CatID"]?>">
-                                                        <?=$Cats[$i]["CatName"]?></option>
+                                                    <option <?php
+echo $Selected?> value="<?=$Cats[$i]["CatID"];
+?>">
+                                                        <?php
+echo $Cats[$i]["CatName"];
+?></option>
                                                     <?
                           }
                           ?>
@@ -105,14 +113,17 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <label class="col-md-2 col-form-label">MPD</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="Manifest" name="Manifest"
-                                                    value="<?=$Data["Manifest"]?>">
+                                                    value="<?php
+echo $Data["Manifest"];
+?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">KID</label>
                                             <div class="col-md-10">
-                                                <input class="form-control" type="text" id="KID[]" name="KID[]"
-                                                    value="<?=$Data["Keys"][0]["KID"]?>">
+                                                <input class="form-control" type="text" id="KID[]" name="KID[]" value="<?php
+echo $Data["Keys"][0]["KID"];
+?>">
                                                 <a href="javascript: void(0)" class="btn btn-primary btn-sm"
                                                     onclick="GetKID()">Get KID</a>
                                             </div>
@@ -120,8 +131,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Key</label>
                                             <div class="col-md-10">
-                                                <input class="form-control" type="text" id="Key[]" name="Key[]"
-                                                    value="<?=$Data["Keys"][0]["Key"]?>">
+                                                <input class="form-control" type="text" id="Key[]" name="Key[]" value="<?php
+echo $Data["Keys"][0]["Key"];
+?>">
                                                 <a href="javascript: void(0)" class="btn btn-primary btn-sm"
                                                     onclick="addKey()">Add Key</a>
                                             </div>
@@ -135,14 +147,18 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                                 <label class="col-md-2 col-form-label">KID</label>
                                                 <div class="col-md-10">
                                                     <input class="form-control" type="text" id="KID[]" name="KID[]"
-                                                        value="<?=$Data["Keys"][$i]["KID"]?>">
+                                                        value="<?php
+echo $Data["Keys"][$i]["KID"];
+?>">
                                                 </div>
                                             </div>
                                             <div class="mb-3 row">
                                                 <label class="col-md-2 col-form-label">Key</label>
                                                 <div class="col-md-10">
                                                     <input class="form-control" type="text" id="Key[]" name="Key[]"
-                                                        value="<?=$Data["Keys"][$i]["Key"]?>">
+                                                        value="<?php
+echo $Data["Keys"][$i]["Key"];
+?>">
                                                 </div>
                                             </div>
                                             <?php
@@ -158,21 +174,27 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="SegmentJoiner"
                                                     name="SegmentJoiner" onchange="CalcTime()" onkeyup="CalcTime()"
-                                                    value="<?=$Data["SegmentJoiner"]?>">
+                                                    value="<?php
+echo $Data["SegmentJoiner"];
+?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Playlist</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="PlaylistLimit"
-                                                    name="PlaylistLimit" value="<?=$Data["PlaylistLimit"]?>">
+                                                    name="PlaylistLimit" value="<?php
+echo $Data["PlaylistLimit"];
+?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Timeline</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="URLListLimit"
-                                                    name="URLListLimit" value="<?=$Data["URLListLimit"]?>">
+                                                    name="URLListLimit" value="<?php
+echo $Data["URLListLimit"];
+?>">
                                             </div>
                                         </div>
 
@@ -180,7 +202,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <label class="col-md-2 col-form-label">Useragent</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="DownloadUseragent"
-                                                    name="DownloadUseragent" value="<?=$Data["DownloadUseragent"]?>">
+                                                    name="DownloadUseragent" value="<?php
+echo $Data["DownloadUseragent"];
+?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -219,8 +243,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Allowed IP</label>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" id="AllowedIP"
-                                                    name="AllowedIP"><?=$Data["AllowedIP"]?></textarea>
+                                                <textarea class="form-control" id="AllowedIP" name="AllowedIP"><?php
+echo $Data["AllowedIP"];
+?></textarea>
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -228,9 +253,13 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <div class="col-md-10">
                                                 <Select id="AutoRestart" name="AutoRestart">
                                                     <?php if($Data["AutoRestart"]==1)$Selected="selected";else $Selected="";?>
-                                                    <option <?=$Selected?> value="1">Enabled</option>
+                                                    <option <?php
+echo $Selected;
+?> value="1">Enabled</option>
                                                     <?php if($Data["AutoRestart"]==0)$Selected="selected";else $Selected="";?>
-                                                    <option <?=$Selected?> value="0">Disabled</option>
+                                                    <option <?php
+echo $Selected;
+?> value="0">Disabled</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -281,11 +310,19 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         for($i=0;$i<count($Variants);$i++){
                           if(in_array($Variants[$i]["AudioID"], $AudioIDs)) $Checked="checked";else $Checked="";
                           ?>
-                                                <label for="AudioID_<?=$Variants[$i]["AudioID"]?>">
-                                                    <input <?=$Checked?> type="checkbox" name="AudioIDs[]"
-                                                        id="AudioID_<?=$Variants[$i]["AudioID"]?>"
-                                                        value="<?=$Variants[$i]["AudioID"]?>">
-                                                    <?=$Variants[$i]["AudioID"]?>
+                                                <label for="AudioID_<?php
+echo $Variants[$i]["AudioID"];
+?>">
+                                                    <input <?php
+echo $Checked;
+?> type="checkbox" name="AudioIDs[]" id="AudioID_<?php
+echo $Variants[$i]["AudioID"];
+?>" value="<?php
+echo $Variants[$i]["AudioID"];
+?>">
+                                                    <?php
+echo $Variants[$i]["AudioID"];
+?>
                                                 </label><br>
                                                 <?php
                         }
@@ -298,7 +335,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                               for($i=0;$i<count($Data["AudioIDs"]);$i++){
                                 if($Data["AudioID"] == $Data["AudioIDs"][$i][0])$Selected="selected";else $Selected="";
                             ?>
-                                <option <?=$Selected?> value="<?=$Data["AudioIDs"][$i][0]?>"><?=$Data["AudioIDs"][$i][0]?></option>
+                                <option <?php
+echo $Selected?> value="<?=$Data["AudioIDs"][$i][0]?>"><?=$Data["AudioIDs"][$i][0];
+?></option>
                             <?php
                               }
                             }
@@ -317,8 +356,12 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                               for($i=0;$i<count($Data["VideoIDs"]);$i++){
                                 if($Data["VideoID"] == $Data["VideoIDs"][$i][0])$Selected="selected";else $Selected="";
                             ?>
-                                                    <option <?=$Selected?> value="<?=$Data["VideoIDs"][$i][0]?>">
-                                                        <?=$Data["VideoIDs"][$i][0]?></option>
+                                                    <option <?php
+echo $Selected?> value="<?=$Data["VideoIDs"][$i][0];
+?>">
+                                                        <?php
+echo $Data["VideoIDs"][$i][0];
+?></option>
                                                     <?php
                               }
                             }
@@ -334,9 +377,13 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <div class="col-md-10">
                                                 <Select id="AutoRestart" name="AutoRestart">
                                                     <?php if($Data["UseProxy"]==1)$Selected="selected";else $Selected="";?>
-                                                    <option <?=$Selected?> value="1">Yes</option>
+                                                    <option <?php
+echo $Selected;
+?> value="1">Yes</option>
                                                     <?php if($Data["UseProxy"]==0)$Selected="selected";else $Selected="";?>
-                                                    <option <?=$Selected?> value="0">No</option>
+                                                    <option <?php
+echo $Selected;
+?> value="0">No</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -344,14 +391,18 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <label class="col-md-2 col-form-label">Proxy Host</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="proxyUrl" name="proxyUrl"
-                                                    value="<?=$Data["ProxyURL"]?>">
+                                                    value="<?php
+echo $Data["ProxyURL"];
+?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Proxy Port</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="proxyPort" name="proxyPort"
-                                                    value="<?=$Data["ProxyPort"]?>">
+                                                    value="<?php
+echo $Data["ProxyPort"];
+?>">
                                             </div>
                                         </div>
 
@@ -359,7 +410,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <label class="col-md-2 col-form-label">Proxy User</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="proxyUser" name="proxyUser"
-                                                    value="<?=$Data["ProxyUser"]?>">
+                                                    value="<?php
+echo $Data["ProxyUser"];
+?>">
                                             </div>
                                         </div>
 
@@ -367,7 +420,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                                             <label class="col-md-2 col-form-label">Proxy Password</label>
                                             <div class="col-md-10">
                                                 <input class="form-control" type="text" id="proxyPassword"
-                                                    name="proxyPassword" value="<?=$Data["ProxyPass"]?>">
+                                                    name="proxyPassword" value="<?php
+echo $Data["ProxyPass"];
+?>">
                                             </div>
                                         </div>
                                     </div>
@@ -377,7 +432,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                         <input type="hidden" name="Dur" id="Dur" value="0">
                         <input type="hidden" name="Update" id="Update" value="0">
                         <input type="hidden" name="Save" value="1">
-                        <input type="hidden" name="ID" value="<?=$ChanID?>">
+                        <input type="hidden" name="ID" value="<?php
+echo $ChanID;
+?>">
                     </form>
                 </div>
             </div>
@@ -500,7 +557,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
         $target = $('#keys');
         $target.append(
             '<div class="mb-3 row"><label class="col-md-2 col-form-label">KID</label><div class="col-md-10"><input class="form-control" type="text" id="KID[]" name="KID[]" value="" placeholder="KID"></div></div><div class="mb-3 row"><label class="col-md-2 col-form-label">Key</label><div class="col-md-10"><input type="text" class="form-control" name="Key[]" placeholder="KEY"></div></div>'
-            );
+        );
     }
 
     function addHeader() {
@@ -512,7 +569,7 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
         $target = $('#headers');
         $target.append(
             '<div class="mb-3 row"><label class="col-md-2 col-form-label">Header</label><div class="col-md-10"><input class="form-control" type="text" id="customHeaders[]" name="customHeaders[]" value="" placeholder="Header"></div></div>'
-            );
+        );
     }
     </script>
 </body>

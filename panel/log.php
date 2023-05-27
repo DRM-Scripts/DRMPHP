@@ -54,13 +54,21 @@ $LogName2=$x[0];
                     <div class="nav-item" style="float:right" >
                       Lines: <select id="Lines" onchange="ReloadPage()">
                         <?php if($Lines==20)$Selected="selected";else $Selected="";?>
-                        <option <?=$Selected?> value="20">20</option>
+                        <option <?php
+echo $Selected;
+?> value="20">20</option>
                         <?php if($Lines==50)$Selected="selected";else $Selected="";?>
-                        <option <?=$Selected?> value="50">50</option>
+                        <option <?php
+echo $Selected;
+?> value="50">50</option>
                         <?php if($Lines==100)$Selected="selected";else $Selected="";?>
-                        <option <?=$Selected?> value="100">100</option>
+                        <option <?php
+echo $Selected;
+?> value="100">100</option>
                         <?php if($Lines==500)$Selected="selected";else $Selected="";?>
-                        <option <?=$Selected?> value="500">500</option>
+                        <option <?php
+echo $Selected;
+?> value="500">500</option>
                       </select>
                     </div>                  
                     <ul class="nav nav-tabs" role="tablist">
@@ -80,14 +88,22 @@ $LogName2=$x[0];
                     <div class="tab-content p-3 text-muted">
                       <div class="tab-pane active" id="home" role="tabpanel">
                         <p class="mb-0">
-                          <h4 class="card-title mb-4">FFMpeg Log <small style="color:gray"><?=$LogName1?></small></h4>
-                          <div class="table-responsive"><pre style="height:500px;overflow: auto;"><?=$FFMpegLog?></pre></div>
+                          <h4 class="card-title mb-4">FFMpeg Log <small style="color:gray"><?php
+echo $LogName1;
+?></small></h4>
+                          <div class="table-responsive"><pre style="height:500px;overflow: auto;"><?php
+echo $FFMpegLog;
+?></pre></div>
                         </p>
                       </div>
                       <div class="tab-pane" id="profile" role="tabpanel">
                         <p class="mb-0">
-                          <h4 class="card-title mb-4">PHP Log <small style="color:gray"><?=$LogName2?></small></h4>
-                          <div class="table-responsive"><pre style="height:500px;overflow: auto;"><?=$PHPLog?></pre></div>
+                          <h4 class="card-title mb-4">PHP Log <small style="color:gray"><?php
+echo $LogName2;
+?></small></h4>
+                          <div class="table-responsive"><pre style="height:500px;overflow: auto;"><?php
+echo $PHPLog;
+?></pre></div>
                         </p>
                       </div>
                     </div>
@@ -114,7 +130,9 @@ $LogName2=$x[0];
     <script>
       function ReloadPage(){
         lines=$('#Lines').val();
-        window.location.replace("?id=<?=$ID?>&l="+lines);
+        window.location.replace("?id=<?php
+echo $ID;
+?>&l="+lines);
       }
     </script>
   </body>

@@ -33,7 +33,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                   <h4 class="mb-sm-0 font-size-18">
                     <?php if($CatID){ ?>
-                      Edit Category: <span class="bg-light"><?=$Data["CatName"]?></span>
+                      Edit Category: <span class="bg-light"><?php
+echo $Data["CatName"];
+?></span>
                     <?php }else{?>
                       Add New Category
                     <?php }?>
@@ -70,7 +72,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                       <div class="mb-3 row">
                         <label class="col-md-2 col-form-label">Name</label>
                         <div class="col-md-10">
-                          <input class="form-control" type="text" id="CatName" name="CatName" value="<?=$Data["CatName"]?>">
+                          <input class="form-control" type="text" id="CatName" name="CatName" value="<?php
+echo $Data["CatName"];
+?>">
                         </div>
                       </div>
                                             
@@ -88,7 +92,9 @@ if(isset($_POST["Save"]) && $_POST["Save"]==1){
                 </div>
               </div>
               <input type="hidden" name="Save" value="1">
-              <input type="hidden" name="ID" value="<?=$CatID?>">
+              <input type="hidden" name="ID" value="<?php
+echo $CatID;
+?>">
             </form>
           </div>
         </div>
