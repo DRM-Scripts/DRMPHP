@@ -71,20 +71,26 @@ if(isset($_POST["Backup"]) && $_POST["Backup"] ==1){
                 <div class="card-body">
                   <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link <?=$active1?>" data-bs-toggle="tab" href="#t1" role="tab" aria-selected="<?=$selected1?>">
+                      <a class="nav-link <?php
+echo $active1?>" data-bs-toggle="tab" href="#t1" role="tab" aria-selected="<?=$selected1;
+?>">
                         <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                         <span class="d-none d-sm-block">General</span>    
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link <?=$active2?>" data-bs-toggle="tab" href="#t2" role="tab" aria-selected="<?=$selected2?>">
+                      <a class="nav-link <?php
+echo $active2?>" data-bs-toggle="tab" href="#t2" role="tab" aria-selected="<?=$selected2;
+?>">
                         <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                         <span class="d-none d-sm-block">Backup</span>    
                       </a>
                     </li>
                   </ul>
                   <div class="tab-content p-3">
-                    <div class="tab-pane <?=$active1?>" id="t1" role="tabpanel">
+                    <div class="tab-pane <?php
+echo $active1;
+?>" id="t1" role="tabpanel">
                       <div class="mb-0">
                         <h4 class="card-title">Global Settings</h4>
                         <p class="card-title-desc">This settings affects all channels. Global settings is used when individual channels settings not set.</p>
@@ -92,85 +98,113 @@ if(isset($_POST["Backup"]) && $_POST["Backup"] ==1){
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Segment Download Path</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="DownloadPath" name="DownloadPath" value="<?=$App->GetConfig("DownloadPath")?>">
+                              <input class="form-control" type="text" id="DownloadPath" name="DownloadPath" value="<?php
+echo $App->GetConfig("DownloadPath");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Downloader Path</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="DownloaderPath" name="DownloaderPath" value="<?=$App->GetConfig("DownloaderPath")?>">
+                              <input class="form-control" type="text" id="DownloaderPath" name="DownloaderPath" value="<?php
+echo $App->GetConfig("DownloaderPath");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">DB Backup Path</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="BackupPath" name="BackupPath" value="<?=$App->GetConfig("BackupPath")?>">
+                              <input class="form-control" type="text" id="BackupPath" name="BackupPath" value="<?php
+echo $App->GetConfig("BackupPath");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Max Log Size (bytes)</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="MaxLogSize" name="MaxLogSize" value="<?=$App->GetConfig("MaxLogSize")?>">
+                              <input class="form-control" type="text" id="MaxLogSize" name="MaxLogSize" value="<?php
+echo $App->GetConfig("MaxLogSize");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Mp4Decrypt Path</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="BinPath" name="BinPath" value="<?=$App->GetConfig("BinPath")?>">
+                              <input class="form-control" type="text" id="BinPath" name="BinPath" value="<?php
+echo $App->GetConfig("BinPath");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">M3U8 Download URL</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="M3UDownloadURL" name="M3UDownloadURL" value="<?=$App->GetConfig("M3UDownloadURL")?>">
+                              <input class="form-control" type="text" id="M3UDownloadURL" name="M3UDownloadURL" value="<?php
+echo $App->GetConfig("M3UDownloadURL");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Segment Joiner Count</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="SegmentJoiner" name="SegmentJoiner" value="<?=$App->GetConfig("SegmentJoiner")?>">
+                              <input class="form-control" type="text" id="SegmentJoiner" name="SegmentJoiner" value="<?php
+echo $App->GetConfig("SegmentJoiner");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Default Playlist Items</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="PlaylistLimit" name="PlaylistLimit" value="<?=$App->GetConfig("PlaylistLimit")?>">
+                              <input class="form-control" type="text" id="PlaylistLimit" name="PlaylistLimit" value="<?php
+echo $App->GetConfig("PlaylistLimit");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Default Timeline List Limit</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="URLListLimit" name="URLListLimit" value="<?=$App->GetConfig("URLListLimit")?>">
+                              <input class="form-control" type="text" id="URLListLimit" name="URLListLimit" value="<?php
+echo $App->GetConfig("URLListLimit");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">FFMpeg Merge Command</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="FFMpegCMD" name="FFMpegCMD" value="<?=$App->GetConfig("FFMpegCMD")?>">
+                              <input class="form-control" type="text" id="FFMpegCMD" name="FFMpegCMD" value="<?php
+echo $App->GetConfig("FFMpegCMD");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Delete Encrypted</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="DeleteEncryptedAfterDecrypt" name="DeleteEncryptedAfterDecrypt" value="<?=$App->GetConfig("DeleteEncryptedAfterDecrypt")?>">
+                              <input class="form-control" type="text" id="DeleteEncryptedAfterDecrypt" name="DeleteEncryptedAfterDecrypt" value="<?php
+echo $App->GetConfig("DeleteEncryptedAfterDecrypt");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Delete Decrypted</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="DeleteDecryptedAfterMerge" name="DeleteDecryptedAfterMerge" value="<?=$App->GetConfig("DeleteDecryptedAfterMerge")?>">
+                              <input class="form-control" type="text" id="DeleteDecryptedAfterMerge" name="DeleteDecryptedAfterMerge" value="<?php
+echo $App->GetConfig("DeleteDecryptedAfterMerge");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Download Useragent</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="DownloadUseragent" name="DownloadUseragent" value="<?=$App->GetConfig("DownloadUseragent")?>">
+                              <input class="form-control" type="text" id="DownloadUseragent" name="DownloadUseragent" value="<?php
+echo $App->GetConfig("DownloadUseragent");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
                             <label class="col-md-2 col-form-label">Auto restart channels</label>
                             <div class="col-md-10">
-                              <input class="form-control" type="text" id="AutoRestart" name="AutoRestart" value="<?=$App->GetConfig("AutoRestart")?>">
+                              <input class="form-control" type="text" id="AutoRestart" name="AutoRestart" value="<?php
+echo $App->GetConfig("AutoRestart");
+?>">
                             </div>
                           </div>
                           <div class="mb-3 row">
@@ -183,7 +217,9 @@ if(isset($_POST["Backup"]) && $_POST["Backup"] ==1){
                         </form>
                       </div>
                     </div>
-                    <div class="tab-pane <?=$active2?>" id="t2" role="tabpanel">
+                    <div class="tab-pane <?php
+echo $active2;
+?>" id="t2" role="tabpanel">
                       <div class="mb-0">
                         <h4 class="card-title mb-3">Database Backup</h4>
                         <h3 class="card-title">Create backup</h3>
@@ -191,13 +227,17 @@ if(isset($_POST["Backup"]) && $_POST["Backup"] ==1){
                         <?php
                         if($BackupRes[0]=="Error"){
                           ?>
-                          <pre style="color:red">Error creating backup. Please check system logs.<br><b>Error: <?=$BakcupRes[1]?></b></pre>
+                          <pre style="color:red">Error creating backup. Please check system logs.<br><b>Error: <?php
+echo $BakcupRes[1];
+?></b></pre>
                           <?php
                         }else{
                           if(isset($BackupRes[0])){
                             file_put_contents("getbkup.txt", 1);
                           ?>
-                          <pre style="color:lime">Backup created at: <?=$BackupRes[0]?><br>Filename: <?=$BackupRes[1]?></pre>Click to <a target="_blank" href="getbkup.php?file=<?=$BackupRes[1]?>">Download</a><br><br>
+                          <pre style="color:lime">Backup created at: <?php
+echo $BackupRes[0]?><br>Filename: <?=$BackupRes[1]?></pre>Click to <a target="_blank" href="getbkup.php?file=<?=$BackupRes[1];
+?>">Download</a><br><br>
                           <?php
                           }
                         }
@@ -221,11 +261,19 @@ if(isset($_POST["Backup"]) && $_POST["Backup"] ==1){
                         <table class="table table-sm m-0" style="width:100%">
                         <?php for($i=0;$i<count($Backups);$i++){?>
                           <tr>
-                            <td ><?=$Backups[$i]?></td>
+                            <td ><?php
+echo $Backups[$i];
+?></td>
                             <td style="width:400px">
-                            <button type="button" onclick="RestoreBackup('<?=$Backups[$i]?>')" class="btn btn-outline-success btn-label waves-light" type="button" ><i class="bx bx-reset label-icon"></i> Restore </button>
-                            <button type="button" onclick="DownloadBackup('<?=$Backups[$i]?>')" class="btn btn-outline-info btn-label waves-light" type="button" ><i class="bx bx-download label-icon"></i> Download</button>
-                            <button type="button" onclick="DeleteBackup('<?=$Backups[$i]?>')" class="btn btn-outline-danger btn-label waves-light" type="button" ><i class="bx bx-trash label-icon"></i> Delete</button>                            
+                            <button type="button" onclick="RestoreBackup('<?php
+echo $Backups[$i];
+?>')" class="btn btn-outline-success btn-label waves-light" type="button" ><i class="bx bx-reset label-icon"></i> Restore </button>
+                            <button type="button" onclick="DownloadBackup('<?php
+echo $Backups[$i];
+?>')" class="btn btn-outline-info btn-label waves-light" type="button" ><i class="bx bx-download label-icon"></i> Download</button>
+                            <button type="button" onclick="DeleteBackup('<?php
+echo $Backups[$i];
+?>')" class="btn btn-outline-danger btn-label waves-light" type="button" ><i class="bx bx-trash label-icon"></i> Delete</button>                            
                             </td>                            
                           </tr>
                           <?php }?>

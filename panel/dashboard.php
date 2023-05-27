@@ -191,7 +191,9 @@ if(!$App->LoggedIn())header('location: login.php');
                         <div class="d-flex">
                           <div class="flex-grow-1">
                             <p class="text-muted fw-medium">Channels</p>
-                            <h4 class="mb-0"><?=$Stat["Total"]?></h4>
+                            <h4 class="mb-0"><?php
+echo $Stat["Total"];
+?></h4>
                           </div>
 
                           <div class="flex-shrink-0 align-self-center">
@@ -211,7 +213,9 @@ if(!$App->LoggedIn())header('location: login.php');
                         <div class="d-flex">
                           <div class="flex-grow-1">
                             <p class="text-muted fw-medium">Online</p>
-                            <h4 class="mb-0"><?=$Stat["Online"]?></h4>
+                            <h4 class="mb-0"><?php
+echo $Stat["Online"];
+?></h4>
                           </div>
 
                           <div class="flex-shrink-0 align-self-center ">
@@ -231,7 +235,9 @@ if(!$App->LoggedIn())header('location: login.php');
                         <div class="d-flex">
                           <div class="flex-grow-1">
                             <p class="text-muted fw-medium">Offline</p>
-                            <h4 class="mb-0"><?=$Stat["Offline"]?></h4>
+                            <h4 class="mb-0"><?php
+echo $Stat["Offline"];
+?></h4>
                           </div>
 
                           <div class="flex-shrink-0 align-self-center">
@@ -302,10 +308,14 @@ if(!$App->LoggedIn())header('location: login.php');
         },
         series: [{
           name: "Series A",
-          data: [<?=$Stat["Uptime"]?>]
+          data: [<?php
+echo $Stat["Uptime"];
+?>]
         }],
         xaxis: {
-          categories: [<?=$Stat["Names"]?>]
+          categories: [<?php
+echo $Stat["Names"];
+?>]
         },
         colors: ["#556ee6"],
         legend: {
