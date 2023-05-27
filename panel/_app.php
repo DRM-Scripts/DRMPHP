@@ -1151,7 +1151,13 @@ class App
         $pattern = '/(?<=cenc:default_KID=")([^"]+)/';
         preg_match_all($pattern, $Manifest, $matches);
         $defaultKids = $matches[1];
-        return $defaultKids;
+        foreach ($defaultKids as $defaultKid) {
+            $defaultKid = str_replace("-", "", $defaultKid);
+            if (!in_array($defaultKid, $kids)) {
+                $kids[] = $defaultKid;
+            }
+        }
+        return $kids;
     }
     private function ExtractMarlinKid($Manifest)
     {
