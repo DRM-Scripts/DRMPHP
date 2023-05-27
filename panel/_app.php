@@ -119,7 +119,7 @@ class App
             return false; // Current password is incorrect
         }
     }
-    
+
     public function GetChannel($ID)
     {
         $sql = "select * from channels where ID=:ID";
@@ -179,6 +179,19 @@ class App
         $st->bindParam(":ChannelID", $ID);
         $st->execute();
         $Chan["VideoIDs"] = $st->fetchAll();
+
+        $keySql = "select * from channel_keys where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($keySql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["Keys"] = $st->fetchAll();
+
+        $headerSql = "select * from channel_headers where ChannelID=:ChannelID";
+        $st = $this->DB->prepare($headerSql);
+        $st->bindParam(":ChannelID", $ID);
+        $st->execute();
+        $Chan["CustomHeaders"] = $st->fetchAll();
+        
         return $Chan;
     }
     public function GetVariants($ChannelID)
