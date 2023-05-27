@@ -191,7 +191,7 @@ class App
         $st->bindParam(":ChannelID", $ID);
         $st->execute();
         $Chan["CustomHeaders"] = $st->fetchAll();
-        
+
         return $Chan;
     }
     public function GetVariants($ChannelID)
@@ -1103,6 +1103,9 @@ class App
         if ($pssh !== null) {
             $kidArray = $this->ExtractKidFromPSSH($pssh);
         }
+        if (count($kidArray) == 0) {
+            $kidArray = $this->ExtractKidFromManifest($URL);
+        }
         // pssh not include any kid
         if (count($kidArray) == 0) {
             if ($posDefault !== false) {
@@ -1127,6 +1130,44 @@ class App
         }
 
         return $kidArray;
+    }
+    private function ExtractKidFromManifest($URL)
+    {
+        $data = $this->GetURL($URL);
+        $posDefault = strpos($data, "default_KID");
+        $posMarlin = strpos($data, "marlin:kid");
+        if ($posDefault !== false) {
+            return $this->ExtractCencKid($data);
+        } else {
+            if ($posMarlin !== false) {
+                return $this->ExtractMarlinKid($data);
+            } else {
+                return [];
+            }
+        }
+    }
+    private function ExtractCencKid($Manifest)
+    {
+        $pattern = '/(?<=cenc:default_KID=")([^"]+)/';
+        preg_match_all($pattern, $Manifest, $matches);
+        $defaultKids = $matches[1];
+        return $defaultKids;
+    }
+    private function ExtractMarlinKid($Manifest)
+    {
+        $pattern = '/<mas:MarlinContentId>([^<]+)/';
+        preg_match_all($pattern, $Manifest, $matches);
+
+        $contentIds = $matches[1];
+        $kids = [];
+        foreach ($contentIds as $contentId) {
+            $contentId = str_replace("urn:marlin:kid:", "", $contentId);
+            $contentId = ltrim($contentId, ":");
+            if (!in_array($contentId, $kids)) {
+                $kids[] = $contentId;
+            }
+        }
+        return $kids;
     }
     public function GetUsers()
     {
