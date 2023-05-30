@@ -32,7 +32,7 @@
 31. cd /home
 32. cd DRM*
 34. cp downloader.php /var/www/html
-35. cp panel/downloader.php /var/www/html/panel
+35. cp panel/downloader.php /var/www/html
 36. cd /home/DRM*
 37. chmod 777 ./db.sh
 38. sed -i -e 's/\r$//' db.sh
