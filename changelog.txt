@@ -1,3 +1,6 @@
 26/05/23
 - Change Password: FIXED THANKS @obsecuremind
 - MultiKey Support: ADDED THANKS @ninjajiraiya
+
+30/05/2023
+- Installer: Beta - THANKS (Actually a few people submitted a file, its a culmanation of a few)
