@@ -169,11 +169,9 @@ echo $Chan["ID"]?>"><?=$Chan["FPID"];
                                     <a class="btn btn-outline-dark" title="hhh" href="add.php?id=<?php
 echo $Chan["ID"];
 ?>"><i class="bx bxs-edit-alt"></i></a>
-                                    <!--
                                     <a class="btn btn-outline-info" href="javascript: void(0)" onclick="ShowConfig('<?php
 echo $Chan["ID"];
 ?>')"><i class="bx bxs-cog"></i></a>
-                                    -->
                                     <?php if($Chan["Status"]=="Stopped"){ ?>
                                       <a href="javascript: void(0)" class="btn btn-outline-success" onclick="Download('<?php
 echo $Chan["ID"]?>', '<?=$Chan["Manifest"]?>', '<?=$Chan["AudioID"]?>', '<?=$Chan["VideoID"];

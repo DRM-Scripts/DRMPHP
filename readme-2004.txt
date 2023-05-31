@@ -8,7 +8,7 @@
 7. sudo apt-get install -y php7.4 php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-bz2 php7.4-xmlrpc
 8. apt install git
 9. git clone this repos at /home
-10. cd DRMUniversal
+10. cd DRM*
 11. cp -r cli /etc/php/7.4
 12. wget http://ftp.de.debian.org/debian/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1_amd64.deb
 13. dpkg -i libnghttp2-14_1.52.0-1_amd64.deb
@@ -31,10 +31,9 @@
 30. chmod 777 html
 31. cd /home
 32. cd DRM*
-33. mkdir -p /var/www/html/panel
 34. cp downloader.php /var/www/html
-35. cp panel/downloader.php /var/www/html/panel
-36. cd /home/DRMUniversal
+35. cp panel/downloader.php /var/www/html
+36. cd /home/DRM*
 37. chmod 777 ./db.sh
 38. sed -i -e 's/\r$//' db.sh
 39. ./db.sh - Fill in the MYSQL Database & User Details
@@ -42,4 +41,4 @@
 41. nano _db.php - Enter Your DB & User Details
 42. service apache2 restart
 43. browse to pub server ip
-44. login with admin/Admin@2022##
+44. login with admin/Admin@2023##

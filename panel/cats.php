@@ -54,16 +54,26 @@ if(!$App->LoggedIn())header('location: login.php');
                               $Cat=$Data[$i];
                           ?>
                               <tr>
-                                <td><?=$Cat["CatID"]?></td>
+                                <td><?php
+echo $Cat["CatID"];
+?></td>
                                 <td style="width:450px;overflow-wrap: break-word;word-break: break-all;">
-                                  <a href="addcat.php?id=<?=$Cat["CatID"]?>" class="text-body fw-bold"><?=$Cat["CatName"]?></a> 
+                                  <a href="addcat.php?id=<?php
+echo $Cat["CatID"]?>" class="text-body fw-bold"><?=$Cat["CatName"];
+?></a> 
                                 </td>
-                                <td><?=$Cat["ChannelsCount"]?></td>
+                                <td><?php
+echo $Cat["ChannelsCount"];
+?></td>
                                 <td>
                                   <div class="btn-group btn-group-sm">
-                                    <a class="btn btn-outline-dark" href="addcat.php?id=<?=$Cat["CatID"]?>"><i class="bx bxs-edit-alt"></i></a>
+                                    <a class="btn btn-outline-dark" href="addcat.php?id=<?php
+echo $Cat["CatID"];
+?>"><i class="bx bxs-edit-alt"></i></a>
                                   </div>
-                                  <a class="btn btn-danger btn-sm" href="javascript: void(0)" onclick="DeleteCat('<?=$Cat["CatID"]?>')"><i class="bx bx-trash"></i></a>
+                                  <a class="btn btn-danger btn-sm" href="javascript: void(0)" onclick="DeleteCat('<?php
+echo $Cat["CatID"];
+?>')"><i class="bx bx-trash"></i></a>
                                 </td>
                               </tr>
                             <?}
