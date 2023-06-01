@@ -113,17 +113,17 @@ echo $Chan["ID"];
 ?><br>
                                   <?php if($Chan["Status"]=="Downloading" && (!file_exists("/proc/".$Chan["PID"]) ||!file_exists("/proc/".$Chan["FPID"]))){?>
                                     <span class="badge badge-pill badge-soft-danger">Error</span>
-                                  <?php }else {?>
-                                    <?php if($Chan["Status"]=="KeyError"){?>
+                                  <?php } else {?>
+                                    <?php if($Chan["Status"]=="KeyError") {?>
                                       <span class="badge badge-pill badge-soft-danger">Key Error</span>
-                                    <?php }else {?>
-                                    <?php if($Chan["Status"]=="Stopped"){ ?>
+                                    <?php } else {?>
+                                    <?php if($Chan["Status"]=="Stopped") { ?>
                                       <span class="badge badge-pill badge-soft-dark">Offline</span>
-                                    <?php }elseif($Chan["Status"]=="Downloading"){ ?>
+                                    <?php } elseif($Chan["Status"]=="Downloading") { ?>
                                       <span class="badge badge-pill badge-soft-success">Online</span>
-                                    <?php }elseif($Chan["Status"]=="Not Supported"){ ?>
+                                    <?php } elseif($Chan["Status"]=="Not Supported") { ?>
                                       <span class="badge badge-pill badge-soft-danger">Not supported</span>
-                                    <?php }elseif($Chan["Status"]=="Offline"){ ?>
+                                    <?php } elseif($Chan["Status"]=="Offline") { ?>
                                       <span class="badge badge-pill badge-soft-warning">O</span>
                                   <?php }
                                     }
@@ -197,7 +197,7 @@ echo $Chan["ID"];
 ?>" style="display:none;padding-left:100px"></td>
                               </tr>
                             <?}
-                          }else{
+                          } else {
                             ?>
                             <tr>
                               <td colspan="7" class="text-center">
@@ -205,7 +205,8 @@ echo $Chan["ID"];
                               </td>
                             </tr>
                           <?php
-                          }?>
+                          }
+                          ?>
                         </tbody>
                       </table>
                     </div>
@@ -214,12 +215,15 @@ echo $Chan["ID"];
               </div>
             </div>
           </div>
-        </div>
-
-        <?php include "_footer.php"?>
-      </div>
-    </div>
-    <?php include "_rightbar.php"?>
+        </div> <!-- container-fluid -->
+        <?php 
+        include "_footer.php";
+        ?>
+      </div><!-- content -->
+    </div><!-- container -->
+    <?php 
+    include "_rightbar.php";
+    ?>
 
     <div class="rightbar-overlay"></div>
 

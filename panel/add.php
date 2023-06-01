@@ -375,22 +375,15 @@ echo $Data["VideoIDs"][$i][0];
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Use Proxy</label>
                                             <div class="col-md-10">
-                                                <Select id="AutoRestart" name="AutoRestart">
-                                                    <?php if($Data["UseProxy"]==1)$Selected="selected";else $Selected="";?>
-                                                    <option <?php
-echo $Selected;
-?> value="1">Yes</option>
-                                                    <?php if($Data["UseProxy"]==0)$Selected="selected";else $Selected="";?>
-                                                    <option <?php
-echo $Selected;
-?> value="0">No</option>
-                                                </select>
+                                               <input type="checkbox" id="UseProxy" name="UseProxy" value="1" <?php
+if($Data["UseProxy"]==1)echo "checked";
+?>/>
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Proxy Host</label>
                                             <div class="col-md-10">
-                                                <input class="form-control" type="text" id="proxyUrl" name="proxyUrl"
+                                                <input class="form-control" type="text" id="ProxyURL" name="ProxyURL"
                                                     value="<?php
 echo $Data["ProxyURL"];
 ?>">
@@ -399,7 +392,7 @@ echo $Data["ProxyURL"];
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Proxy Port</label>
                                             <div class="col-md-10">
-                                                <input class="form-control" type="text" id="proxyPort" name="proxyPort"
+                                                <input class="form-control" type="text" id="ProxyPort" name="ProxyPort"
                                                     value="<?php
 echo $Data["ProxyPort"];
 ?>">
@@ -409,7 +402,7 @@ echo $Data["ProxyPort"];
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Proxy User</label>
                                             <div class="col-md-10">
-                                                <input class="form-control" type="text" id="proxyUser" name="proxyUser"
+                                                <input class="form-control" type="text" id="ProxyUser" name="ProxyUser"
                                                     value="<?php
 echo $Data["ProxyUser"];
 ?>">
@@ -419,8 +412,8 @@ echo $Data["ProxyUser"];
                                         <div class="mb-3 row">
                                             <label class="col-md-2 col-form-label">Proxy Password</label>
                                             <div class="col-md-10">
-                                                <input class="form-control" type="text" id="proxyPassword"
-                                                    name="proxyPassword" value="<?php
+                                                <input class="form-control" type="text" id="ProxyPass"
+                                                    name="ProxyPass" value="<?php
 echo $Data["ProxyPass"];
 ?>">
                                             </div>
