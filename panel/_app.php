@@ -57,71 +57,59 @@ class App
         return null;
     }
 
-    public function Login($UserID, $Password)
-    {
-        $sql = "SELECT * FROM users WHERE UserID = :UserID";
-        $st = $this->DB->prepare($sql);
-        $st->bindParam(":UserID", $UserID);
-        $st->execute();
-        $line = $st->fetch();
+    function Login($UserID, $Password) {
+  $sql = "SELECT * FROM users WHERE UserID = :UserID";
+  $st = $this->DB->prepare($sql);
+  $st->bindParam(":UserID", $UserID);
+  $st->execute();
+  $line = $st->fetch();
+  if ($line && $line["Password"] == $Password) {
+    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+    $st = $this->DB->prepare($sql);
+    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+    $st->bindParam(":UserID", $UserID);
+    $st->execute();
+    return $line;
+  } else {
+    return false;
+  }
+}
 
-        if ($line) {
-            if (!password_needs_rehash($line["Password"], PASSWORD_DEFAULT)) {
-                // Password is already hashed, verify it
-                if (password_verify($Password, $line["Password"])) {
-                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
-                    $st = $this->DB->prepare($sql);
-                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
-                    $st->bindParam(":UserID", $UserID);
-                    $st->execute();
-                    return $line;
-                }
-            } else {
-                // Password is not hashed, update it to a hashed version
-                $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
-                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
-                $st = $this->DB->prepare($sql);
-                $st->bindParam(":NewPassword", $hashedPassword);
-                $st->bindParam(":UserID", $UserID);
-                $st->execute();
+function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
+  // Retrieve the user's stored password from the database
+  $sql = "SELECT Password FROM users WHERE UserID = :UserID";
+  $st = $this->DB->prepare($sql);
+  $st->bindParam(":UserID", $UserID);
+  $st->execute();
+  $line = $st->fetch();
 
-                if (password_verify($Password, $hashedPassword)) {
-                    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
-                    $st = $this->DB->prepare($sql);
-                    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
-                    $st->bindParam(":UserID", $UserID);
-                    $st->execute();
-                    return $line;
-                }
-            }
-        }
+  if ($line && $line["Password"] === $CurrentPassword) {
+    try {
+      // Update the password
+      $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
+      $st = $this->DB->prepare($sql);
+      $st->bindParam(":NewPassword", $NewPassword);
+      $st->bindParam(":UserID", $UserID);
+      $st->execute();
 
-        return false;
+      // Optionally, update the last access time
+      $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+      $st = $this->DB->prepare($sql);
+      $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+      $st->bindParam(":UserID", $UserID);
+      $st->execute();
+
+      return true; // Password change successful
+
+    } catch (PDOException $e) {
+      // Handle the database error
+      echo "Database Error: " . $e->getMessage();
+      return false; // Password change failed
     }
-
-    public function ChangePassword($UserID, $CurrentPassword, $NewPassword)
-    {
-        // Check if the current password is correct
-        $loggedInUser = $this->Login($UserID, $CurrentPassword);
-
-        if ($loggedInUser) {
-            try {
-                // Update the password
-                $hashedPassword = password_hash($NewPassword, PASSWORD_DEFAULT);
-                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :ID";
-                $st = $this->DB->prepare($sql);
-                $st->bindParam(":NewPassword", $hashedPassword);
-                $st->bindParam(":ID", $UserID);
-                $st->execute();
-
-            } catch (PDOException $e) {
-                // Handle the database error
-                echo "Database Error: " . $e->getMessage();
-            }
-        } else {
-            return false; // Current password is incorrect
-        }
-    }
+  } else {
+    return false; // Current password is incorrect
+  }
+}
 
     public function GetChannel($ID)
     {
