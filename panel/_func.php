@@ -64,7 +64,7 @@
       break;
     }
     case "GetKID":{
-      $kid=$App->GetKID($_POST["URL"]);
+      $kid=$App->GetKID($_POST);
       echo json_encode($kid);
       break;
     }
