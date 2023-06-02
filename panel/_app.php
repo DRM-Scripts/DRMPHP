@@ -670,7 +670,7 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
     public function TestMPD($Data)
     {
         $Url = $Data["MPD"];
-        $UseProxy = intval($Data["UseProxy"]) == 1;
+        $UseProxy = $Data["UseProxy"] == "true";
         $Useragent = $Data["Useragent"];
         if ($Useragent == "") {
             $Useragent = $this->GetConfig("DownloadUseragent");
@@ -1050,7 +1050,7 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
         return $All;
     }
 
-    private function GetURL($URL)
+    private function GetURL($URL, $UseProxy = false, $ProxyURL = "", $ProxyPort = "", $ProxyUser = "", $ProxyPass = "")
     {
         //chrome user agent
         $userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36";
@@ -1058,12 +1058,22 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
             'Connection: Keep-Alive',
             'User-Agent: ' . $userAgent,
         );
+    
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $URL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         // set header
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        if ($UseProxy) {
+            $ProxyUserPass = $ProxyUser . ":" . $ProxyPass;
+            curl_setopt($ch, CURLOPT_PROXY, $ProxyURL);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $ProxyPort);
+            if ($ProxyUser != "" && $ProxyPass != "") {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $ProxyUserPass);
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC|CURLAUTH_ANY);
+            }
+        }
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
@@ -1122,9 +1132,9 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
         return $kidArray;
     }
 
-    public function GetPSSH($URL)
+    public function GetPSSH($PSSH)
     {
-        $data = $this->GetURL($URL);
+        $data = $PSSH;
         // Use regex to extract pssh value
         $pattern = '/<(?:cenc:pssh|pssh)\s*[^>]*>(.*?)<\/(?:cenc:pssh|pssh)>/s';
         $validPssh = '';
@@ -1138,9 +1148,9 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
         return null;
     }
 
-    private function ExtractKidFromManifest($URL)
+    private function ExtractKidFromManifest($Manifest)
     {
-        $data = $this->GetURL($URL);
+        $data = $Manifest;
         $posDefault = strpos($data, "default_KID");
         $posMarlin = strpos($data, "marlin:kid");
         if ($posDefault !== false) {
@@ -1185,12 +1195,19 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
         return $kids;
     }
 
-    public function GetKID($URL)
+    public function GetKID($Data)
     {
-        $data = file_get_contents($URL);
+        $URL = $Data["URL"];
+        $UseProxy = $Data["UseProxy"] == "true";
+        $ProxyURL = $Data["ProxyURL"];
+        $ProxyPort = $Data["ProxyPort"];
+        $ProxyUser = $Data["ProxyUser"];
+        $ProxyPass = $Data["ProxyPass"];
+
+        $data = $this->GetURL($URL, $UseProxy, $ProxyURL, $ProxyPort, $ProxyUser, $ProxyPass);
         $posDefault = strpos($data, "default_KID");
         $posMarlin = strpos($data, "marlin:kid");
-        $pssh = $this->GetPSSH($URL);
+        $pssh = $this->GetPSSH($data);
         $kidArray = array();
         // get kid from pssh
         if ($pssh !== null) {
@@ -1198,7 +1215,7 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
         }
         // get kid from manifest
         if (count($kidArray) == 0) {
-            $kidArray = $this->ExtractKidFromManifest($URL);
+            $kidArray = $this->ExtractKidFromManifest($data);
         }
         // pssh not include any kid
         if (count($kidArray) == 0) {
