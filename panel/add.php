@@ -520,9 +520,21 @@ echo $ChanID;
 
     function GetKID() {
         var manifest = $('#Manifest').val();
+        var useproxy = $('#UseProxy').is(":checked");
+        var proxyurl = $('#ProxyURL').val();
+        var proxyport = $('#ProxyPort').val();
+        var proxyuser = $('#ProxyUser').val();
+        var proxypass = $('#ProxyPass').val();
+        var useragent = $('#Useragent').val();
         $.post("_func.php", {
                 Func: "GetKID",
-                URL: manifest
+                URL: manifest,
+                UseProxy: useproxy,
+                ProxyURL: proxyurl,
+                ProxyPort: proxyport,
+                ProxyUser: proxyuser,
+                ProxyPass: proxypass,
+                Useragent: useragent
             })
             .done(function(data) {
                 let res = JSON.parse(data);
