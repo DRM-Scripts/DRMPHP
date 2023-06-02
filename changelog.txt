@@ -4,3 +4,8 @@
 
 30/05/2023
 - Installer: Beta - THANKS (Actually a few people submitted a file, its a culmanation of a few)
+
+02/06/2023
+- Button Issue: FIXED
+- Proxy Beta: CREDIT @ninjajiraiya
+- Change Password: TEMP FIX - WILL BE MADE MORE SECURE SOON
