@@ -57,59 +57,61 @@ class App
         return null;
     }
 
-    function Login($UserID, $Password) {
-  $sql = "SELECT * FROM users WHERE UserID = :UserID";
-  $st = $this->DB->prepare($sql);
-  $st->bindParam(":UserID", $UserID);
-  $st->execute();
-  $line = $st->fetch();
-  if ($line && $line["Password"] == $Password) {
-    $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
-    $st = $this->DB->prepare($sql);
-    $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
-    $st->bindParam(":UserID", $UserID);
-    $st->execute();
-    return $line;
-  } else {
-    return false;
-  }
-}
-
-function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
-  // Retrieve the user's stored password from the database
-  $sql = "SELECT Password FROM users WHERE UserID = :UserID";
-  $st = $this->DB->prepare($sql);
-  $st->bindParam(":UserID", $UserID);
-  $st->execute();
-  $line = $st->fetch();
-
-  if ($line && $line["Password"] === $CurrentPassword) {
-    try {
-      // Update the password
-      $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
-      $st = $this->DB->prepare($sql);
-      $st->bindParam(":NewPassword", $NewPassword);
-      $st->bindParam(":UserID", $UserID);
-      $st->execute();
-
-      // Optionally, update the last access time
-      $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
-      $st = $this->DB->prepare($sql);
-      $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
-      $st->bindParam(":UserID", $UserID);
-      $st->execute();
-
-      return true; // Password change successful
-
-    } catch (PDOException $e) {
-      // Handle the database error
-      echo "Database Error: " . $e->getMessage();
-      return false; // Password change failed
+    public function Login($UserID, $Password)
+    {
+        $sql = "SELECT * FROM users WHERE UserID = :UserID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":UserID", $UserID);
+        $st->execute();
+        $line = $st->fetch();
+        if ($line && $line["Password"] == $Password) {
+            $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+            $st = $this->DB->prepare($sql);
+            $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+            $st->bindParam(":UserID", $UserID);
+            $st->execute();
+            return $line;
+        } else {
+            return false;
+        }
     }
-  } else {
-    return false; // Current password is incorrect
-  }
-}
+
+    public function ChangePassword($UserID, $CurrentPassword, $NewPassword)
+    {
+        // Retrieve the user's stored password from the database
+        $sql = "SELECT Password FROM users WHERE UserID = :UserID";
+        $st = $this->DB->prepare($sql);
+        $st->bindParam(":UserID", $UserID);
+        $st->execute();
+        $line = $st->fetch();
+
+        if ($line && $line["Password"] === $CurrentPassword) {
+            try {
+                // Update the password
+                $sql = "UPDATE users SET Password = :NewPassword WHERE UserID = :UserID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":NewPassword", $NewPassword);
+                $st->bindParam(":UserID", $UserID);
+                $st->execute();
+
+                // Optionally, update the last access time
+                $sql = "UPDATE users SET LastAccess = :LastAccess WHERE UserID = :UserID";
+                $st = $this->DB->prepare($sql);
+                $st->bindParam(":LastAccess", date("Y-m-d H:i:s"));
+                $st->bindParam(":UserID", $UserID);
+                $st->execute();
+
+                return true; // Password change successful
+
+            } catch (PDOException $e) {
+                // Handle the database error
+                echo "Database Error: " . $e->getMessage();
+                return false; // Password change failed
+            }
+        } else {
+            return false; // Current password is incorrect
+        }
+    }
 
     public function GetChannel($ID)
     {
@@ -352,6 +354,8 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
       , `ProxyPort`=:ProxyPort
       , `ProxyUser`=:ProxyUser
       , `ProxyPass`=:ProxyPass
+      , `AutoRestart`=:AutoRestart
+      , `CatId`=:CatId
       where ID=:ID";
             $st = $this->DB->prepare($sql);
             $st->bindParam(":ID", $ID);
@@ -372,6 +376,8 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
             $st->bindParam(":ProxyPort", $ProxyPort);
             $st->bindParam(":ProxyUser", $ProxyUser);
             $st->bindParam(":ProxyPass", $ProxyPass);
+            $st->bindParam(":AutoRestart", $AutoRestart);
+            $st->bindParam(":CatId", $CatId);
             $st->execute();
 
             $removeExistingKeysSql = "DELETE FROM channel_keys WHERE ChannelID=:ChannelID";
@@ -1078,7 +1084,7 @@ function ChangePassword($UserID, $CurrentPassword, $NewPassword) {
         curl_close($ch);
         return $data;
     }
-    
+
     private function HexToBase64($String)
     {
         $data = hex2bin($String);
