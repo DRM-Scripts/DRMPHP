@@ -1,12 +1,10 @@
-<?php
-$version = "v0.1b";
+<?php 
 ?>
-
 <footer class="footer">
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-6">
-        <script>document.write(new Date().getFullYear())</script> Â© DRMPHP <?php echo $version; ?>v.
+        <script>document.write(new Date().getFullYear())</script> © DRMPHP.
       </div>
     </div>
   </div>

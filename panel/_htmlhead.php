@@ -8,4 +8,5 @@
   <link href="assets/css/bootstrap-dark.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
   <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
   <link href="assets/css/app-dark.min.css" id="app-style" rel="stylesheet" type="text/css" />
+  <link href="assets/libs/magnific-popup/magnific-popup.css" id="app-style" rel="stylesheet" type="text/css" />
 </head>

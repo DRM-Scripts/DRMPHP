@@ -1,5 +1,3 @@
-<?php
-?>
 <div class="vertical-menu">
   <div data-simplebar class="h-100">
     <div id="sidebar-menu">
@@ -24,11 +22,26 @@
           </a>
         </li>
         <li>
+  <a href="lines.php" class="waves-effect">
+    <i class="bx bx-user"></i>
+    <span>Lines</span>
+  </a>
+  <ul class="sub-menu">
+    <li>
+      <a href="add_line.php" class="waves-effect">Add Line</a>
+    </li>
+    <li>
+      <a href="lines.php" class="waves-effect">Show Lines</a>
+    </li>
+  </ul>
+</li>
+        <li>
           <a href="settings.php" class="waves-effect">
             <i class="bx bx-cog"></i>
             <span>Settings</span>
           </a>
         </li> 
+
         <li>
           <a href="login.php" class="waves-effect">
             <i class="bx bx-log-out"></i>
