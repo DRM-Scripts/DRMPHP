@@ -9,3 +9,8 @@
 - Button Issue: FIXED
 - Proxy Beta: CREDIT @ninjajiraiya
 - Change Password: TEMP FIX - WILL BE MADE MORE SECURE SOON
+
+07/06/2023
+- Installer U20.04: Beta - CREDIT @ninjajiraiya
+- Stream Player: Beta - CREDIT @ninjajiraiya
+- User Lines: IN PROGRESS - CREDIT @obsecuremind
