@@ -1,3 +1,5 @@
+NOTICE: The adding of user lines is a work in progress, do not use in a production enviroment until fully completed.
+
 -- UBUNTU 18.04 --
 
 cd /home
