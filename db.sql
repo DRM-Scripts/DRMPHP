@@ -107,7 +107,7 @@ INSERT INTO `channel_keys` (`ID`, `ChannelID`, `KID`, `Key`) VALUES
 CREATE TABLE `channel_headers` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `ChannelID` int(11) NOT NULL,
-  `Value` varchar(255) NOT NULL,
+  `Value` TEXT NOT NULL,
   PRIMARY KEY (ID)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
@@ -129,7 +129,7 @@ CREATE TABLE `config` (
 
 INSERT INTO `config` (`ID`, `ConfigName`, `ConfigDesc`, `ConfigValue`) VALUES
 (1, 'DownloadPath', '', '/var/www/html/download'),
-(2, 'BinPath', '', '/var/www/html/'),
+(2, 'BinPath', '', '/var/www/html/panel/'),
 (3, 'SegmentJoiner', '', '8'),
 (4, 'DeleteEncryptedAfterDecrypt', '', '1'),
 (5, 'DeleteDecryptedAfterMerge', '', '1'),
@@ -143,7 +143,7 @@ INSERT INTO `config` (`ID`, `ConfigName`, `ConfigDesc`, `ConfigValue`) VALUES
 (13, 'ProxyPass', 'Proxy Password', ''),
 (14, 'DownloadUseragent', 'Download Useragent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0'),
 (15, 'AutoRestart', 'Auto restart channels', '1'),
-(16, 'DownloaderPath', 'Downloader Path', '/var/www/html/'),
+(16, 'DownloaderPath', 'Downloader Path', '/var/www/html/panel/'),
 (17, 'BackupPath', '/var/www/backup', '/var/www/backup'),
 (18, 'MaxLogSize', '', '1048576');
 
@@ -160,6 +160,17 @@ CREATE TABLE `notification` (
   `Sent` datetime NOT NULL,
   `Status` varchar(8) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+--
+-- Table structure for table `lines`
+--
+
+CREATE TABLE `lines` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `expire_date` DATE NOT NULL
+);
 
 -- --------------------------------------------------------
 
