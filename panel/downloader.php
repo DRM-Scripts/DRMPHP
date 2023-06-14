@@ -1002,8 +1002,7 @@ if ($ChID) {
     $Keys = $ChData["Keys"];
     $CustomHeaders = $ChData["CustomHeaders"];
     $ChName = str_replace(" ", "_", $ChData["ChannelName"]);
-
-    $Useragent = $ChData["DownloadUseragent"] ? $ChData["DownloadUseragent"] : $Useragent;
+    $Useragent = $ChData["DownloadUseragent"] && $ChData["DownloadUseragent"] != "" ? $ChData["DownloadUseragent"] : $Useragent;
     $SegmentJoiner = intval($ChData["SegmentJoiner"]) > 0 ? $ChData["SegmentJoiner"] : $SegmentJoiner;
     $URLListLimit = intval($ChData["URLListLimit"]) >= 1 ? $ChData["URLListLimit"] : $PlaylistLimit;
     $PlaylistLimit = intval($ChData["PlaylistLimit"]) >= 3 ? $ChData["PlaylistLimit"] : $PlaylistLimit;
