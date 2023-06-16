@@ -165,7 +165,7 @@ function installDRMPHP() {
   cd /var/www/html
   
   chmod +x mp4decrypt
-  mkdir download;
+  [[ ! -d "./download" ]] && mkdir -p "$./download"
   chmod 777 download;
 
   cd ../;
@@ -186,9 +186,6 @@ function installDRMPHP() {
 	echo "Creating new MySQL database..."
 	mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${dbname} /*\!40100 DEFAULT CHARACTER SET ${charset} */;"
 	echo "Database successfully created!"
-	echo "Showing existing databases..."
-	mysql -uroot -p${rootpasswd} -e "show databases;"
-	echo ""
   read -p  "Please enter the NAME of the new MySQL database user (example: user1): " username </dev/tty
 	sed -i "s/admin/$username/g" /var/www/html/_db.php
 	read -s -p "Please enter the PASSWORD for the new MySQL database user (password will be hidden when typing): " userpass </dev/tty
@@ -218,9 +215,9 @@ EOF
 #     E N D   F U N C T I O N S     #
 #####################################
 echo ""
-echo "============================================================="
+echo "#############################################################"
 echo "      DRMPHP install and configuration script for Linux      "
-echo "============================================================="
+echo "#############################################################"
 echo ""
 
 while true; do
