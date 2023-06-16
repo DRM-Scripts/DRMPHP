@@ -211,12 +211,16 @@ EOF
   rm /var/www/html/index.html;
 }
 
+function cleanup() {
+  rm -rf $dirInstall;
+}
+
 #####################################
 #     E N D   F U N C T I O N S     #
 #####################################
 echo ""
 echo "#############################################################"
-echo "      DRMPHP install and configuration script for Linux      "
+echo "#     DRMPHP install and configuration script for Linux     #"
 echo "#############################################################"
 echo ""
 
@@ -227,6 +231,7 @@ while true; do
     [Yy]*)
       initialCheck
       installDRMPHP
+      cleanup
       break
       ;;
     [Nn]*)
