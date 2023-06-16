@@ -61,8 +61,7 @@ function checkOS() {
     if [[ $ID == "fedora" || $ID_LIKE == "fedora" ]]; then
       OS="fedora"
       dnf -y update
-      dnf -y install git
-      dnf -y install iputils
+      dnf -y install git xz iputils which
       dnf -y install httpd
       dnf -y install aria2
       dnf -y install community-mysql-server
