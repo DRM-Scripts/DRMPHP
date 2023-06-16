@@ -174,7 +174,6 @@ function installDRMPHP() {
   chmod 777 html;
   echo " Panel configured successfully!";
   
-  # If /root/.my.cnf exists then it won't ask for root password
   if [ -f /root/.my.cnf ]; then
     read -s -p "Please enter root user MySQL password (password will be hidden when typing): " rootpasswd </dev/tty
   else
@@ -209,7 +208,10 @@ function installDRMPHP() {
     SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION';
 EOF
     )
-	echo "$commands" | mysql -u root -p"$rootpasswd"  
+	echo "$commands" | mysql -u root -p"$rootpasswd"
+
+  # Delete default apache page
+  rm /var/www/html/index.html;
 }
 
 #####################################
