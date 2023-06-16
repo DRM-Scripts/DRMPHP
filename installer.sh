@@ -81,8 +81,7 @@ function checkOS() {
         exit 1
       fi
       yum update -y
-      yum install git -y
-      yum install iputils -y
+      yum install git xz iputils which -y
       yum install httpd -y
       yum install aria2 -y
       yum install mysql-server -y
