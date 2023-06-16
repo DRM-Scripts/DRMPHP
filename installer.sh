@@ -173,44 +173,14 @@ function installDRMPHP() {
   chmod 777 backup;
   chmod 777 html;
   echo " Panel configured successfully!";
-
-# If /root/.my.cnf exists then it won't ask for root password
-if [ -f /root/.my.cnf ]; then
-	read -p "Please enter the NAME of the new MySQL database (example: database1) " dbname </dev/tty
-	sed -i "s/drm/$dbname/g" /var/www/html/_db.php
-	read -p "Please enter the MySQL database CHARACTER SET (Enter utf8 if you don't know what you are doing) " charset </dev/tty
-	echo "Creating new MySQL database..."
-	mysql -e "CREATE DATABASE ${dbname} /*\!40100 DEFAULT CHARACTER SET ${charset} */;"
-	echo "Database successfully created!"
-	echo "Showing existing databases..."
-	mysql -e "show databases;"
-	echo ""
-    read -p  "Please enter the NAME of the new MySQL database user (example: user1) " username </dev/tty
-	sed -i "s/admin/$username/g" /var/www/html/_db.php
-	read -s -p "Please enter the PASSWORD for the new MySQL database user (password will be hidden when typing) " userpass </dev/tty
-	sed -i "s/passwd/$userpass/g" /var/www/html/_db.php
-	echo "Creating new user..."
-	mysql -e "CREATE USER ${username}@localhost IDENTIFIED BY '${userpass}';"
-	echo "User successfully created!"
-	echo ""
-	echo "Granting ALL privileges on ${dbname} to ${username}!"
-	mysql -e "GRANT ALL PRIVILEGES ON ${dbname}.* TO '${username}'@'localhost';"
-	mysql -e "FLUSH PRIVILEGES;"
-	mysql ${dbname} < db.sql
-	read -s -p "Please enter root user MySQL password (password will be hidden when typing) " rootpasswd </dev/tty
-	# MySQL commands
-    commands=$(cat <<EOF
-    USE $dbname;
-    SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
-    SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION';
-EOF
-    )
-	echo "$commands" | mysql -u root -p"$rootpasswd"
-	echo "You're good now :)"
-
-# If /root/.my.cnf doesn't exist then it'll ask for root password	
-else
-	read -s -p "Please enter root user MySQL password (password will be hidden when typing) " rootpasswd </dev/tty
+  
+  # If /root/.my.cnf exists then it won't ask for root password
+  if [ -f /root/.my.cnf ]; then
+    read -s -p "Please enter root user MySQL password (password will be hidden when typing) " rootpasswd </dev/tty
+  else
+    read -p "Please create root user MySQL password" rootpasswd </dev/tty
+  fi
+  echo "";
 	read -p "Please enter the NAME of the new MySQL database (example: database1) " dbname </dev/tty
 	sed -i "s/drm/$dbname/g" /var/www/html/_db.php
 	read -p "Please enter the MySQL database CHARACTER SET (Enter utf8 if you don't know what you are doing) " charset </dev/tty
@@ -220,7 +190,7 @@ else
 	echo "Showing existing databases..."
 	mysql -uroot -p${rootpasswd} -e "show databases;"
 	echo ""
-    read -p  "Please enter the NAME of the new MySQL database user (example: user1) " username </dev/tty
+  read -p  "Please enter the NAME of the new MySQL database user (example: user1) " username </dev/tty
 	sed -i "s/admin/$username/g" /var/www/html/_db.php
 	read -s -p "Please enter the PASSWORD for the new MySQL database user (password will be hidden when typing) " userpass </dev/tty
 	sed -i "s/passwd/$userpass/g" /var/www/html/_db.php
@@ -231,19 +201,15 @@ else
 	echo "Granting ALL privileges on ${dbname} to ${username}!"
 	mysql -uroot -p${rootpasswd} -e "GRANT ALL PRIVILEGES ON ${dbname}.* TO '${username}'@'localhost';"
 	mysql -uroot -p${rootpasswd} -e "FLUSH PRIVILEGES;"
-	mysql -uroot -p${rootpasswd} ${dbname} < db.sql
+	mysql -uroot -p${rootpasswd} ${dbname} < "$dirInstall/db.sql"
 	# MySQL commands
-    commands=$(cat <<EOF
+  commands=$(cat <<EOF
     USE $dbname;
     SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
     SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION';
 EOF
     )
-	echo "$commands" | mysql -u root -p"$rootpasswd"
-	echo "You're good now :)"
-fi
-  
-  # If /root/.my.cnf exists then it won't ask for root password
+	echo "$commands" | mysql -u root -p"$rootpasswd"  
 }
 
 #####################################
@@ -272,6 +238,15 @@ while true; do
   esac
 done
 
-echo " Have Fun!"
+echo "####################################################";
+echo "#                  PANEL DETAILS                   #";
+echo "####################################################";
+echo "# USER: admin                                      #";
+echo "# PASS: Admin@2023##                               #";
+echo "# URL: http://${serverIP}/login.php                #";
+echo "####################################################";
+echo "# NOTE: EDIT <M3U8 Download URL> IN SETTINGS PAGE  #";
+echo "####################################################";
+echo "Have Fun!"
 echo ""
 sleep 3
