@@ -176,23 +176,23 @@ function installDRMPHP() {
   
   # If /root/.my.cnf exists then it won't ask for root password
   if [ -f /root/.my.cnf ]; then
-    read -s -p "Please enter root user MySQL password (password will be hidden when typing) " rootpasswd </dev/tty
+    read -s -p "Please enter root user MySQL password (password will be hidden when typing): " rootpasswd </dev/tty
   else
-    read -p "Please create root user MySQL password" rootpasswd </dev/tty
+    read -p "Please create root user MySQL password: " rootpasswd </dev/tty
   fi
   echo "";
-	read -p "Please enter the NAME of the new MySQL database (example: database1) " dbname </dev/tty
+	read -p "Please enter the NAME of the new MySQL database (example: db1): " dbname </dev/tty
 	sed -i "s/drm/$dbname/g" /var/www/html/_db.php
-	read -p "Please enter the MySQL database CHARACTER SET (Enter utf8 if you don't know what you are doing) " charset </dev/tty
+	read -p "Please enter the MySQL database CHARACTER SET (enter utf8 if you don't know what you are doing): " charset </dev/tty
 	echo "Creating new MySQL database..."
 	mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${dbname} /*\!40100 DEFAULT CHARACTER SET ${charset} */;"
 	echo "Database successfully created!"
 	echo "Showing existing databases..."
 	mysql -uroot -p${rootpasswd} -e "show databases;"
 	echo ""
-  read -p  "Please enter the NAME of the new MySQL database user (example: user1) " username </dev/tty
+  read -p  "Please enter the NAME of the new MySQL database user (example: user1): " username </dev/tty
 	sed -i "s/admin/$username/g" /var/www/html/_db.php
-	read -s -p "Please enter the PASSWORD for the new MySQL database user (password will be hidden when typing) " userpass </dev/tty
+	read -s -p "Please enter the PASSWORD for the new MySQL database user (password will be hidden when typing): " userpass </dev/tty
 	sed -i "s/passwd/$userpass/g" /var/www/html/_db.php
 	echo "Creating new user..."
 	mysql -uroot -p${rootpasswd} -e "CREATE USER ${username}@localhost IDENTIFIED BY '${userpass}';"
@@ -238,6 +238,7 @@ while true; do
   esac
 done
 
+getIP
 echo "####################################################";
 echo "#                  PANEL DETAILS                   #";
 echo "####################################################";
