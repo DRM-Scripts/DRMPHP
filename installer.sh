@@ -158,7 +158,6 @@ function installDRMPHP() {
     [[ ! -d "$dirInstall/ffmpeg" ]] && mkdir -p "$dirInstall/ffmpeg"
     tar -xf "$dirInstall/ffmpeg.tar.xz" -C "$dirInstall/ffmpeg";
     for i in "$dirInstall/ffmpeg/ffmpeg-*-amd64-static"; do cp "$i/ff*" /usr/bin/; break; done
-    rm -r "$dirInstall/ffmpeg.tar.xz" "$dirInstall/ffmpeg";
     echo "FFMpeg installed!";
   fi
 
