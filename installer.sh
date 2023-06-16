@@ -155,6 +155,7 @@ function installDRMPHP() {
   if [[ ! -f "/usr/bin/ffmpeg" ]] || [[ ! -f "/usr/bin/ffprobe" ]]; then
     echo "FFMpeg not found, installing...";
     curl -L --progress-bar -# -o "$dirInstall/ffmpeg.tar.xz" "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz";
+    [[ ! -d "$dirInstall/ffmpeg" ]] && mkdir -p "$dirInstall/ffmpeg"
     tar -xf "$dirInstall/ffmpeg.tar.xz" -C "$dirInstall/ffmpeg";
     for i in "$dirInstall/ffmpeg/ffmpeg-*-amd64-static"; do cp "$i/ff*" /usr/bin/; break; done
     rm -r "$dirInstall/ffmpeg.tar.xz" "$dirInstall/ffmpeg";
