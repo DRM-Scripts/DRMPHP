@@ -61,7 +61,7 @@ function checkOS() {
     if [[ $ID == "fedora" || $ID_LIKE == "fedora" ]]; then
       OS="fedora"
       dnf -y update
-      dnf -y install git xz iputils which
+      dnf -y install git xz iputils which initscripts
       dnf -y install httpd
       dnf -y install aria2
       dnf -y install community-mysql-server
@@ -163,11 +163,11 @@ function installDRMPHP() {
   cd /var/www/html
   
   chmod +x mp4decrypt
-  [[ ! -d "./download" ]] && mkdir -p "$./download"
+  [[ ! -d "./download" ]] && mkdir -p "download"
   chmod 777 download;
 
   cd ../;
-  mkdir backup;
+  [[ ! -d "./backup" ]] && mkdir -p "backup"
   chmod 777 backup;
   chmod 777 html;
   echo " Panel configured successfully!";
