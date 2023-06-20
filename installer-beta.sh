@@ -26,7 +26,7 @@ apt full-upgrade -y;
 
 # Install MySQL, Apache2 & Aria2
 apt install mysql-server apache2 aria2 -y;
-apt-get install php7.4 php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-bz2 php7.4-xmlrpc -y;
+apt-get install php7.2 php7.2-cli php7.2-json php7.2-common php7.2-mysql php7.2-zip php7.2-gd php7.2-mbstring php7.2-curl php7.2-xml php7.2-bcmath php7.2-bz2 php7.2-xmlrpc -y;
 
 # Download Panel
 cd /home;
@@ -44,8 +44,8 @@ service mysql restart;
 echo "MySQL configured successfully!";
 
 #setup php.ini
-sed -i -r 's/short_open_tag = Off$/short_open_tag = On/' /etc/php/7.4/cli/php.ini;
-sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/apache2/php.ini;
+sed -i -r 's/short_open_tag = Off$/short_open_tag = On/' /etc/php/7.2/cli/php.ini;
+sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/apache2/php.ini;
 echo "php.ini configured successfully!";
 
 #setup sudoers
