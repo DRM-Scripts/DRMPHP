@@ -14,3 +14,6 @@
 - Installer U20.04: Beta - CREDIT @ninjajiraiya
 - Stream Player: Beta - CREDIT @ninjajiraiya
 - User Lines: IN PROGRESS - CREDIT @obsecuremind
+
+20/06/2023
+- Starting to add Ubuntu 22.04 support. The installer is beta/broken but will be fixed
