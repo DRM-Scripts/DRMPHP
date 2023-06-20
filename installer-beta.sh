@@ -18,7 +18,7 @@ add-apt-repository ppa:ondrej/apache2 -y;
 add-apt-repository ppa:xapienz/curl34 -y;
 
 # Remove any pending packages
-apt-get autoremove;
+apt-get autoremove -y;
 
 # Run an update
 apt-get update -y;
