@@ -32,8 +32,6 @@ if(!$App->LoggedIn())header('location: login.php');
                 <a href="add.php" style="float:right" class="mb-3 btn btn-light waves-effect btn-label waves-light"><i class="bx bx-list-plus label-icon"></i> Add New</a>
                 <a href="javascript: void(0)" onclick="All('Start')" class="mb-3 btn btn-success waves-effect btn-label waves-light"><i class="bx bx-play label-icon"></i> Start All</a>
                 <a href="javascript: void(0)" onclick="All('Stop')" class="mb-3 btn btn-warning waves-effect btn-label waves-light"><i class="bx bx-stop label-icon"></i> Stop All</a>
-                <a href="javascript: void(0)" onclick="ExportAll('api')" class="mb-3 btn btn-info waves-effect btn-label waves-light"><i class="bx bxs-download label-icon"></i> Download .m3u (api)</a>
-                <a href="javascript: void(0)" onclick="ExportAll('hls')" class="mb-3 btn btn-info waves-effect btn-label waves-light"><i class="bx bxs-download label-icon"></i> Download .m3u (hls)</a>
                 <img src="assets/images/loader.gif" id="Loader" style="display:none;vertical-align: middle;width:48px;height:48px;margin-top: -12px;">
               </div>
             </div>
