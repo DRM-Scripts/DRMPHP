@@ -261,7 +261,7 @@ echo "PASS: Admin@2023##";
 echo "URL: http://${serverIP}:${answer_port}/login.php";
 echo "----------------------------------------------------";
 echo "NOTE: EDIT <M3U8 Download URL> IN SETTINGS PAGE";
-echo "####################################################";
+echo "";
 echo "Have Fun!"
 echo ""
 sleep 3
