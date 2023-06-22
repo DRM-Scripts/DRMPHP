@@ -146,7 +146,7 @@ function installDRMPHP() {
   read -p ' Change TorrServer web-port? (Yes/No) ' answer_cp </dev/tty
   if [ "$answer_cp" != "${answer_cp#[Yy]}" ]; then
     read -p ' Enter port number: ' answer_port </dev/tty
-    if [[ $OS == "debian "]] || [[ $OS == "ubuntu"]]; then 
+    if [[ $OS == "debian" ]] || [[ $OS == "ubuntu" ]]; then 
       sed 's/80/${answer_port}/' /etc/apache2/ports.conf
       sed 's/80/${answer_port}/' /etc/apache2/sites-enabled/000-default.conf
     else
