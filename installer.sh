@@ -81,7 +81,7 @@ function checkOS() {
         exit 1
       fi
       yum update -y
-      yum install git xz iputils which -y
+      yum install git xz iputils which initscripts -y
       yum install httpd -y
       yum install aria2 -y
       yum install mysql-server -y
@@ -143,6 +143,16 @@ function installDRMPHP() {
   sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/apache2/php.ini
   echo " PHP configured successfully!"
 
+  read -p ' Change TorrServer web-port? (Yes/No) ' answer_cp </dev/tty
+  if [ "$answer_cp" != "${answer_cp#[Yy]}" ]; then
+    read -p ' Enter port number: ' answer_port </dev/tty
+    if [[ $OS == "debian "]] || [[ $OS == "ubuntu"]]; then 
+      sed 's/80/${answer_port}/' /etc/apache2/ports.conf
+      sed 's/80/${answer_port}/' /etc/apache2/sites-enabled/000-default.conf
+    else
+      sed 's/80/${answer_port}/' /etc/httpd/conf/httpd.conf
+    fi
+  fi
   echo " Configuring permissions..."
   line="www-data ALL=(ALL) NOPASSWD: ALL";
   sed -i "$ a $line" /etc/sudoers;
