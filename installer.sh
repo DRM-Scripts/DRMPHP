@@ -152,6 +152,8 @@ function installDRMPHP() {
     else
       sed -i "s/80/${answer_port}/" /etc/httpd/conf/httpd.conf
     fi
+  else
+    answer_port = "80"
   fi
   echo " Configuring permissions..."
   line="www-data ALL=(ALL) NOPASSWD: ALL";
@@ -254,11 +256,11 @@ getIP
 echo "####################################################";
 echo "#                  PANEL DETAILS                   #";
 echo "####################################################";
-echo "# USER: admin                                      #";
-echo "# PASS: Admin@2023##                               #";
-echo "# URL: http://${serverIP}/login.php                #";
-echo "####################################################";
-echo "# NOTE: EDIT <M3U8 Download URL> IN SETTINGS PAGE  #";
+echo "USER: admin";
+echo "PASS: Admin@2023##";
+echo "URL: http://${serverIP}:${answer_port}/login.php";
+echo "----------------------------------------------------";
+echo "NOTE: EDIT <M3U8 Download URL> IN SETTINGS PAGE";
 echo "####################################################";
 echo "Have Fun!"
 echo ""
