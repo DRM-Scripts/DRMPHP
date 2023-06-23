@@ -129,7 +129,7 @@ function installDRMPHP() {
 
   echo " Downloading files..."
   [[ ! -d "$dirInstall" ]] && mkdir -p ${dirInstall}
-  git clone https://github.com/Higher08/DRMPHP $dirInstall
+  git clone https://github.com/DRM-Scripts/DRMPHP $dirInstall
   echo " Downloaded."
 
   echo " Setting up MySQL..."
