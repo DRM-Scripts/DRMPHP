@@ -153,7 +153,7 @@ function installDRMPHP() {
       sed -i "s/80/${answer_port}/" /etc/httpd/conf/httpd.conf
     fi
   else
-    answer_port = "80"
+    answer_port="80"
   fi
   echo " Configuring permissions..."
   line="www-data ALL=(ALL) NOPASSWD: ALL";
