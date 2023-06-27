@@ -36,26 +36,34 @@ function checkOS() {
         exit 1
       fi
     elif [[ $ID == "ubuntu" ]]; then
-      OS="ubuntu"
-      MAJOR_UBUNTU_VERSION=$(echo "$VERSION_ID" | cut -d '.' -f1)
-      if [[ $MAJOR_UBUNTU_VERSION -lt 18 ]]; then
-        echo " Your Ubuntu version is unsupported."
-        echo ""
-        echo " Script supports only Ubuntu >=18"
-        echo ""
-        exit 1
-      fi
-    fi
-    if ! dpkg -s $PKGS >/dev/null 2>&1; then
-      echo " Installing missing packages…"
-      sleep 1
-      apt-get update -y;
-      apt -y install $PKGS;
-      # a2dismod mpm_event;
-      add-apt-repository ppa:ondrej/php -y;
-      apt-get update -y;
-      apt -y install php7.4 php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-bz2 php7.4-xmlrpc;
-    fi
+  OS="ubuntu"
+  MAJOR_UBUNTU_VERSION=$(echo "$VERSION_ID" | cut -d '.' -f1)
+  if [[ $MAJOR_UBUNTU_VERSION -lt 18 ]]; then
+    echo "Your Ubuntu version is unsupported."
+    echo ""
+    echo "Script supports only Ubuntu >=18"
+    echo ""
+    exit 1
+  fi
+fi
+
+if ! dpkg -s $PKGS >/dev/null 2>&1; then
+  echo "Installing missing packages…"
+  sleep 1
+  apt-get update -y;
+
+  if [[ $MAJOR_UBUNTU_VERSION == 18 ]]; then
+    apt -y install $PKGS;
+    add-apt-repository ppa:ondrej/php -y;
+    apt-get update -y;
+    apt -y install php7.2 php7.2-cli php7.2-json php7.2-common php7.2-mysql php7.2-zip php7.2-gd php7.2-mbstring php7.2-curl php7.2-xml php7.2-bcmath php7.2-bz2 php7.2-xmlrpc;
+  elif [[ $MAJOR_UBUNTU_VERSION == 20 || $MAJOR_UBUNTU_VERSION == 22 ]]; then
+    apt -y install $PKGS;
+    add-apt-repository ppa:ondrej/php -y;
+    apt-get update -y;
+    apt -y install php7.4 php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-bz2 php7.4-xmlrpc;
+  fi
+fi
   elif [[ -e /etc/system-release ]]; then
     source /etc/os-release
     if [[ $ID == "fedora" || $ID_LIKE == "fedora" ]]; then
